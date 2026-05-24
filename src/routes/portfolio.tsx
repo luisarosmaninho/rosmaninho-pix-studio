@@ -1,80 +1,67 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import { photos, type Photo } from "@/lib/photos";
+import { categories, photosByCategory } from "@/lib/photos";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
     meta: [
       { title: "Portefólio — Rosmaninho Fotografia" },
-      { name: "description", content: "Colecção completa de fotografias de Luísa Rosmaninho." },
+      { name: "description", content: "Quatro colecções de fotografias de Luísa Rosmaninho: Luz que cai, Água viva, Pedra antiga e Horizontes." },
     ],
   }),
   component: Portfolio,
 });
 
-const categories = ["Tudo", "Urbano", "Paisagem", "Água", "Arquitetura"] as const;
-
 function Portfolio() {
-  const [filter, setFilter] = useState<(typeof categories)[number]>("Tudo");
-  const [lightbox, setLightbox] = useState<Photo | null>(null);
-
-  const visible = filter === "Tudo" ? photos : photos.filter((p) => p.category === filter);
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SiteNav />
+      <SiteNav variant="solid" />
 
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-12">
-        <p className="font-mono-label text-muted-foreground">Arquivo · {photos.length} obras</p>
-        <h1 className="font-display text-6xl md:text-8xl mt-4">Portefólio</h1>
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16">
+        <p className="font-mono-label text-muted-foreground">Quatro colecções</p>
+        <h1 className="font-display text-6xl md:text-8xl mt-4 leading-[0.95]">
+          Portefólio<span className="text-accent">.</span>
+        </h1>
+        <p className="mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+          O trabalho organiza-se como quem arruma fotografias numa caixa de
+          madeira — por matéria, por afecto, por luz. Escolhe uma porta.
+        </p>
       </section>
 
-      <div className="px-6 md:px-12 flex flex-wrap gap-6 border-b border-border pb-6 mb-12">
-        {categories.map((c) => (
-          <button
-            key={c}
-            onClick={() => setFilter(c)}
-            className={`font-mono-label transition-colors ${
-              filter === c ? "text-accent" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
-
-      <section className="px-6 md:px-12 pb-24 columns-1 sm:columns-2 lg:columns-3 gap-6 [&>*]:mb-6">
-        {visible.map((p) => (
-          <figure
-            key={p.src}
-            onClick={() => setLightbox(p)}
-            className="group break-inside-avoid cursor-pointer relative overflow-hidden"
-          >
-            <img src={p.src} alt={p.title} className="w-full h-auto block transition-transform duration-[1200ms] group-hover:scale-[1.03]" />
-            <figcaption className="absolute inset-x-0 bottom-0 p-4 text-white bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-              <p className="font-display text-xl">{p.title}</p>
-              <p className="font-mono-label opacity-80">{p.location} · {p.year}</p>
-            </figcaption>
-          </figure>
-        ))}
+      <section className="px-6 md:px-12 pb-24 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {categories.map((cat, i) => {
+          const pics = photosByCategory(cat.slug);
+          const cover = pics[0];
+          return (
+            <Link
+              key={cat.slug}
+              to="/portfolio/$category"
+              params={{ category: cat.slug }}
+              className="group block relative overflow-hidden aspect-[4/5]"
+            >
+              {cover && (
+                <img
+                  src={cover.src}
+                  alt={cover.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-105"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
+              <div className="relative h-full flex flex-col justify-between p-8 md:p-10 text-white">
+                <p className="font-mono-label opacity-80">0{i + 1} · {pics.length} obras</p>
+                <div>
+                  <p className="font-mono-label opacity-80 mb-3">{cat.subtitle}</p>
+                  <h2 className="font-display text-4xl md:text-6xl leading-none">{cat.title}</h2>
+                  <p className="mt-4 max-w-md text-sm opacity-90 leading-relaxed">{cat.description}</p>
+                  <span className="font-mono-label inline-block mt-6 border-b border-white pb-1 group-hover:text-accent group-hover:border-accent transition-colors">
+                    Entrar →
+                  </span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </section>
-
-      {lightbox && (
-        <div
-          onClick={() => setLightbox(null)}
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-6 cursor-zoom-out fade-up"
-        >
-          <button className="absolute top-6 right-6 text-white font-mono-label">Fechar ✕</button>
-          <figure className="max-w-6xl max-h-full">
-            <img src={lightbox.src} alt={lightbox.title} className="max-h-[85vh] w-auto mx-auto object-contain" />
-            <figcaption className="text-white text-center mt-6">
-              <p className="font-display text-2xl">{lightbox.title}</p>
-              <p className="font-mono-label opacity-70 mt-1">{lightbox.location} · {lightbox.year} · {lightbox.category}</p>
-            </figcaption>
-          </figure>
-        </div>
-      )}
 
       <SiteFooter />
     </div>
