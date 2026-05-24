@@ -5,8 +5,8 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
-      { title: "Contacto — Rosmaninho Fotografia" },
-      { name: "description", content: "Entre em contacto com Luísa Rosmaninho para encomendas, exposições e colaborações." },
+      { title: "Diálogo — Rosmaninho" },
+      { name: "description", content: "Diálogo: ensaios autorais, publicações independentes, curadoria e aquisição de impressões Fine Art." },
     ],
   }),
   component: Contacto,
@@ -17,53 +17,91 @@ function Contacto() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SiteNav />
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-24 grid md:grid-cols-12 gap-12">
-        <div className="md:col-span-5">
-          <p className="font-mono-label text-muted-foreground">— Contacto</p>
-          <h1 className="font-display text-5xl md:text-7xl mt-4 leading-none">Vamos<br /><em className="text-accent not-italic">conversar</em>.</h1>
-          <div className="mt-12 space-y-6">
+      <SiteNav variant="solid" />
+
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-32 grid grid-cols-12 gap-8">
+        {/* Coluna esquerda — info */}
+        <div className="col-span-12 md:col-span-4">
+          <p className="font-mono-label">[ ESPAÇO DE DIÁLOGO ]</p>
+          <h1 className="font-display uppercase text-6xl md:text-8xl leading-[0.9] mt-6 tracking-wide">
+            Diálogo
+          </h1>
+
+          <p className="mt-12 body-text max-w-sm" style={{ textAlign: "justify" }}>
+            Para ensaios autorais, publicações independentes, curadoria ou
+            aquisição de impressões Fine Art.
+          </p>
+
+          <div className="mt-16 space-y-6">
             <div>
-              <p className="font-mono-label text-muted-foreground">Email</p>
-              <a href="mailto:ola@rosmaninho.pt" className="text-xl mt-1 inline-block border-b border-foreground pb-1">ola@rosmaninho.pt</a>
+              <p className="font-mono-label">[ EMAIL ]</p>
+              <a href="mailto:ola@rosmaninho.pt" className="font-display text-2xl mt-2 inline-block hover:text-accent transition-colors">
+                ola@rosmaninho.pt
+              </a>
             </div>
             <div>
-              <p className="font-mono-label text-muted-foreground">Telefone</p>
-              <p className="text-xl mt-1">+351 910 000 000</p>
+              <p className="font-mono-label">[ FUSO HORÁRIO ]</p>
+              <p className="font-display text-2xl mt-2">GMT+00 · Lisboa</p>
             </div>
             <div>
-              <p className="font-mono-label text-muted-foreground">Estúdio</p>
-              <p className="text-xl mt-1">Coimbra, Portugal</p>
+              <p className="font-mono-label">[ INSTAGRAM ]</p>
+              <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="font-display text-2xl mt-2 inline-block hover:text-accent transition-colors">
+                @luisarosmaninh
+              </a>
             </div>
           </div>
         </div>
 
+        {/* Coluna direita — formulário sem caixas */}
         <form
           onSubmit={(e) => { e.preventDefault(); setSent(true); }}
-          className="md:col-span-7 md:pl-12 space-y-8"
+          className="col-span-12 md:col-span-7 md:col-start-6 md:pt-32 space-y-16"
         >
-          <Field label="Nome" name="nome" />
-          <Field label="Email" name="email" type="email" />
-          <Field label="Assunto" name="assunto" />
-          <div>
-            <label className="font-mono-label text-muted-foreground block mb-3">Mensagem</label>
-            <textarea required rows={5} className="w-full bg-transparent border-b border-border focus:border-accent outline-none py-2 text-lg resize-none" />
-          </div>
-          <button type="submit" disabled={sent} className="font-mono-label border-b border-foreground hover:text-accent hover:border-accent pb-1 transition-colors">
-            {sent ? "Mensagem enviada ✓" : "Enviar mensagem →"}
+          <LineField label="O teu nome" name="nome" />
+          <LineField label="O teu e-mail" name="email" type="email" />
+          <LineField label="A tua mensagem" name="mensagem" multiline />
+
+          <button
+            type="submit"
+            disabled={sent}
+            className="font-mono-label hover:text-accent transition-colors"
+          >
+            [ {sent ? "MENSAGEM ENVIADA ✓" : "ENVIAR MENSAGEM"} ]
           </button>
         </form>
       </section>
+
       <SiteFooter />
     </div>
   );
 }
 
-function Field({ label, name, type = "text" }: { label: string; name: string; type?: string }) {
+function LineField({
+  label, name, type = "text", multiline = false,
+}: { label: string; name: string; type?: string; multiline?: boolean }) {
   return (
-    <div>
-      <label htmlFor={name} className="font-mono-label text-muted-foreground block mb-3">{label}</label>
-      <input id={name} name={name} type={type} required className="w-full bg-transparent border-b border-border focus:border-accent outline-none py-2 text-lg" />
+    <div className="relative">
+      <label htmlFor={name} className="font-mono-label block mb-4">
+        {label}
+      </label>
+      {multiline ? (
+        <textarea
+          id={name}
+          name={name}
+          required
+          rows={3}
+          className="w-full bg-transparent border-0 border-b border-foreground focus:border-accent focus:outline-none py-3 text-lg resize-none font-display italic"
+        />
+      ) : (
+        <input
+          id={name}
+          name={name}
+          type={type}
+          required
+          className="w-full bg-transparent border-0 border-b border-foreground focus:border-accent focus:outline-none py-3 text-lg font-display italic"
+        />
+      )}
+      <span aria-hidden className="absolute right-0 bottom-3 font-mono-label">————————</span>
     </div>
   );
 }

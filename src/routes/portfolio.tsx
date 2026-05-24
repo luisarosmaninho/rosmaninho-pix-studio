@@ -1,64 +1,87 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import { categories, photosByCategory } from "@/lib/photos";
+import { photos } from "@/lib/photos";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
     meta: [
-      { title: "Portefólio — Rosmaninho Fotografia" },
-      { name: "description", content: "Quatro colecções de fotografias de Luísa Rosmaninho: Luz que cai, Água viva, Pedra antiga e Horizontes." },
+      { title: "Arquivo — Rosmaninho" },
+      { name: "description", content: "Arquivo visual: fotografias de Luísa Rosmaninho em fluxo editorial assimétrico." },
     ],
   }),
   component: Portfolio,
 });
 
+// Lê metadados a partir do índice do arquivo
+function refCode(i: number) {
+  return `REF_${String((i + 1) * 9).padStart(3, "0")}`;
+}
+
+function locationTag(loc: string) {
+  return loc.toUpperCase().split(",")[0];
+}
+
+// Define o layout assimétrico para cada foto (alterna full, vertical, pequena)
+type Slot = { width: string; align: "left" | "right" | "center"; aspect: string };
+const layout: Slot[] = [
+  { width: "w-full",                align: "center", aspect: "aspect-[16/9]" },
+  { width: "w-full md:w-[42%]",     align: "left",   aspect: "aspect-[3/4]" },
+  { width: "w-full md:w-[55%]",     align: "right",  aspect: "aspect-[4/3]" },
+  { width: "w-full md:w-[70%]",     align: "center", aspect: "aspect-[16/10]" },
+  { width: "w-full md:w-[38%]",     align: "right",  aspect: "aspect-[3/4]" },
+  { width: "w-full md:w-[48%]",     align: "left",   aspect: "aspect-[5/4]" },
+  { width: "w-full",                align: "center", aspect: "aspect-[21/9]" },
+  { width: "w-full md:w-[45%]",     align: "right",  aspect: "aspect-[4/5]" },
+  { width: "w-full md:w-[58%]",     align: "left",   aspect: "aspect-[4/3]" },
+  { width: "w-full md:w-[50%]",     align: "center", aspect: "aspect-[5/4]" },
+];
+
+const tags = ["TEXTURA URBANA", "LUZ SILENCIOSA", "MARGENS", "ARQUITETURA", "REFLEXOS", "PRESENÇA", "VAZIO", "PELÍCULA", "GEOMETRIA", "NÉVOA"];
+const formats = ["ANALOG_50MM", "DIGITAL_35MM", "ANALOG_28MM", "FILM_135", "DIGITAL_85MM"];
+
 function Portfolio() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16">
-        <p className="font-mono-label text-muted-foreground">Quatro colecções</p>
-        <h1 className="font-display text-6xl md:text-8xl mt-4 leading-[0.95]">
-          Portefólio<span className="text-accent">.</span>
+      {/* Header */}
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
+        <p className="font-mono-label">[ ARQUIVO VISUAL // 2020 — 2026 ]</p>
+        <h1 className="font-display uppercase text-6xl md:text-9xl leading-[0.9] mt-6 tracking-wide">
+          Arquivo
         </h1>
-        <p className="mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-          O trabalho organiza-se como quem arruma fotografias numa caixa de
-          madeira — por matéria, por afecto, por luz. Escolhe uma porta.
+        <p className="mt-10 max-w-xl text-foreground body-text">
+          Um fluxo irregular de imagens, sem grelha. Cada fotografia ocupa o espaço
+          que pede. Deixa o olhar respirar entre os silêncios.
         </p>
       </section>
 
-      <section className="px-6 md:px-12 pb-24 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {categories.map((cat, i) => {
-          const pics = photosByCategory(cat.slug);
-          const cover = pics[0];
+      <div className="hairline mx-6 md:mx-12 mb-20" />
+
+      {/* Fluxo editorial assimétrico */}
+      <section className="px-6 md:px-12 pb-32 flex flex-col gap-[120px] md:gap-[180px]">
+        {photos.map((photo, i) => {
+          const slot = layout[i % layout.length];
+          const justify =
+            slot.align === "left" ? "justify-start"
+            : slot.align === "right" ? "justify-end"
+            : "justify-center";
+
           return (
-            <Link
-              key={cat.slug}
-              to="/portfolio/$category"
-              params={{ category: cat.slug }}
-              className="group block relative overflow-hidden aspect-[4/5]"
-            >
-              {cover && (
-                <img
-                  src={cover.src}
-                  alt={cover.title}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-105"
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
-              <div className="relative h-full flex flex-col justify-between p-8 md:p-10 text-white">
-                <p className="font-mono-label opacity-80">0{i + 1} · {pics.length} obras</p>
-                <div>
-                  <p className="font-mono-label opacity-80 mb-3">{cat.subtitle}</p>
-                  <h2 className="font-display text-4xl md:text-6xl leading-none">{cat.title}</h2>
-                  <p className="mt-4 max-w-md text-sm opacity-90 leading-relaxed">{cat.description}</p>
-                  <span className="font-mono-label inline-block mt-6 border-b border-white pb-1 group-hover:text-accent group-hover:border-accent transition-colors">
-                    Entrar →
-                  </span>
+            <div key={i} className={`flex ${justify}`}>
+              <figure className={`${slot.width} fade-up`}>
+                <div className={`relative overflow-hidden ${slot.aspect}`}>
+                  <img
+                    src={photo.src}
+                    alt={photo.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1600ms] hover:scale-[1.02]"
+                  />
                 </div>
-              </div>
-            </Link>
+                <figcaption className="mt-5 font-mono-label">
+                  [ {refCode(i)} // {locationTag(photo.location)} // {tags[i % tags.length]} // {formats[i % formats.length]} ]
+                </figcaption>
+              </figure>
+            </div>
           );
         })}
       </section>

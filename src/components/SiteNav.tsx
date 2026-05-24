@@ -1,48 +1,93 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/logo-rosmaninho.png";
 
-export function SiteNav({ variant = "overlay" }: { variant?: "overlay" | "solid" }) {
+/**
+ * Micro navigation — links textuais espalhados nos cantos superiores.
+ * variant "overlay" -> texto branco sobre imagem
+ * variant "solid"   -> texto carvão sobre fundo papel
+ */
+export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }) {
   const isOverlay = variant === "overlay";
+  const color = isOverlay ? "text-background" : "text-foreground";
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 ${isOverlay ? "" : "bg-background/90 backdrop-blur border-b border-border"}`}>
-      <nav className={`flex items-center justify-between px-6 md:px-12 py-5 ${isOverlay ? "text-white" : "text-foreground"}`}>
-        <Link to="/" className="flex items-center" aria-label="Rosmaninho — início">
-          {isOverlay ? (
-            <span className="font-display text-2xl md:text-3xl italic tracking-wide">
-              Rosmaninho<span className="text-accent">.</span>
-            </span>
-          ) : (
-            <img src={logo} alt="Rosmaninho" className="h-12 md:h-14 w-auto" />
-          )}
+    <header className={`fixed top-0 left-0 right-0 z-50 pointer-events-none ${color}`}>
+      <div className="flex items-start justify-between px-6 md:px-10 pt-6">
+        {/* Top-left: edição */}
+        <Link
+          to="/"
+          className="pointer-events-auto font-mono-label hover:text-accent transition-colors"
+          style={{ color: "inherit" }}
+        >
+          [ ROSMANINHO // ED. 2026 ]
         </Link>
-        <ul className="hidden md:flex items-center gap-10 font-mono-label">
-          <li><Link to="/" activeOptions={{ exact: true }} className="hover:text-accent transition-colors">Início</Link></li>
-          <li><Link to="/portfolio" className="hover:text-accent transition-colors">Portefólio</Link></li>
-          <li><Link to="/diario" className="hover:text-accent transition-colors">Diário</Link></li>
-          <li><Link to="/sobre" className="hover:text-accent transition-colors">Sobre</Link></li>
-          <li><Link to="/contacto" className="hover:text-accent transition-colors">Contacto</Link></li>
-        </ul>
-        <Link to="/contacto" className="md:hidden font-mono-label">Contacto</Link>
-      </nav>
+
+        {/* Top-right: micro-nav textual */}
+        <nav className="pointer-events-auto flex gap-6 md:gap-8 font-mono-label">
+          <Link to="/" activeOptions={{ exact: true }} className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
+            Index
+          </Link>
+          <Link to="/portfolio" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
+            Arquivo
+          </Link>
+          <Link to="/diario" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
+            Journal
+          </Link>
+          <Link to="/contacto" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
+            Diálogo
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border px-6 md:px-12 py-12 mt-24">
-      <div className="flex flex-col md:flex-row justify-between gap-8 items-start">
-        <div>
-          <img src={logo} alt="Rosmaninho" className="h-20 w-auto -ml-4" />
-          <p className="font-mono-label text-muted-foreground mt-2">Luísa Rosmaninho · Fotografia</p>
+    <footer className="px-6 md:px-12 pt-24 pb-10 border-t border-border mt-32">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        {/* Coluna esquerda — Links */}
+        <div className="md:col-span-4 flex flex-col gap-8">
+          <p className="font-mono-label">[ ROSMANINHO ]</p>
+          <ul className="flex flex-col gap-3 font-display text-2xl">
+            <li><a href="/" className="hover:text-accent transition-colors">Index</a></li>
+            <li><a href="/portfolio" className="hover:text-accent transition-colors">Arquivo</a></li>
+            <li><a href="/diario" className="hover:text-accent transition-colors">Journal</a></li>
+            <li><a href="/contacto" className="hover:text-accent transition-colors">Diálogo</a></li>
+            <li>
+              <a
+                href="https://instagram.com/luisarosmaninh"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-accent transition-colors"
+              >
+                Instagram @luisarosmaninh
+              </a>
+            </li>
+          </ul>
         </div>
-        <div className="flex gap-10 font-mono-label">
-          <a href="mailto:ola@rosmaninho.pt" className="hover:text-accent">Email</a>
-          <a href="#" className="hover:text-accent">Instagram</a>
-          <a href="#" className="hover:text-accent">Behance</a>
+
+        {/* Coluna direita — Mapa monocromático (estático) */}
+        <div className="md:col-span-8">
+          <p className="font-mono-label mb-4">[ COORDENADAS // 40.2033° N, 8.4103° W ]</p>
+          <div className="relative w-full aspect-[16/9] overflow-hidden border border-border">
+            <iframe
+              title="Coimbra"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-8.45%2C40.18%2C-8.37%2C40.23&amp;layer=mapnik&amp;marker=40.2033%2C-8.4103"
+              className="absolute inset-0 w-full h-full grayscale contrast-125"
+              style={{ filter: "grayscale(1) contrast(1.1) brightness(0.95)" }}
+            />
+            <div className="absolute inset-0 pointer-events-none mix-blend-multiply bg-background/10" />
+          </div>
         </div>
       </div>
-      <p className="font-mono-label text-muted-foreground mt-12">© {new Date().getFullYear()} — Todos os direitos reservados</p>
+
+      <div className="mt-16 hairline" />
+
+      <div className="mt-6 flex flex-col md:flex-row justify-between gap-4">
+        <p className="font-mono-label">
+          © {new Date().getFullYear()} ROSMANINHO. TODOS OS DIREITOS RESERVADOS.
+        </p>
+        <p className="font-mono-label">[ COIMBRA // PORTUGAL ]</p>
+      </div>
     </footer>
   );
 }
