@@ -62,15 +62,34 @@ function Index() {
         </div>
       </section>
 
-      {/* Quote */}
+      {/* Diário teaser */}
       <section className="px-6 md:px-12 py-32 border-t border-border">
-        <blockquote className="max-w-4xl mx-auto text-center">
-          <p className="font-display text-3xl md:text-5xl italic leading-snug">
-            “A fotografia é a memória do que ainda não soubemos nomear.”
-          </p>
-          <footer className="font-mono-label text-muted-foreground mt-8">— L.R.</footer>
-        </blockquote>
+        <div className="grid md:grid-cols-12 gap-10 items-center">
+          <div className="md:col-span-5">
+            <p className="font-mono-label text-muted-foreground">— Diário</p>
+            <h2 className="font-display text-4xl md:text-6xl mt-4 leading-tight">
+              Notas sobre <em className="text-accent not-italic">o que vejo</em>.
+            </h2>
+            <p className="mt-6 text-muted-foreground leading-relaxed max-w-md">
+              Pequenos textos sobre uma fotografia, um lugar, uma luz. Um caderno
+              em aberto que vai crescendo devagar.
+            </p>
+            <Link to="/diario" className="font-mono-label inline-block mt-8 border-b border-foreground pb-1 hover:text-accent hover:border-accent transition-colors">
+              Abrir o diário →
+            </Link>
+          </div>
+          <div className="md:col-span-7">
+            <blockquote>
+              <p className="font-display text-2xl md:text-3xl italic leading-snug">
+                “A fotografia é a memória do que ainda não soubemos nomear.”
+              </p>
+              <footer className="font-mono-label text-muted-foreground mt-8">— L.R.</footer>
+            </blockquote>
+          </div>
+        </div>
       </section>
+
+
 
       <SiteFooter />
     </div>
