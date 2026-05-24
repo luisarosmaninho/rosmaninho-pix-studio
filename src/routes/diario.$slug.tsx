@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import { getJournalEntry, journal, formatJournalDate } from "@/lib/journal";
-import { getCategory } from "@/lib/photos";
+import { getJournalEntry, journal } from "@/lib/journal";
+import { photos } from "@/lib/photos";
 
 export const Route = createFileRoute("/diario/$slug")({
   beforeLoad: ({ params }) => {
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/diario/$slug")({
     const e = getJournalEntry(params.slug);
     return {
       meta: [
-        { title: `${e?.title ?? "Diário"} — Rosmaninho` },
+        { title: `${e?.title ?? "Journal"} — Rosmaninho` },
         { name: "description", content: e?.excerpt ?? "" },
         { property: "og:image", content: e?.photoSrc ?? "" },
       ],
@@ -25,69 +25,108 @@ export const Route = createFileRoute("/diario/$slug")({
   ),
 });
 
+function stamp(date: string) {
+  const d = new Date(date);
+  return `${d.getFullYear()} / ${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
-  const cat = getCategory(entry.relatedCategory);
-  const others = journal.filter((e) => e.slug !== slug).slice(0, 2);
+  // duas imagens secundárias para a sequência assimétrica
+  const extras = photos
+    .filter((p) => p.src !== entry.photoSrc && p.category === entry.relatedCategory)
+    .slice(0, 2);
+  // fallback se a categoria não tiver duas
+  while (extras.length < 2) {
+    const more = photos.find((p) => p.src !== entry.photoSrc && !extras.includes(p));
+    if (more) extras.push(more); else break;
+  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground">
       <SiteNav variant="solid" />
 
       <article>
-        <header className="px-6 md:px-12 pt-32 md:pt-40 pb-12 max-w-3xl">
-          <Link to="/diario" className="font-mono-label text-muted-foreground hover:text-accent">
-            ← Diário
-          </Link>
-          <p className="font-mono-label text-accent mt-8">{formatJournalDate(entry.date)}</p>
-          <h1 className="font-display text-5xl md:text-7xl mt-4 leading-[1.02]">{entry.title}</h1>
-          <p className="mt-6 text-xl text-muted-foreground italic leading-relaxed">{entry.excerpt}</p>
+        {/* Cabeçalho editorial */}
+        <header className="px-6 md:px-12 pt-32 md:pt-40 pb-16">
+          <div className="grid grid-cols-12 gap-6 items-baseline max-w-6xl mx-auto">
+            <div className="col-span-12 md:col-span-3">
+              <Link to="/diario" className="font-mono-label hover:text-accent transition-colors">
+                &larr; Journal
+              </Link>
+              <p className="font-mono-label mt-10">[ {stamp(entry.date)} ]</p>
+            </div>
+            <div className="col-span-12 md:col-span-9">
+              <h1 className="font-display italic text-4xl md:text-7xl leading-[1.05]">
+                {entry.title}
+              </h1>
+            </div>
+          </div>
         </header>
 
-        <figure className="px-6 md:px-12 pb-12">
-          <img src={entry.photoSrc} alt={entry.photoTitle} className="w-full max-h-[80vh] object-cover" />
-          <figcaption className="font-mono-label text-muted-foreground mt-4">
-            {entry.photoTitle}
-          </figcaption>
-        </figure>
+        {/* Corpo — coluna central estreita, max 650px */}
+        <div className="px-6 md:px-12 pb-20">
+          <div className="mx-auto" style={{ maxWidth: "650px" }}>
+            <p className="font-display italic text-2xl md:text-3xl leading-[1.5] mb-16">
+              “{entry.excerpt}”
+            </p>
 
-        <div className="px-6 md:px-12 pb-24 max-w-2xl mx-auto">
-          {entry.body.map((p, i) => (
-            <p key={i} className="text-lg leading-[1.8] mb-6">{p}</p>
+            {entry.body.slice(0, 1).map((p, i) => (
+              <p key={i} className="body-text text-base mb-8" style={{ textAlign: "justify" }}>{p}</p>
+            ))}
+          </div>
+
+          {/* Sequência assimétrica: 1 grande + 2 verticais lado-a-lado */}
+          <div className="my-24 max-w-6xl mx-auto">
+            <figure className="w-full aspect-[16/10] overflow-hidden">
+              <img src={entry.photoSrc} alt={entry.photoTitle} className="w-full h-full object-cover" />
+            </figure>
+            <figcaption className="font-mono-label mt-4">
+              [ {entry.photoTitle.toUpperCase()} ]
+            </figcaption>
+          </div>
+
+          {entry.body.slice(1, 2).map((p, i) => (
+            <div key={i} className="mx-auto mb-20" style={{ maxWidth: "650px" }}>
+              <p className="body-text text-base" style={{ textAlign: "justify" }}>{p}</p>
+            </div>
           ))}
 
-          {cat && (
-            <div className="mt-12 pt-8 border-t border-border">
-              <p className="font-mono-label text-muted-foreground">Ver mais da colecção</p>
-              <Link
-                to="/portfolio/$category"
-                params={{ category: cat.slug }}
-                className="font-display text-3xl mt-2 inline-block hover:text-accent transition-colors"
-              >
-                {cat.title} →
-              </Link>
+          {extras.length === 2 && (
+            <div className="grid grid-cols-2 gap-6 my-24 max-w-6xl mx-auto">
+              {extras.map((p, i) => (
+                <figure key={i} className="aspect-[3/4] overflow-hidden">
+                  <img src={p.src} alt={p.title} className="w-full h-full object-cover" />
+                </figure>
+              ))}
             </div>
           )}
-        </div>
-      </article>
 
-      {others.length > 0 && (
-        <section className="px-6 md:px-12 pb-24 border-t border-border pt-16">
-          <p className="font-mono-label text-muted-foreground mb-8">Continuar a ler</p>
-          <div className="grid md:grid-cols-2 gap-8">
-            {others.map((e) => (
+          <div className="mx-auto" style={{ maxWidth: "650px" }}>
+            {entry.body.slice(2).map((p, i) => (
+              <p key={i} className="body-text text-base mb-8" style={{ textAlign: "justify" }}>{p}</p>
+            ))}
+            <div className="mt-16 hairline" />
+            <p className="font-mono-label mt-6">[ L.R. // FIM ]</p>
+          </div>
+        </div>
+
+        {/* Continuar */}
+        <section className="px-6 md:px-12 py-24 border-t border-border">
+          <p className="font-mono-label mb-12">[ CONTINUAR A LER ]</p>
+          <div className="grid md:grid-cols-2 gap-12">
+            {journal.filter((e) => e.slug !== slug).slice(0, 2).map((e) => (
               <Link key={e.slug} to="/diario/$slug" params={{ slug: e.slug }} className="group block">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={e.photoSrc} alt={e.photoTitle} className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
-                </div>
-                <p className="font-mono-label text-muted-foreground mt-4">{formatJournalDate(e.date)}</p>
-                <h3 className="font-display text-2xl mt-2 group-hover:text-accent transition-colors">{e.title}</h3>
+                <p className="font-mono-label">[ {stamp(e.date)} ]</p>
+                <h3 className="font-display italic text-3xl md:text-4xl mt-3 leading-tight group-hover:text-accent transition-colors">
+                  {e.title}
+                </h3>
               </Link>
             ))}
           </div>
         </section>
-      )}
+      </article>
 
       <SiteFooter />
     </div>
