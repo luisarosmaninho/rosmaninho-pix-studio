@@ -28,6 +28,9 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
           <Link to="/portfolio" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
             Arquivo
           </Link>
+          <Link to="/sobre" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
+            Autora
+          </Link>
           <Link to="/diario" className="hover:text-accent transition-colors" style={{ color: "inherit" }}>
             Journal
           </Link>
@@ -50,6 +53,7 @@ export function SiteFooter() {
           <ul className="flex flex-col gap-3 font-display text-2xl">
             <li><a href="/" className="hover:text-accent transition-colors">Index</a></li>
             <li><a href="/portfolio" className="hover:text-accent transition-colors">Arquivo</a></li>
+            <li><a href="/sobre" className="hover:text-accent transition-colors">Autora</a></li>
             <li><a href="/diario" className="hover:text-accent transition-colors">Journal</a></li>
             <li><a href="/contacto" className="hover:text-accent transition-colors">Diálogo</a></li>
             <li>
