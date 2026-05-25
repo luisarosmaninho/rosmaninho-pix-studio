@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: "easeOut" } },
 };
 
 function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -61,7 +61,7 @@ function HomePage() {
           className="absolute inset-0 h-full w-full object-cover"
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] as const }}
+          transition={{ duration: 3, ease: "easeOut" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
@@ -76,7 +76,7 @@ function HomePage() {
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.4, delay: 1.5, ease: [0.22, 1, 0.36, 1] as const }}
+            transition={{ duration: 1.4, delay: 1.5, ease: "easeOut" }}
             className="font-display text-cream text-4xl md:text-7xl lg:text-8xl max-w-5xl leading-[1.05]"
           >
             Onde o Tempo Para<br />e a Emoção Fica.
@@ -177,7 +177,7 @@ function HomePage() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 1, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
+                transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
                 className={`hover-zoom relative ${p.span}`}
               >
                 <img src={p.src} alt="" className="absolute inset-0 h-full w-full object-cover" />
