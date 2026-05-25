@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { categories, getCategory, photosByCategory, type CategorySlug, type Photo } from "@/lib/photos";
 
 export const Route = createFileRoute("/portfolio/$category")({
@@ -41,7 +41,7 @@ function CategoryPage() {
         <Link to="/portfolio" className="font-mono-label text-muted-foreground hover:text-accent">
           ← Portefólio
         </Link>
-        <p className="font-mono-label text-muted-foreground mt-8">{cat.subtitle}</p>
+        <p className="font-mono-label text-muted-foreground mt-8">Colecção</p>
         <h1 className="font-display text-6xl md:text-8xl mt-3 leading-[0.95]">{cat.title}</h1>
         <p className="mt-8 text-lg text-muted-foreground max-w-2xl leading-relaxed">{cat.description}</p>
       </section>
