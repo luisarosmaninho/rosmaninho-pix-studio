@@ -1,165 +1,273 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { motion } from "framer-motion";
+import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photos, categories } from "@/lib/photos";
+import portoStreet from "@/assets/porto-street.jpg";
+import sunsetBeach from "@/assets/sunset-beach.jpg";
+import river from "@/assets/river.jpg";
+import villageAlley from "@/assets/village-alley.jpg";
+import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rosmaninho — Arquivo Visual" },
-      { name: "description", content: "Arquivo visual de Luísa Rosmaninho. Fotografia analógica e digital — Porto, Coimbra, Aveiro." },
+      { title: "Rosmaninho Fotografia — Onde o tempo para e a emoção fica" },
+      { name: "description", content: "Fotografia cinematográfica de casamentos, retratos, lifestyle e branding. Coimbra, Portugal." },
+      { property: "og:title", content: "Rosmaninho Fotografia" },
+      { property: "og:description", content: "Capto a poesia dos teus dias mais especiais." },
     ],
   }),
-  component: Index,
+  component: HomePage,
 });
 
-function Index() {
-  const heroPhoto = photos[0];
-  const visorPhoto = photos[4]; // bloco 4
-  const series = [
-    { num: "I", title: "Fragmentos Urbanos", cover: photos[0] },
-    { num: "II", title: "Luz Silenciosa", cover: photos[1] },
-    { num: "III", title: "Entre Espaços", cover: photos[3] },
-    { num: "IV", title: "Margens", cover: photos[2] },
-    { num: "V", title: "Presença", cover: photos[5] },
-  ];
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] } },
+};
 
+function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className="bg-background text-foreground">
-      <SiteNav variant="solid" />
-
-      {/* ============= BLOCO 1 — HERO ASSIMÉTRICO ============= */}
-      <section className="relative min-h-screen w-full overflow-hidden">
-        <div className="grid grid-cols-12 min-h-screen">
-          {/* Esquerda — texto monumental */}
-          <div className="col-span-12 md:col-span-7 flex flex-col justify-between px-6 md:px-12 pt-28 pb-12 fade-up">
-            <p className="font-mono-label">[ ARQUIVO VISUAL // ED. 2026 ]</p>
-            <h1 className="font-display uppercase leading-[0.85] tracking-[0.02em] text-[18vw] md:text-[14vw] lg:text-[11vw]">
-              Rosmaninho
-            </h1>
-            <p className="font-mono-label">
-              [ LUÍSA ROSMANINHO &mdash; FOTOGRAFIA &mdash; COIMBRA, PT ]
-            </p>
-          </div>
-
-          {/* Direita — moldura vertical desalinhada */}
-          <div className="col-span-12 md:col-span-5 relative md:pt-32 md:pb-8 px-6 md:pr-12 md:pl-0 fade-in">
-            <figure className="relative w-full aspect-[2/3] overflow-hidden">
-              <img
-                src={heroPhoto.src}
-                alt={heroPhoto.title}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <figcaption className="absolute left-0 right-0 -bottom-7 flex justify-between font-mono-label">
-                <span>[ 41.1579° N, 8.6291° W ]</span>
-                <span>[ PORTO // CHUVA DE OUTONO ]</span>
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      {/* ============= BLOCO 2 — MANIFESTO ============= */}
-      <section className="px-6 md:px-12 py-40 md:py-56 flex flex-col items-center">
-        <p className="font-mono-label mb-16">[ MANIFESTO &mdash; N.001 ]</p>
-        <p
-          className="max-w-xl text-center md:text-justify font-display text-2xl md:text-3xl italic leading-[1.5] text-foreground"
-          style={{ textAlignLast: "center" }}
-        >
-          “Observar o quotidiano devagar. Documentar o silêncio da luz que toca o
-          betão, a geometria oculta na névoa do Porto, a nostalgia intemporal das
-          ruas de Coimbra e a volatilidade dos reflexos na água de Aveiro. Este
-          espaço não é um portefólio comercial; é um arquivo de presença, uma
-          pausa visual onde a fotografia respira através da película e do espaço
-          vazio.”
-        </p>
-        <div className="mt-20 w-full max-w-5xl mx-auto hairline" />
-      </section>
-
-      {/* ============= BLOCO 3 — SÉRIES VISUAIS ============= */}
-      <section className="px-6 md:px-12 py-32 max-w-6xl mx-auto w-full">
-        <div className="flex items-end justify-between mb-20">
-          <p className="font-mono-label">[ ÍNDICE DE SÉRIES ]</p>
-          <Link to="/portfolio" className="font-mono-label hover:text-accent transition-colors">
-            Ver arquivo &rarr;
-          </Link>
-        </div>
-
-        <ul>
-          {series.map((s, i) => (
-            <li key={s.num} className={i === 0 ? "" : "border-t border-border"}>
-              <SeriesRow num={s.num} title={s.title} cover={s.cover.src} />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* ============= BLOCO 4 — VISOR EDITORIAL ============= */}
-      <section className="relative h-screen w-full overflow-hidden">
-        <img
-          src={visorPhoto.src}
-          alt={visorPhoto.title}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ transform: "translateZ(0)" }}
-        />
-        {/* Hairline viewfinders */}
-        <span className="absolute top-6 left-6 w-8 h-8 border-l border-t border-background" />
-        <span className="absolute top-6 right-6 w-8 h-8 border-r border-t border-background" />
-        <span className="absolute bottom-6 left-6 w-8 h-8 border-l border-b border-background" />
-        <span className="absolute bottom-6 right-6 w-8 h-8 border-r border-b border-background" />
-
-        <p className="absolute bottom-10 left-10 font-mono-label text-background">
-          [ VISOR_S02 // ARQUIVO_TÁTIL ]
-        </p>
-      </section>
-
-      {/* Pequena ponte ao journal — discreta */}
-      <section className="px-6 md:px-12 py-32 max-w-3xl mx-auto text-center">
-        <p className="font-mono-label mb-6">[ JOURNAL EDITORIAL ]</p>
-        <h2 className="font-display text-4xl md:text-5xl italic leading-tight">
-          Pequenos textos sobre uma imagem, um lugar, uma luz.
-        </h2>
-        <Link
-          to="/diario"
-          className="font-mono-label inline-block mt-12 hover:text-accent transition-colors"
-        >
-          Abrir journal &rarr;
-        </Link>
-      </section>
-
-      <SiteFooter />
-
-      {/* hidden semantic list of categories for SEO */}
-      <ul className="sr-only">
-        {categories.map((c) => <li key={c.slug}>{c.title}</li>)}
-      </ul>
-    </div>
+    <motion.section
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
+      className={className}
+    >
+      {children}
+    </motion.section>
   );
 }
 
-function SeriesRow({ num, title, cover }: { num: string; title: string; cover: string }) {
-  return (
-    <Link
-      to="/portfolio"
-      className="group relative flex items-center py-8 md:py-10 transition-colors"
-    >
-      <span className="font-mono-label w-24 md:w-32 shrink-0 group-hover:text-accent transition-colors">
-        [ SÉRIE {num} ]
-      </span>
-      <span className="font-display text-3xl md:text-5xl uppercase tracking-wide group-hover:text-accent transition-colors">
-        {title}
-      </span>
-      <span className="ml-auto font-mono-label opacity-0 group-hover:opacity-100 transition-opacity">
-        Entrar &rarr;
-      </span>
+function HomePage() {
+  const portfolioCover = [
+    { src: portoStreet, span: "row-span-2" },
+    { src: sunsetBeach, span: "" },
+    { src: river, span: "" },
+    { src: villageAlley, span: "row-span-2" },
+    { src: coimbraSkyline, span: "" },
+    { src: photos[2].src, span: "" },
+  ];
 
-      {/* miniatura flutuante */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute right-44 top-1/2 -translate-y-1/2 w-28 h-36 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500 overflow-hidden hidden md:block"
-        style={{ boxShadow: "0 20px 60px -20px rgba(17,17,18,0.4)" }}
-      >
-        <img src={cover} alt="" className="w-full h-full object-cover" style={{ filter: "contrast(0.95) saturate(0.85)" }} />
-      </span>
-    </Link>
+  return (
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
+      <SiteNav variant="overlay" />
+
+      {/* HERO */}
+      <section className="relative h-screen w-full overflow-hidden">
+        <motion.img
+          src={portoStreet}
+          alt="Rosmaninho Fotografia"
+          className="absolute inset-0 h-full w-full object-cover"
+          initial={{ scale: 1.15 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 3, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.2 }}
+            className="font-script text-3xl md:text-5xl text-gold mb-6"
+          >
+            Rosmaninho Fotografia
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.4, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            className="font-display text-cream text-4xl md:text-7xl lg:text-8xl max-w-5xl leading-[1.05]"
+          >
+            Onde o Tempo Para<br />e a Emoção Fica.
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 2.1 }}
+            className="mt-8 max-w-2xl text-cream/80 text-base md:text-lg font-light"
+          >
+            Capturo a poesia dos teus dias mais especiais com um olhar cinematográfico e intemporal.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 2.4 }}
+            className="mt-12 flex flex-col sm:flex-row gap-4"
+          >
+            <Link to="/portfolio" className="btn-ghost-light">Ver o meu olhar</Link>
+            <Link to="/contacto" className="btn-solid-dark bg-cream text-foreground hover:bg-gold hover:text-cream">Vamos criar algo juntos</Link>
+          </motion.div>
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-cream/60 text-[10px] uppercase tracking-[0.4em]"
+        >
+          ↓ Descer
+        </motion.div>
+      </section>
+
+      {/* SOBRE */}
+      <Section className="px-6 md:px-12 py-32 md:py-44 bg-cream">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          <div className="md:col-span-5 relative">
+            <div className="hover-zoom aspect-[3/4] relative">
+              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
+            </div>
+            <p className="font-script text-3xl text-gold absolute -bottom-6 -right-2 md:right-6 bg-cream px-4 py-2">Luísa</p>
+          </div>
+          <div className="md:col-span-7 md:pl-8">
+            <p className="font-mono-label text-gold mb-4">Sobre mim</p>
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
+              Muito mais do que uma lente,<br />
+              <span className="italic text-gold">uma conexão.</span>
+            </h2>
+            <p className="mt-8 text-foreground/80 leading-relaxed max-w-xl">
+              Olá, sou a Luísa. Acredito que cada detalhe — desde o reflexo da luz num olhar até ao movimento mais subtil num abraço — conta uma história. A minha fotografia não é sobre posar; é sobre <em>sentir</em>. O meu objetivo é que, ao veres as minhas fotografias daqui a 20 anos, sintas exatamente a mesma emoção que sentiste no momento.
+            </p>
+
+            <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
+              {[
+                { n: "+200", l: "Sessões" },
+                { n: "+50", l: "Casamentos" },
+                { n: "+5", l: "Anos" },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="font-display text-4xl md:text-5xl text-gold">{s.n}</p>
+                  <p className="font-mono-label mt-2">{s.l}</p>
+                </div>
+              ))}
+            </div>
+
+            <Link to="/sobre" className="mt-10 inline-block text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-gold hover:border-gold transition-colors">
+              Conhecer a história completa →
+            </Link>
+          </div>
+        </div>
+      </Section>
+
+      {/* PORTFOLIO */}
+      <Section className="px-6 md:px-12 py-32 md:py-44">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+            <div>
+              <p className="font-mono-label text-gold mb-4">Portfólio</p>
+              <h2 className="font-display text-4xl md:text-6xl">O meu <span className="italic">olhar</span>.</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {categories.map((c) => (
+                <Link
+                  key={c.slug}
+                  to="/portfolio/$category"
+                  params={{ category: c.slug }}
+                  className="text-[11px] uppercase tracking-[0.28em] border border-foreground/20 px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
+                >
+                  {c.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[240px]">
+            {portfolioCover.map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 1, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className={`hover-zoom relative ${p.span}`}
+              >
+                <img src={p.src} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Link to="/portfolio" className="inline-block text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-gold hover:border-gold transition-colors">
+              Ver o arquivo completo →
+            </Link>
+          </div>
+        </div>
+      </Section>
+
+      {/* SERVIÇOS */}
+      <Section className="px-6 md:px-12 py-32 md:py-44 bg-foreground text-cream">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <p className="font-mono-label text-gold mb-4">Serviços</p>
+            <h2 className="font-display text-4xl md:text-6xl text-cream">
+              O que <span className="italic text-gold">crio</span> para ti.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-cream/15">
+            {[
+              {
+                title: "Casamentos",
+                icon: "♡",
+                desc: "Cobertura discreta, cinematográfica e cheia de alma.",
+              },
+              {
+                title: "Retratos & Lifestyle",
+                icon: "✦",
+                desc: "Celebra quem és com naturalidade e luz.",
+              },
+              {
+                title: "Branding",
+                icon: "◈",
+                desc: "Eleva a tua marca com impacto visual e autoridade.",
+              },
+            ].map((s, i) => (
+              <motion.div
+                key={s.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: i * 0.15 }}
+                className="bg-foreground p-10 md:p-14 flex flex-col items-start gap-6 hover:bg-foreground/80 transition-colors group"
+              >
+                <span className="font-display text-5xl text-gold group-hover:scale-110 transition-transform duration-500">{s.icon}</span>
+                <h3 className="font-display text-3xl text-cream">{s.title}</h3>
+                <p className="text-cream/70 text-sm leading-relaxed">{s.desc}</p>
+                <Link to="/contacto" className="mt-4 text-[11px] uppercase tracking-[0.28em] text-gold border-b border-gold/40 pb-0.5 hover:border-gold">
+                  Reservar →
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* MARQUEE / QUOTE */}
+      <section className="overflow-hidden py-16 border-y border-foreground/10 bg-cream">
+        <div className="marquee flex whitespace-nowrap font-display text-6xl md:text-8xl italic text-foreground/30">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} className="mx-12">Rosmaninho · Fotografia · Coimbra · Portugal · </span>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <Section className="px-6 md:px-12 py-32 md:py-44">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-script text-4xl md:text-5xl text-gold mb-6">vamos começar</p>
+          <h2 className="font-display text-4xl md:text-6xl leading-tight">
+            Pronta para guardar<br />o <span className="italic">teu momento</span>?
+          </h2>
+          <p className="mt-8 text-foreground/70 max-w-xl mx-auto">
+            Cada projecto começa com uma conversa. Conta-me o que tens em mente — sessão, casamento, marca — e desenhamos juntos a melhor forma de o registar.
+          </p>
+          <Link to="/contacto" className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
+            Reservar sessão
+          </Link>
+        </div>
+      </Section>
+
+      <SiteFooter />
+    </div>
   );
 }

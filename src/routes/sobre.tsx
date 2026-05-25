@@ -1,144 +1,103 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import portrait from "@/assets/sunset-beach.jpg";
-import detail from "@/assets/waterfall.jpg";
-import room from "@/assets/village-alley.jpg";
+import { motion } from "framer-motion";
+import { SiteNav, SiteFooter } from "@/components/SiteChrome";
+import villageAlley from "@/assets/village-alley.jpg";
+import stoneVillage from "@/assets/stone-village.jpg";
+import river from "@/assets/river.jpg";
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
-      { title: "Autora — Luísa Rosmaninho" },
-      { name: "description", content: "Retrato breve de Luísa Rosmaninho — fotógrafa de paisagem, arquitetura vernacular e silêncio da luz. Coimbra, Portugal." },
+      { title: "Sobre — Luísa Rosmaninho" },
+      { name: "description", content: "A história, o olhar e o método por trás da Rosmaninho Fotografia." },
+      { property: "og:title", content: "Sobre — Luísa Rosmaninho" },
+      { property: "og:description", content: "Muito mais do que uma lente, uma conexão." },
     ],
   }),
-  component: Sobre,
+  component: SobrePage,
 });
 
-function Sobre() {
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] } },
+};
+
+function SobrePage() {
   return (
-    <div className="bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      {/* ============= BLOCO 1 — RETRATO MONUMENTAL ============= */}
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-24 grid grid-cols-12 gap-8">
-        <div className="col-span-12 md:col-span-7 flex flex-col justify-between">
-          <p className="font-mono-label">[ NOTAS BIOGRÁFICAS // ED. 2026 ]</p>
-          <h1 className="font-display uppercase text-7xl md:text-[11vw] leading-[0.85] tracking-[0.02em] mt-10">
-            Luísa<br/>
-            <span className="italic font-normal lowercase">rosmaninho</span>
+      {/* Intro */}
+      <section className="px-6 md:px-12 pt-32 md:pt-44 pb-16 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" className="md:col-span-7">
+          <p className="font-script text-3xl md:text-4xl text-gold mb-4">olá</p>
+          <h1 className="font-display text-5xl md:text-7xl leading-[1.05]">
+            Sou a <span className="italic">Luísa</span>.<br />
+            Fotografo memórias.
           </h1>
-          <p className="font-mono-label mt-10">
-            [ COIMBRA — PT &nbsp;//&nbsp; ATIVA DESDE 2018 ]
+        </motion.div>
+        <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.2 }} className="md:col-span-5">
+          <p className="font-mono-label text-gold mb-3">Autora · Coimbra</p>
+          <p className="text-foreground/70 leading-relaxed">
+            Há mais de cinco anos que vivo entre câmaras, copos de chá e cadernos de campo. A fotografia, para mim, é uma forma educada de prestar atenção ao mundo.
           </p>
-        </div>
-
-        <div className="col-span-12 md:col-span-5 md:pt-12 fade-in">
-          <figure className="relative w-full aspect-[3/4] overflow-hidden">
-            <img src={portrait} alt="Luísa Rosmaninho" className="absolute inset-0 w-full h-full object-cover" style={{ filter: "contrast(0.95) saturate(0.85)" }} />
-            <figcaption className="absolute left-0 right-0 -bottom-7 flex justify-between font-mono-label">
-              <span>[ AUTORRETRATO ]</span>
-              <span>[ FILM_135 // 2025 ]</span>
-            </figcaption>
-          </figure>
-        </div>
+        </motion.div>
       </section>
 
-      <div className="hairline mx-6 md:mx-12" />
-
-      {/* ============= BLOCO 2 — MANIFESTO PESSOAL ============= */}
-      <section className="px-6 md:px-12 py-32 md:py-48 grid grid-cols-12 gap-8">
-        <div className="col-span-12 md:col-span-3">
-          <p className="font-mono-label">[ N.001 — ORIGEM ]</p>
+      {/* Image */}
+      <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="px-6 md:px-12 max-w-6xl mx-auto">
+        <div className="hover-zoom relative aspect-[16/9]">
+          <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
         </div>
-        <div className="col-span-12 md:col-span-7 md:col-start-5">
-          <p className="font-display italic text-3xl md:text-4xl leading-[1.4]">
-            Nasci no centro de Portugal e cresci entre a serra e o rio. A fotografia
-            chegou cedo, como uma forma de prestar atenção — primeiro às coisas
-            pequenas, depois à luz que as torna grandes.
-          </p>
-        </div>
-      </section>
+      </motion.section>
 
-      {/* ============= BLOCO 3 — DUO ASSIMÉTRICO ============= */}
-      <section className="px-6 md:px-12 pb-32 grid grid-cols-12 gap-8 md:gap-12">
-        <figure className="col-span-12 md:col-span-5 md:col-start-2 fade-up">
-          <div className="relative w-full aspect-[4/5] overflow-hidden">
-            <img src={detail} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          </div>
-          <figcaption className="mt-4 font-mono-label">[ DETALHE // ÁGUA // ANALOG_50MM ]</figcaption>
-        </figure>
-        <figure className="col-span-12 md:col-span-4 md:col-start-8 md:pt-32 fade-up">
-          <div className="relative w-full aspect-[3/4] overflow-hidden">
-            <img src={room} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          </div>
-          <figcaption className="mt-4 font-mono-label">[ ALDEIA // INTERIOR // FILM_135 ]</figcaption>
-        </figure>
-      </section>
-
-      <div className="hairline mx-6 md:mx-12" />
-
-      {/* ============= BLOCO 4 — PROCESSO ============= */}
-      <section className="px-6 md:px-12 py-32 md:py-48 grid grid-cols-12 gap-8">
-        <div className="col-span-12 md:col-span-3">
-          <p className="font-mono-label">[ N.002 — PROCESSO ]</p>
-        </div>
-        <div className="col-span-12 md:col-span-7 md:col-start-5 space-y-8 body-text text-lg md:text-xl" style={{ lineHeight: 1.7 }}>
-          <p>
-            Trabalho sobretudo paisagem, arquitetura vernacular e o gesto quase imóvel
-            da água. Procuro imagens onde o tempo pareça ter parado um instante antes
-            de seguir.
-          </p>
-          <p>
-            Fotografo devagar. Volto várias vezes ao mesmo lugar até reconhecer a
-            luz certa. A película continua a ser o meu modo de medir paciência;
-            o digital, a minha forma de ouvir o ruído.
-          </p>
-        </div>
-      </section>
-
-      <div className="hairline mx-6 md:mx-12" />
-
-      {/* ============= BLOCO 5 — FICHA TÉCNICA ============= */}
-      <section className="px-6 md:px-12 py-32">
-        <p className="font-mono-label mb-16">[ FICHA TÉCNICA ]</p>
-        <dl className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8">
-          <Spec label="Base" value="Coimbra · PT" />
-          <Spec label="Ativa desde" value="2018" />
-          <Spec label="Foco" value="Paisagem · Arquitetura" />
-          <Spec label="Suporte" value="35mm + Digital" />
-          <Spec label="Publicações" value="Umbigo · Gerador" />
-          <Spec label="Exposições" value="Coimbra · Porto" />
-          <Spec label="Encomendas" value="Editorial · Livro · Hotelaria" />
-          <Spec label="Idiomas" value="PT · EN · FR" />
-        </dl>
-      </section>
-
-      <div className="hairline mx-6 md:mx-12" />
-
-      {/* ============= BLOCO 6 — CITAÇÃO / FECHO ============= */}
-      <section className="px-6 md:px-12 py-32 md:py-48 max-w-3xl mx-auto text-center">
-        <p className="font-mono-label mb-10">[ CODA ]</p>
-        <p className="font-display italic text-3xl md:text-5xl leading-[1.3]">
-          &ldquo;Fotografar é uma maneira lenta de habitar um lugar.&rdquo;
+      {/* Manifesto */}
+      <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="px-6 md:px-12 py-32 max-w-3xl mx-auto text-center">
+        <p className="font-mono-label text-gold mb-6">Manifesto</p>
+        <p className="font-display italic text-3xl md:text-5xl leading-[1.2]">
+          “Acredito que cada detalhe — desde o reflexo da luz num olhar até ao movimento mais subtil num abraço — conta uma história. A minha fotografia não é sobre posar; é sobre <span className="text-gold">sentir</span>.”
         </p>
-        <Link
-          to="/contacto"
-          className="font-mono-label inline-block mt-16 hover:text-accent transition-colors"
-        >
-          [ ABRIR DIÁLOGO &rarr; ]
-        </Link>
+      </motion.section>
+
+      {/* Duo */}
+      <section className="px-6 md:px-12 pb-32 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="hover-zoom relative aspect-[3/4]">
+          <img src={stoneVillage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        </motion.div>
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: 0.2 }} className="hover-zoom relative aspect-[3/4] md:mt-20">
+          <img src={river} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        </motion.div>
       </section>
+
+      {/* Stats */}
+      <section className="bg-foreground text-cream px-6 md:px-12 py-24">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          {[
+            { n: "+200", l: "Sessões" },
+            { n: "+50", l: "Casamentos" },
+            { n: "+5", l: "Anos de experiência" },
+          ].map((s) => (
+            <motion.div key={s.l} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <p className="font-display text-6xl md:text-7xl text-gold">{s.n}</p>
+              <p className="font-mono-label mt-4 text-cream/70">{s.l}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="px-6 md:px-12 py-32 text-center max-w-3xl mx-auto">
+        <p className="font-script text-4xl text-gold mb-6">obrigada</p>
+        <h2 className="font-display text-4xl md:text-5xl">
+          Por chegares até aqui.
+        </h2>
+        <p className="mt-6 text-foreground/70">Se sentes que faz sentido, conta-me a tua história.</p>
+        <Link to="/contacto" className="mt-10 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
+          Vamos falar
+        </Link>
+      </motion.section>
 
       <SiteFooter />
-    </div>
-  );
-}
-
-function Spec({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="font-mono-label">[ {label} ]</dt>
-      <dd className="mt-3 font-display text-xl md:text-2xl">{value}</dd>
     </div>
   );
 }
