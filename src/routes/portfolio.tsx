@@ -58,7 +58,7 @@ function PortfolioPage() {
             layout
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: (i % 6) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.9, delay: (i % 6) * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
             onClick={() => setLightbox(p)}
             className="group break-inside-avoid cursor-pointer relative hover-zoom"
           >
