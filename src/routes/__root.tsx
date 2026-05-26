@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SmoothScroll, CustomCursor, LoadingScreen, WhatsAppFab } from "@/components/SiteChrome";
+import { SmoothScroll, CustomCursor, LoadingScreen } from "@/components/SiteChrome";
 
 function NotFoundComponent() {
   return (
@@ -77,7 +77,6 @@ function RootComponent() {
       <SmoothScroll />
       <CustomCursor />
       <Outlet />
-      <WhatsAppFab />
     </QueryClientProvider>
   );
 }
