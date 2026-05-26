@@ -30,7 +30,7 @@ export const journal: JournalEntry[] = [
     ],
     photoSrc: portoStreet,
     photoTitle: "Rua da Madrugada",
-    relatedCategory: "casamentos",
+    relatedCategory: "urbanas",
   },
   {
     slug: "a-flor-da-agua",
@@ -44,7 +44,7 @@ export const journal: JournalEntry[] = [
     ],
     photoSrc: river,
     photoTitle: "À flor da água",
-    relatedCategory: "lifestyle",
+    relatedCategory: "natureza",
   },
   {
     slug: "pedra-e-ceu",
@@ -72,7 +72,7 @@ export const journal: JournalEntry[] = [
     ],
     photoSrc: sunsetBeach,
     photoTitle: "Ocaso atlântico",
-    relatedCategory: "branding",
+    relatedCategory: "natureza",
   },
   {
     slug: "coroa-de-agua",
@@ -86,7 +86,7 @@ export const journal: JournalEntry[] = [
     ],
     photoSrc: waterSplash,
     photoTitle: "Coroa de água",
-    relatedCategory: "lifestyle",
+    relatedCategory: "comida",
   },
 ];
 

@@ -70,13 +70,14 @@ function SobrePage() {
         </motion.div>
       </section>
 
-      {/* Stats */}
+      {/* Séries */}
       <section className="bg-foreground text-cream px-6 md:px-12 py-24">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
           {[
-            { n: "+200", l: "Sessões" },
-            { n: "+50", l: "Casamentos" },
-            { n: "+5", l: "Anos de experiência" },
+            { n: "01", l: "Urbanas" },
+            { n: "02", l: "Natureza" },
+            { n: "03", l: "Retratos" },
+            { n: "04", l: "Comida" },
           ].map((s) => (
             <motion.div key={s.l} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
               <p className="font-display text-6xl md:text-7xl text-gold">{s.n}</p>
@@ -92,9 +93,9 @@ function SobrePage() {
         <h2 className="font-display text-4xl md:text-5xl">
           Por chegares até aqui.
         </h2>
-        <p className="mt-6 text-foreground/70">Se sentes que faz sentido, conta-me a tua história.</p>
+        <p className="mt-6 text-foreground/70">Se quiseres trocar duas palavras sobre uma imagem, escreve.</p>
         <Link to="/contacto" className="mt-10 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
-          Vamos falar
+          Iniciar diálogo
         </Link>
       </motion.section>
 

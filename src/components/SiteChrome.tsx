@@ -126,17 +126,17 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
         </Link>
         <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.28em] uppercase">
           <Link to="/" activeOptions={{ exact: true }} className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Início</Link>
-          <Link to="/sobre" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Sobre</Link>
-          <Link to="/portfolio" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Portfólio</Link>
+          <Link to="/sobre" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Autora</Link>
+          <Link to="/portfolio" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Séries</Link>
           <Link to="/diario" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Diário</Link>
-          <Link to="/contacto" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Reservar</Link>
+          <Link to="/contacto" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
         </nav>
         <Link
           to="/contacto"
           className="md:hidden text-[10px] tracking-[0.28em] uppercase border-b border-current pb-0.5"
           style={{ color: "inherit" }}
         >
-          Reservar
+          Diálogo
         </Link>
       </div>
     </header>
@@ -151,17 +151,17 @@ export function SiteFooter() {
         <div className="md:col-span-5 flex flex-col gap-5">
           <span className="font-script text-5xl text-cream">Rosmaninho</span>
           <p className="text-sm leading-relaxed text-cream/70 max-w-sm">
-            Fotografia cinematográfica e intemporal. Casamentos, retratos e branding com alma — Coimbra, Portugal.
+            Um arquivo lento de imagens e notas — urbanas, natureza, retratos e comida. Feito devagar, em Coimbra.
           </p>
         </div>
 
         <div className="md:col-span-3 flex flex-col gap-3 text-sm">
           <p className="font-mono-label text-cream/50 mb-2">Navegação</p>
           <Link to="/" className="hover:text-gold" style={{ color: "inherit" }}>Início</Link>
-          <Link to="/sobre" className="hover:text-gold" style={{ color: "inherit" }}>Sobre</Link>
-          <Link to="/portfolio" className="hover:text-gold" style={{ color: "inherit" }}>Portfólio</Link>
+          <Link to="/sobre" className="hover:text-gold" style={{ color: "inherit" }}>Autora</Link>
+          <Link to="/portfolio" className="hover:text-gold" style={{ color: "inherit" }}>Séries</Link>
           <Link to="/diario" className="hover:text-gold" style={{ color: "inherit" }}>Diário</Link>
-          <Link to="/contacto" className="hover:text-gold" style={{ color: "inherit" }}>Reservar</Link>
+          <Link to="/contacto" className="hover:text-gold" style={{ color: "inherit" }}>Diálogo</Link>
         </div>
 
         <div className="md:col-span-4 flex flex-col gap-3 text-sm">

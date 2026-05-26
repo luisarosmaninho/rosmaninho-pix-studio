@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
-import { photos, categories } from "@/lib/photos";
+import { photos, categories, photosByCategory } from "@/lib/photos";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 import river from "@/assets/river.jpg";
@@ -11,10 +11,10 @@ import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rosmaninho Fotografia — Onde o tempo para e a emoção fica" },
-      { name: "description", content: "Fotografia cinematográfica de casamentos, retratos, lifestyle e branding. Coimbra, Portugal." },
+      { title: "Rosmaninho Fotografia — Arquivo lento de imagens" },
+      { name: "description", content: "Fotografia de autor: séries urbanas, natureza, retratos e comida. Por Luísa Rosmaninho, Coimbra." },
       { property: "og:title", content: "Rosmaninho Fotografia" },
-      { property: "og:description", content: "Capto a poesia dos teus dias mais especiais." },
+      { property: "og:description", content: "Arquivo lento de imagens — urbanas, natureza, retratos e comida." },
     ],
   }),
   component: HomePage,
@@ -88,7 +88,7 @@ function HomePage() {
             transition={{ duration: 1, delay: 2.1 }}
             className="mt-8 max-w-2xl text-cream/80 text-base md:text-lg font-light"
           >
-            Capturo a poesia dos teus dias mais especiais com um olhar cinematográfico e intemporal.
+            Um arquivo lento de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e caderno.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -96,8 +96,8 @@ function HomePage() {
             transition={{ duration: 1, delay: 2.4 }}
             className="mt-12 flex flex-col sm:flex-row gap-4"
           >
-            <Link to="/portfolio" className="btn-ghost-light">Ver o meu olhar</Link>
-            <Link to="/contacto" className="btn-solid-dark bg-cream text-foreground hover:bg-gold hover:text-cream">Vamos criar algo juntos</Link>
+            <Link to="/portfolio" className="btn-ghost-light">Ver as séries</Link>
+            <Link to="/diario" className="btn-solid-dark bg-cream text-foreground hover:bg-gold hover:text-cream">Ler o diário</Link>
           </motion.div>
         </div>
         <motion.div
@@ -110,7 +110,7 @@ function HomePage() {
         </motion.div>
       </section>
 
-      {/* SOBRE */}
+      {/* AUTORA */}
       <Section className="px-6 md:px-12 py-32 md:py-44 bg-cream">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-5 relative">
@@ -120,19 +120,18 @@ function HomePage() {
             <p className="font-script text-3xl text-gold absolute -bottom-6 -right-2 md:right-6 bg-cream px-4 py-2">Luísa</p>
           </div>
           <div className="md:col-span-7 md:pl-8">
-            <p className="font-mono-label text-gold mb-4">Sobre mim</p>
+            <p className="font-mono-label text-gold mb-4">A autora</p>
             <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
-              Muito mais do que uma lente,<br />
-              <span className="italic text-gold">uma conexão.</span>
+              Fotografo o que <span className="italic text-gold">me obriga a parar.</span>
             </h2>
             <p className="mt-8 text-foreground/80 leading-relaxed max-w-xl">
-              Olá, sou a Luísa. Acredito que cada detalhe — desde o reflexo da luz num olhar até ao movimento mais subtil num abraço — conta uma história. A minha fotografia não é sobre posar; é sobre <em>sentir</em>. O meu objetivo é que, ao veres as minhas fotografias daqui a 20 anos, sintas exatamente a mesma emoção que sentiste no momento.
+              Sou a Luísa Rosmaninho. Vivo em Coimbra, ando muito a pé e tenho sempre uma câmara comigo. Esta página é o meu caderno aberto — uma coleção de imagens que vou fazendo entre cidades, serras, mesas e rostos. Sem clientes, sem pressa, só atenção.
             </p>
 
             <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
               {[
-                { n: "+200", l: "Sessões" },
-                { n: "+50", l: "Casamentos" },
+                { n: "04", l: "Séries" },
+                { n: photos.length.toString().padStart(2, "0"), l: "Imagens" },
                 { n: "+5", l: "Anos" },
               ].map((s) => (
                 <div key={s.l}>
@@ -143,19 +142,19 @@ function HomePage() {
             </div>
 
             <Link to="/sobre" className="mt-10 inline-block text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-gold hover:border-gold transition-colors">
-              Conhecer a história completa →
+              Conhecer a autora →
             </Link>
           </div>
         </div>
       </Section>
 
-      {/* PORTFOLIO */}
+      {/* SÉRIES PRÉVIA (grid) */}
       <Section className="px-6 md:px-12 py-32 md:py-44">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
             <div>
-              <p className="font-mono-label text-gold mb-4">Portfólio</p>
-              <h2 className="font-display text-4xl md:text-6xl">O meu <span className="italic">olhar</span>.</h2>
+              <p className="font-mono-label text-gold mb-4">Arquivo</p>
+              <h2 className="font-display text-4xl md:text-6xl">As <span className="italic">séries</span>.</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               {categories.map((c) => (
@@ -195,75 +194,96 @@ function HomePage() {
         </div>
       </Section>
 
-      {/* SERVIÇOS */}
+      {/* SÉRIES VISUAIS — lista editorial em vez de "Serviços" */}
       <Section className="px-6 md:px-12 py-32 md:py-44 bg-foreground text-cream">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <p className="font-mono-label text-gold mb-4">Serviços</p>
-            <h2 className="font-display text-4xl md:text-6xl text-cream">
-              O que <span className="italic text-gold">crio</span> para ti.
-            </h2>
+          <div className="md:flex md:items-end md:justify-between gap-12 mb-20">
+            <div>
+              <p className="font-mono-label text-gold mb-4">Séries visuais</p>
+              <h2 className="font-display text-4xl md:text-6xl text-cream">
+                Quatro maneiras de <span className="italic text-gold">olhar</span>.
+              </h2>
+            </div>
+            <p className="mt-6 md:mt-0 max-w-sm text-cream/70 text-sm leading-relaxed">
+              O arquivo organiza-se em quatro séries abertas. Nenhuma está fechada — vão crescendo à medida que ando, observo e disparo.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-cream/15">
-            {[
-              {
-                title: "Casamentos",
-                icon: "♡",
-                desc: "Cobertura discreta, cinematográfica e cheia de alma.",
-              },
-              {
-                title: "Retratos & Lifestyle",
-                icon: "✦",
-                desc: "Celebra quem és com naturalidade e luz.",
-              },
-              {
-                title: "Branding",
-                icon: "◈",
-                desc: "Eleva a tua marca com impacto visual e autoridade.",
-              },
-            ].map((s, i) => (
-              <motion.div
-                key={s.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: i * 0.15 }}
-                className="bg-foreground p-10 md:p-14 flex flex-col items-start gap-6 hover:bg-foreground/80 transition-colors group"
-              >
-                <span className="font-display text-5xl text-gold group-hover:scale-110 transition-transform duration-500">{s.icon}</span>
-                <h3 className="font-display text-3xl text-cream">{s.title}</h3>
-                <p className="text-cream/70 text-sm leading-relaxed">{s.desc}</p>
-                <Link to="/contacto" className="mt-4 text-[11px] uppercase tracking-[0.28em] text-gold border-b border-gold/40 pb-0.5 hover:border-gold">
-                  Reservar →
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          <ul className="flex flex-col">
+            {categories.map((c, i) => {
+              const cover = photosByCategory(c.slug)[0];
+              const count = photosByCategory(c.slug).length;
+              return (
+                <li key={c.slug} className={i === 0 ? "border-y border-cream/15" : "border-b border-cream/15"}>
+                  <Link
+                    to="/portfolio/$category"
+                    params={{ category: c.slug }}
+                    className="group grid grid-cols-12 gap-6 py-10 md:py-14 items-center"
+                  >
+                    <div className="col-span-2 md:col-span-1">
+                      <p className="font-mono-label text-gold">0{i + 1}</p>
+                    </div>
+                    <div className="col-span-10 md:col-span-5">
+                      <h3 className="font-display text-3xl md:text-5xl text-cream group-hover:text-gold transition-colors">
+                        {c.title}
+                      </h3>
+                    </div>
+                    <div className="col-span-12 md:col-span-4 text-cream/70 text-sm leading-relaxed">
+                      {c.description}
+                    </div>
+                    <div className="col-span-12 md:col-span-2 flex items-center justify-between md:justify-end gap-6">
+                      <span className="font-mono-label text-cream/50">{count} img</span>
+                      {cover && (
+                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <img src={cover.src} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </Section>
 
-      {/* MARQUEE / QUOTE */}
+      {/* MARQUEE */}
       <section className="overflow-hidden py-16 border-y border-foreground/10 bg-cream">
         <div className="marquee flex whitespace-nowrap font-display text-6xl md:text-8xl italic text-foreground/30">
           {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="mx-12">Rosmaninho · Fotografia · Coimbra · Portugal · </span>
+            <span key={i} className="mx-12">Urbanas · Natureza · Retratos · Comida · </span>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
+      {/* DIÁRIO TEASER */}
       <Section className="px-6 md:px-12 py-32 md:py-44">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="font-script text-4xl md:text-5xl text-gold mb-6">vamos começar</p>
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="font-mono-label text-gold mb-4">Diário</p>
           <h2 className="font-display text-4xl md:text-6xl leading-tight">
-            Pronta para guardar<br />o <span className="italic">teu momento</span>?
+            Notas curtas sobre <span className="italic">algumas fotos</span>.
           </h2>
           <p className="mt-8 text-foreground/70 max-w-xl mx-auto">
-            Cada projecto começa com uma conversa. Conta-me o que tens em mente — sessão, casamento, marca — e desenhamos juntos a melhor forma de o registar.
+            Um caderno em aberto. Escrevo devagar, sobre o que estava a acontecer antes, durante e depois de uma imagem.
+          </p>
+          <Link to="/diario" className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
+            Abrir diário
+          </Link>
+        </div>
+      </Section>
+
+      {/* DIÁLOGO */}
+      <Section className="px-6 md:px-12 py-32 md:py-44 bg-cream">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-script text-4xl md:text-5xl text-gold mb-6">diálogo</p>
+          <h2 className="font-display text-4xl md:text-6xl leading-tight">
+            Se quiseres <span className="italic">falar</span>, escreve.
+          </h2>
+          <p className="mt-8 text-foreground/70 max-w-xl mx-auto">
+            Não há sessões nem tabelas. Apenas uma conversa, se quiseres trocar impressões sobre uma imagem, um lugar ou uma ideia.
           </p>
           <Link to="/contacto" className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
-            Reservar sessão
+            Iniciar diálogo
           </Link>
         </div>
       </Section>
