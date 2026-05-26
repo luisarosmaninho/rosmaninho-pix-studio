@@ -8,10 +8,10 @@ import sunsetBeach from "@/assets/sunset-beach.jpg";
 export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
-      { title: "Reservar — Rosmaninho Fotografia" },
-      { name: "description", content: "Pedido de sessão fotográfica: casamentos, retratos, lifestyle e branding." },
-      { property: "og:title", content: "Reservar — Rosmaninho" },
-      { property: "og:description", content: "Vamos criar algo juntos." },
+      { title: "Diálogo — Rosmaninho Fotografia" },
+      { name: "description", content: "Uma conversa aberta. Escreve sobre uma imagem, um lugar ou uma ideia." },
+      { property: "og:title", content: "Diálogo — Rosmaninho" },
+      { property: "og:description", content: "Sem sessões nem tabelas. Apenas uma conversa." },
     ],
   }),
   component: ContactoPage,
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/contacto")({
 const schema = z.object({
   nome: z.string().trim().min(2, "Diz-me o teu nome").max(100),
   email: z.string().trim().email("Email inválido").max(255),
-  tipo: z.string().min(1, "Escolhe o tipo de sessão"),
-  data: z.string().max(30).optional().or(z.literal("")),
+  assunto: z.string().min(1, "Escolhe um assunto"),
   mensagem: z.string().trim().min(10, "Conta-me um pouco mais").max(1500),
 });
 
@@ -56,12 +55,12 @@ function ContactoPage() {
             transition={{ duration: 1 }}
             className="max-w-xl"
           >
-            <p className="font-script text-3xl md:text-4xl text-gold mb-4">vamos falar</p>
+            <p className="font-script text-3xl md:text-4xl text-gold mb-4">diálogo</p>
             <h1 className="font-display text-4xl md:text-6xl leading-[1.05]">
-              Reservar a tua <span className="italic">sessão</span>.
+              Vamos <span className="italic">falar</span>.
             </h1>
             <p className="mt-6 text-foreground/70 max-w-md">
-              Preenche o pedido e respondo em 24 horas. Sem compromisso — só uma conversa.
+              Sem formulários complicados. Escreve sobre uma imagem, um lugar ou uma ideia — respondo quando o tempo deixar, com calma.
             </p>
 
             {sent ? (
@@ -77,29 +76,28 @@ function ContactoPage() {
               <form onSubmit={onSubmit} className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Field label="Nome" name="nome" error={errors.nome} />
                 <Field label="Email" name="email" type="email" error={errors.email} />
-                <div className="flex flex-col gap-2">
-                  <label className="font-mono-label">Tipo de sessão</label>
+                <div className="md:col-span-2 flex flex-col gap-2">
+                  <label className="font-mono-label">Assunto</label>
                   <select
-                    name="tipo"
+                    name="assunto"
                     defaultValue=""
                     className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-gold focus:outline-none transition-colors"
                   >
                     <option value="" disabled>Escolhe...</option>
-                    <option value="casamento">Casamento</option>
-                    <option value="retrato">Retrato</option>
-                    <option value="lifestyle">Lifestyle</option>
-                    <option value="branding">Branding</option>
+                    <option value="imagem">Sobre uma imagem</option>
+                    <option value="serie">Sobre uma série</option>
+                    <option value="diario">Sobre um texto do diário</option>
+                    <option value="impressao">Pedir uma impressão</option>
                     <option value="outro">Outro</option>
                   </select>
-                  {errors.tipo && <span className="text-xs text-destructive">{errors.tipo}</span>}
+                  {errors.assunto && <span className="text-xs text-destructive">{errors.assunto}</span>}
                 </div>
-                <Field label="Data prevista" name="data" type="date" error={errors.data} />
                 <div className="md:col-span-2 flex flex-col gap-2">
                   <label className="font-mono-label">Mensagem</label>
                   <textarea
                     name="mensagem"
                     rows={5}
-                    placeholder="Conta-me sobre ti e o que imaginas..."
+                    placeholder="Escreve o que te apetecer..."
                     className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-gold focus:outline-none transition-colors resize-none"
                   />
                   {errors.mensagem && <span className="text-xs text-destructive">{errors.mensagem}</span>}
@@ -108,7 +106,7 @@ function ContactoPage() {
                   type="submit"
                   className="md:col-span-2 mt-4 bg-foreground text-cream px-8 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500 self-start"
                 >
-                  Enviar pedido
+                  Enviar mensagem
                 </button>
               </form>
             )}
@@ -119,8 +117,8 @@ function ContactoPage() {
                 <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-gold">ola@rosmaninhofotografia.pt</a>
               </div>
               <div>
-                <p className="font-mono-label mb-2">WhatsApp</p>
-                <a href="https://wa.me/351900000000" target="_blank" rel="noreferrer" className="hover:text-gold">+351 900 000 000</a>
+                <p className="font-mono-label mb-2">Instagram</p>
+                <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-gold">@luisarosmaninh</a>
               </div>
             </div>
           </motion.div>
@@ -128,11 +126,11 @@ function ContactoPage() {
 
         {/* Right: image */}
         <div className="relative hidden lg:block">
-          <img src={sunsetBeach} alt="Reservar sessão" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={sunsetBeach} alt="Diálogo" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60" />
           <div className="absolute bottom-12 left-12 right-12 text-cream">
-            <p className="font-script text-4xl text-gold">um instante</p>
-            <p className="font-display text-3xl mt-3 max-w-md">Que dure para sempre.</p>
+            <p className="font-script text-4xl text-gold">uma conversa</p>
+            <p className="font-display text-3xl mt-3 max-w-md">Sem pressa, sem agenda.</p>
           </div>
         </div>
       </section>
