@@ -9,7 +9,7 @@ import waterfall from "@/assets/waterfall.jpg";
 import waterSplash from "@/assets/water-splash.jpg";
 import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
 
-export type CategorySlug = "casamentos" | "retratos" | "lifestyle" | "branding";
+export type CategorySlug = "urbanas" | "natureza" | "retratos" | "comida";
 
 export type Category = {
   slug: CategorySlug;
@@ -18,10 +18,10 @@ export type Category = {
 };
 
 export const categories: Category[] = [
-  { slug: "casamentos", title: "Casamentos", description: "Cobertura discreta, cinematográfica e cheia de alma." },
-  { slug: "retratos", title: "Retratos", description: "Celebra quem és com naturalidade e luz." },
-  { slug: "lifestyle", title: "Lifestyle", description: "Histórias autênticas, capturadas com leveza." },
-  { slug: "branding", title: "Branding", description: "Eleva a tua marca com impacto visual e autoridade." },
+  { slug: "urbanas", title: "Urbanas", description: "Ruas, pontes e telhados — a cidade enquanto matéria viva." },
+  { slug: "natureza", title: "Natureza", description: "Água, luz e paisagem — o tempo lento dos lugares." },
+  { slug: "retratos", title: "Retratos", description: "Rostos, pedra e silêncio — quem é, e onde está." },
+  { slug: "comida", title: "Comida", description: "Mesas, texturas e o instante antes do primeiro garfo." },
 ];
 
 export type Photo = {
@@ -34,16 +34,16 @@ export type Photo = {
 };
 
 export const photos: Photo[] = [
-  { src: portoStreet, title: "Rua da Madrugada", location: "Porto", year: "2026", category: "lifestyle", orientation: "portrait" },
-  { src: coimbra, title: "Sobre o Mondego", location: "Coimbra", year: "2024", category: "branding", orientation: "square" },
-  { src: river, title: "À flor da água", location: "Mondego", year: "2024", category: "lifestyle", orientation: "landscape" },
-  { src: villageAlley, title: "Pedra e céu", location: "Monsanto", year: "2023", category: "casamentos", orientation: "portrait" },
-  { src: portoBridge, title: "Dom Luís I", location: "Porto", year: "2024", category: "branding", orientation: "landscape" },
-  { src: sunsetBeach, title: "Ocaso atlântico", location: "Caparica", year: "2022", category: "casamentos", orientation: "landscape" },
+  { src: portoStreet, title: "Rua da Madrugada", location: "Porto", year: "2026", category: "urbanas", orientation: "portrait" },
+  { src: coimbra, title: "Sobre o Mondego", location: "Coimbra", year: "2024", category: "urbanas", orientation: "square" },
+  { src: river, title: "À flor da água", location: "Mondego", year: "2024", category: "natureza", orientation: "landscape" },
+  { src: villageAlley, title: "Pedra e céu", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
+  { src: portoBridge, title: "Dom Luís I", location: "Porto", year: "2024", category: "urbanas", orientation: "landscape" },
+  { src: sunsetBeach, title: "Ocaso atlântico", location: "Caparica", year: "2022", category: "natureza", orientation: "landscape" },
   { src: stoneVillage, title: "Aldeia histórica", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
-  { src: waterfall, title: "Pequena queda", location: "Lousã", year: "2020", category: "lifestyle", orientation: "landscape" },
-  { src: waterSplash, title: "Coroa de água", location: "Estúdio", year: "2023", category: "branding", orientation: "landscape" },
-  { src: coimbraSkyline, title: "Telhados de Coimbra", location: "Coimbra", year: "2023", category: "retratos", orientation: "landscape" },
+  { src: waterfall, title: "Pequena queda", location: "Lousã", year: "2020", category: "natureza", orientation: "landscape" },
+  { src: waterSplash, title: "Coroa de água", location: "Estúdio", year: "2023", category: "comida", orientation: "landscape" },
+  { src: coimbraSkyline, title: "Telhados de Coimbra", location: "Coimbra", year: "2023", category: "urbanas", orientation: "landscape" },
 ];
 
 export function photosByCategory(slug: CategorySlug) {
