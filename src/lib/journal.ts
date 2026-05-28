@@ -78,10 +78,10 @@ export const journal: JournalEntry[] = [
     slug: "coroa-de-agua",
     date: "2023-08-15",
     title: "Uma coroa que dura um milésimo",
-    excerpt: "Pedi à minha sobrinha para atirar uma pedra. Foi a melhor assistente que já tive.",
+    excerpt: "Há formas que existem durante menos tempo do que levamos a piscá-los. Esta é uma delas.",
     body: [
       "Esta é uma fotografia simples e absurdamente difícil. Quis registar uma coisa que ninguém vê — a forma que a água faz quando algo cai sobre ela, antes de voltar a ser superfície.",
-      "Montei a câmara num pequeno tripé à beira do tanque, pus o disparo em rajada e dei uma pedra à Madalena, com instruções precisas. Ela atirou. Eu disparei. Repetimos umas trinta vezes.",
+      "Montei a câmara num pequeno tripé à beira do tanque, pus o disparo em rajada e fui atirando pedras com a mão livre. Disparei. Repetimos umas trinta vezes. A maioria resultou em nada — um respingo desfocado, um enquadramento torto, um milésimo de segundo de atraso.",
       "No final, escolhi este enquadramento: a coroa estava perfeita, com os respingos suspensos como se o tempo tivesse parado para posar. É uma fotografia que me lembra que paciência também é luz.",
     ],
     photoSrc: waterSplash,

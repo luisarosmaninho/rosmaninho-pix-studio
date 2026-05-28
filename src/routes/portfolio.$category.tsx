@@ -56,7 +56,7 @@ function CategoryPage() {
             <img src={p.src} alt={p.title} className="w-full h-auto block transition-transform duration-[1200ms] group-hover:scale-[1.03]" />
             <figcaption className="absolute inset-x-0 bottom-0 p-4 text-white bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
               <p className="font-display text-xl">{p.title}</p>
-              <p className="font-mono-label opacity-80">{p.location} · {p.year}</p>
+              <p className="font-mono-label opacity-80">{p.year}</p>
             </figcaption>
           </figure>
         ))}
@@ -92,7 +92,7 @@ function CategoryPage() {
             <img src={lightbox.src} alt={lightbox.title} className="max-h-[85vh] w-auto mx-auto object-contain" />
             <figcaption className="text-white text-center mt-6">
               <p className="font-display text-2xl">{lightbox.title}</p>
-              <p className="font-mono-label opacity-70 mt-1">{lightbox.location} · {lightbox.year}</p>
+              <p className="font-mono-label opacity-70 mt-1">{lightbox.year}</p>
             </figcaption>
           </figure>
         </div>
