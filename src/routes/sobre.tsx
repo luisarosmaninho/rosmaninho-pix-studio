@@ -122,9 +122,9 @@ function SobrePage() {
       <section className="px-6 md:px-12 py-28 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
         <Fade className="md:col-span-5 md:sticky md:top-36">
           <div className="hover-zoom relative aspect-[3/4] overflow-hidden">
-            <img src={farolPeniche} alt="Farol da fortaleza, Peniche" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={farolPeniche} alt="Farol da fortaleza, Figueira da Foz" className="absolute inset-0 h-full w-full object-cover" />
           </div>
-          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Peniche · Mai 2026</p>
+          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Figueira da Foz · Mai 2026</p>
         </Fade>
 
         <div className="md:col-span-7 space-y-12">
