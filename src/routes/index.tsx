@@ -16,9 +16,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Rosmaninho Fotografia — Arquivo lento de imagens" },
-      { name: "description", content: "Fotografia de autor: séries urbanas, natureza, retratos e comida. Por Luísa Rosmaninho, Coimbra." },
+      { name: "description", content: "Fotografia de autor: séries urbanas, natureza, retratos e iguarias. Por Luísa Rosmaninho, Coimbra." },
       { property: "og:title", content: "Rosmaninho Fotografia" },
-      { property: "og:description", content: "Arquivo lento de imagens — urbanas, natureza, retratos e comida." },
+      { property: "og:description", content: "Arquivo lento de imagens — urbanas, natureza, retratos e iguarias." },
     ],
   }),
   component: HomePage,
@@ -51,7 +51,7 @@ function HomePage() {
     { src: villageAlley, h: "h-[440px]", cat: "Retratos", title: "Pedra e céu" },
     { src: river, h: "h-[380px]", cat: "Natureza", title: "À flor da água" },
     { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas", title: "Telhados de Coimbra" },
-    { src: waterSplash, h: "h-[420px]", cat: "Comida", title: "Coroa de água" },
+    { src: waterSplash, h: "h-[420px]", cat: "Iguarias", title: "Coroa de água" },
   ];
 
   const latestEntry = journal[0];
@@ -204,7 +204,7 @@ function HomePage() {
               </h2>
             </div>
             <p className="max-w-sm text-foreground/70 text-sm leading-relaxed">
-              Urbanas, Natureza, Retratos, Comida. Quatro pastas abertas — nenhuma fechada — que se vão tocando ao longo dos anos.
+              Urbanas, Natureza, Retratos, Iguarias. Quatro pastas abertas — nenhuma fechada — que se vão tocando ao longo dos anos.
             </p>
           </div>
 

@@ -199,7 +199,7 @@ export const photos: Photo[] = [
     meta: { date: "Set 2023", time: "17:45", coords: "40°25'N 7°15'O", note: "As pedras recordam tudo. Só nós esquecemos." },
   },
 
-  // Comida
+  // Iguarias
   {
     src: geladoBolacha,
     title: "Sorriso de bolacha",

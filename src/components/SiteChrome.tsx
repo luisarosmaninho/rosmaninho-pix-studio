@@ -236,7 +236,7 @@ export function SiteFooter() {
           <div className="md:col-span-6 flex flex-col gap-6">
             <span className="font-italic-serif text-6xl md:text-7xl text-copper leading-none">Rosmaninho</span>
             <p className="text-sm leading-relaxed text-cream/65 max-w-md">
-              Um arquivo lento de imagens e notas — urbanas, natureza, retratos e comida. Feito devagar, em Coimbra.
+              Um arquivo lento de imagens e notas — urbanas, natureza, retratos e iguarias. Feito devagar, em Coimbra.
             </p>
             <p className="font-mono-label text-cream/40">est. 2020 · Coimbra · Portugal</p>
           </div>
