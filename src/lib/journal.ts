@@ -86,7 +86,7 @@ export const journal: JournalEntry[] = [
     ],
     photoSrc: waterSplash,
     photoTitle: "Coroa de água",
-    relatedCategory: "comida",
+    relatedCategory: "natureza",
   },
 ];
 
