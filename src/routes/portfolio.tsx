@@ -26,7 +26,7 @@ function PortfolioPage() {
       <SiteNav variant="solid" />
 
       <section className="px-6 md:px-12 pt-32 md:pt-44 pb-12 max-w-7xl mx-auto">
-        <p className="font-script text-3xl md:text-4xl text-gold mb-4">arquivo</p>
+        <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">arquivo</p>
         <h1 className="font-display text-5xl md:text-7xl leading-tight">Portfólio.</h1>
         <p className="mt-6 max-w-2xl text-foreground/70">
           Uma selecção de momentos — casamentos, retratos, lifestyle e branding — em que o tempo decidiu ficar.

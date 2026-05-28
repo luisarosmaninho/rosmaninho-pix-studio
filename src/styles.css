@@ -6,9 +6,9 @@
 
 @theme inline {
   --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -31,38 +31,45 @@
   --color-cream: var(--cream);
   --color-bege: var(--bege);
   --color-gold: var(--gold);
+  --color-clay: var(--clay);
+  --color-copper: var(--copper);
+  --color-sienna: var(--sienna);
 }
 
 :root {
-  --radius: 4px;
-  /* Branco quente #F7F4EF */
-  --background: oklch(0.965 0.008 80);
-  /* Preto elegante #111111 */
-  --foreground: oklch(0.16 0 0);
-  /* Creme #EFE8DD */
-  --cream: oklch(0.935 0.015 80);
-  /* Bege premium #C8B8A6 */
-  --bege: oklch(0.77 0.025 70);
-  /* Dourado subtil #B89C7D */
-  --gold: oklch(0.685 0.045 65);
+  --radius: 3px;
+  /* Burnt Sienna — base papel quente (off-white com leve toque terroso) */
+  --background: oklch(0.965 0.010 70);
+  /* Tinta — castanho profundo (#3a1f15 ish) */
+  --foreground: oklch(0.22 0.045 40);
 
-  --card: oklch(0.965 0.008 80);
-  --card-foreground: oklch(0.16 0 0);
-  --popover: oklch(0.965 0.008 80);
-  --popover-foreground: oklch(0.16 0 0);
-  --primary: oklch(0.16 0 0);
-  --primary-foreground: oklch(0.965 0.008 80);
-  --secondary: oklch(0.935 0.015 80);
-  --secondary-foreground: oklch(0.16 0 0);
-  --muted: oklch(0.935 0.015 80);
-  --muted-foreground: oklch(0.45 0.015 70);
-  --accent: oklch(0.685 0.045 65);
-  --accent-foreground: oklch(0.965 0.008 80);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.16 0 0 / 12%);
-  --input: oklch(0.16 0 0 / 20%);
-  --ring: oklch(0.685 0.045 65);
+  /* Paleta Burnt Sienna */
+  --sienna: oklch(0.38 0.085 40);   /* #6b3a2a */
+  --clay:   oklch(0.52 0.115 40);   /* #a0522d */
+  --copper: oklch(0.66 0.115 55);   /* #cd7f32 */
+  --gold:   oklch(0.82 0.085 80);   /* #e8c07a */
+
+  /* Tokens semânticos */
+  --cream: oklch(0.945 0.018 75);
+  --bege:  oklch(0.86 0.030 70);
+
+  --card: oklch(0.965 0.010 70);
+  --card-foreground: oklch(0.22 0.045 40);
+  --popover: oklch(0.965 0.010 70);
+  --popover-foreground: oklch(0.22 0.045 40);
+  --primary: oklch(0.38 0.085 40);
+  --primary-foreground: oklch(0.945 0.018 75);
+  --secondary: oklch(0.945 0.018 75);
+  --secondary-foreground: oklch(0.22 0.045 40);
+  --muted: oklch(0.93 0.018 70);
+  --muted-foreground: oklch(0.48 0.030 50);
+  --accent: oklch(0.66 0.115 55);
+  --accent-foreground: oklch(0.965 0.010 70);
+  --destructive: oklch(0.55 0.220 27);
+  --destructive-foreground: oklch(0.98 0.003 248);
+  --border: oklch(0.22 0.045 40 / 14%);
+  --input: oklch(0.22 0.045 40 / 22%);
+  --ring: oklch(0.66 0.115 55);
 }
 
 @layer base {
@@ -73,12 +80,13 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: 'Work Sans', system-ui, sans-serif;
     font-size: 15px;
-    line-height: 1.7;
-    font-weight: 300;
+    line-height: 1.65;
+    font-weight: 350;
     -webkit-font-smoothing: antialiased;
     cursor: none;
+    font-feature-settings: "ss01", "ss02";
   }
 
   @media (max-width: 768px) {
@@ -86,24 +94,32 @@
   }
 
   h1, h2, h3, h4, .font-display {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
     font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.1;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
   }
 
-  .font-script {
-    font-family: 'Great Vibes', cursive;
+  .font-italic-serif {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
     font-weight: 400;
-    letter-spacing: 0;
+  }
+
+  /* Mantemos a classe font-script por compatibilidade — agora é serifa em itálico */
+  .font-script {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   .font-mono-label {
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: 'Work Sans', system-ui, sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.32em;
     font-size: 10px;
-    font-weight: 400;
+    font-weight: 500;
     color: var(--color-muted-foreground);
   }
 
@@ -111,6 +127,8 @@
   @media (max-width: 768px) {
     a, button, [role="button"] { cursor: pointer; }
   }
+
+  ::selection { background: var(--copper); color: var(--cream); }
 }
 
 @layer utilities {
@@ -121,18 +139,55 @@
   .text-gold { color: var(--gold); }
   .bg-gold { background-color: var(--gold); }
   .border-gold { border-color: var(--gold); }
+  .text-clay { color: var(--clay); }
+  .bg-clay { background-color: var(--clay); }
+  .text-copper { color: var(--copper); }
+  .bg-copper { background-color: var(--copper); }
+  .text-sienna { color: var(--sienna); }
+  .bg-sienna { background-color: var(--sienna); }
+  .border-copper { border-color: var(--copper); }
 
   .hairline {
     height: 1px;
     background-color: var(--color-foreground);
-    opacity: 0.15;
+    opacity: 0.18;
   }
 
   .btn-ghost-light {
-    @apply inline-flex items-center gap-3 border border-cream/60 px-7 py-3.5 text-xs uppercase tracking-[0.28em] text-cream hover:bg-cream hover:text-foreground transition-all duration-500;
+    @apply inline-flex items-center gap-3 border border-cream/60 px-7 py-3.5 text-[11px] uppercase tracking-[0.32em] text-cream hover:bg-cream hover:text-foreground transition-all duration-500;
   }
   .btn-solid-dark {
-    @apply inline-flex items-center gap-3 bg-foreground text-background px-7 py-3.5 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-all duration-500;
+    @apply inline-flex items-center gap-3 bg-foreground text-background px-7 py-3.5 text-[11px] uppercase tracking-[0.32em] hover:bg-copper transition-all duration-500;
+  }
+  .btn-copper {
+    @apply inline-flex items-center gap-3 bg-copper text-cream px-7 py-3.5 text-[11px] uppercase tracking-[0.32em] hover:bg-sienna transition-all duration-500;
+  }
+
+  /* Link com sublinhado animado */
+  .link-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 1px;
+    background: currentColor;
+    transform-origin: right;
+    transform: scaleX(1);
+    transition: transform 0.6s cubic-bezier(0.7,0,0.3,1);
+  }
+  .link-underline:hover::after {
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: link-underline 0.9s cubic-bezier(0.7,0,0.3,1) forwards;
+  }
+  @keyframes link-underline {
+    0% { transform-origin: right; transform: scaleX(1); }
+    50% { transform-origin: right; transform: scaleX(0); }
+    51% { transform-origin: left; transform: scaleX(0); }
+    100% { transform-origin: left; transform: scaleX(1); }
   }
 
   /* Cursor */
@@ -145,34 +200,42 @@
     transform: translate(-50%, -50%);
     mix-blend-mode: difference;
   }
-  .cursor-dot { width: 6px; height: 6px; background: #fff; transition: transform 0.15s ease; }
-  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.5); transition: transform 0.35s ease, width 0.3s, height 0.3s; }
+  .cursor-dot { width: 5px; height: 5px; background: #fff; transition: transform 0.15s ease; }
+  .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.45); transition: transform 0.35s ease, width 0.3s, height 0.3s; }
 
   /* Hover image zoom */
   .hover-zoom { overflow: hidden; }
   .hover-zoom img {
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
   }
-  .hover-zoom:hover img { transform: scale(1.05); filter: brightness(1.05); }
+  .hover-zoom:hover img { transform: scale(1.04); filter: brightness(1.03) saturate(1.05); }
+
+  /* Filtro quente subtil — coerência tonal Burnt Sienna */
+  .warm-tone img { filter: saturate(1.02) contrast(1.02); }
 
   /* Marquee */
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
-  .marquee { animation: marquee 40s linear infinite; }
+  .marquee { animation: marquee 50s linear infinite; }
 
   /* Loading screen */
   @keyframes loaderFade {
     0%, 70% { opacity: 1; }
     100% { opacity: 0; visibility: hidden; }
   }
-  .loader-screen {
-    animation: loaderFade 1.6s ease 0.4s forwards;
-  }
+  .loader-screen { animation: loaderFade 1.6s ease 0.4s forwards; }
+
   @keyframes scaleIn {
-    from { transform: scale(0.95); opacity: 0; }
+    from { transform: scale(0.96); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
   .scale-in { animation: scaleIn 1.2s cubic-bezier(0.22,1,0.36,1) both; }
+
+  /* Masonry CSS columns helper */
+  .masonry { column-gap: 1.5rem; }
+  .masonry > * { break-inside: avoid; margin-bottom: 1.5rem; }
+  @media (min-width: 640px) { .masonry { column-count: 2; } }
+  @media (min-width: 1024px) { .masonry { column-count: 3; } }
 }

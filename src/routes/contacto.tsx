@@ -55,7 +55,7 @@ function ContactoPage() {
             transition={{ duration: 1 }}
             className="max-w-xl"
           >
-            <p className="font-script text-3xl md:text-4xl text-gold mb-4">diálogo</p>
+            <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">diálogo</p>
             <h1 className="font-display text-4xl md:text-6xl leading-[1.05]">
               Vamos <span className="italic">falar</span>.
             </h1>
@@ -67,9 +67,9 @@ function ContactoPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="mt-12 border border-gold p-8 bg-cream"
+                className="mt-12 border border-copper p-8 bg-cream"
               >
-                <p className="font-display text-2xl text-gold">Recebido com carinho.</p>
+                <p className="font-display text-2xl text-copper">Recebido com carinho.</p>
                 <p className="mt-3 text-foreground/70">Volto a ti em breve por email.</p>
               </motion.div>
             ) : (
@@ -81,7 +81,7 @@ function ContactoPage() {
                   <select
                     name="assunto"
                     defaultValue=""
-                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-gold focus:outline-none transition-colors"
+                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors"
                   >
                     <option value="" disabled>Escolhe...</option>
                     <option value="imagem">Sobre uma imagem</option>
@@ -98,13 +98,13 @@ function ContactoPage() {
                     name="mensagem"
                     rows={5}
                     placeholder="Escreve o que te apetecer..."
-                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-gold focus:outline-none transition-colors resize-none"
+                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors resize-none"
                   />
                   {errors.mensagem && <span className="text-xs text-destructive">{errors.mensagem}</span>}
                 </div>
                 <button
                   type="submit"
-                  className="md:col-span-2 mt-4 bg-foreground text-cream px-8 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500 self-start"
+                  className="md:col-span-2 mt-4 bg-foreground text-cream px-8 py-4 text-xs uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500 self-start"
                 >
                   Enviar mensagem
                 </button>
@@ -114,11 +114,11 @@ function ContactoPage() {
             <div className="mt-16 pt-8 border-t border-foreground/10 grid grid-cols-2 gap-6 text-sm">
               <div>
                 <p className="font-mono-label mb-2">Email</p>
-                <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-gold">ola@rosmaninhofotografia.pt</a>
+                <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper">ola@rosmaninhofotografia.pt</a>
               </div>
               <div>
                 <p className="font-mono-label mb-2">Instagram</p>
-                <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-gold">@luisarosmaninh</a>
+                <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper">@luisarosmaninh</a>
               </div>
             </div>
           </motion.div>
@@ -129,7 +129,7 @@ function ContactoPage() {
           <img src={sunsetBeach} alt="Diálogo" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60" />
           <div className="absolute bottom-12 left-12 right-12 text-cream">
-            <p className="font-script text-4xl text-gold">uma conversa</p>
+            <p className="font-italic-serif text-4xl text-copper">uma conversa</p>
             <p className="font-display text-3xl mt-3 max-w-md">Sem pressa, sem agenda.</p>
           </div>
         </div>
@@ -147,7 +147,7 @@ function Field({ label, name, type = "text", error }: { label: string; name: str
       <input
         name={name}
         type={type}
-        className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-gold focus:outline-none transition-colors"
+        className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors"
       />
       {error && <span className="text-xs text-destructive">{error}</span>}
     </div>

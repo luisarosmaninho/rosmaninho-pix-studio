@@ -31,14 +31,14 @@ function SobrePage() {
       {/* Intro */}
       <section className="px-6 md:px-12 pt-32 md:pt-44 pb-16 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
         <motion.div variants={fadeUp} initial="hidden" animate="show" className="md:col-span-7">
-          <p className="font-script text-3xl md:text-4xl text-gold mb-4">olá</p>
+          <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">olá</p>
           <h1 className="font-display text-5xl md:text-7xl leading-[1.05]">
             Sou a <span className="italic">Luísa</span>.<br />
             Fotografo memórias.
           </h1>
         </motion.div>
         <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.2 }} className="md:col-span-5">
-          <p className="font-mono-label text-gold mb-3">Autora · Coimbra</p>
+          <p className="font-mono-label text-copper mb-3">Autora · Coimbra</p>
           <p className="text-foreground/70 leading-relaxed">
             Há mais de cinco anos que vivo entre câmaras, copos de chá e cadernos de campo. A fotografia, para mim, é uma forma educada de prestar atenção ao mundo.
           </p>
@@ -54,9 +54,9 @@ function SobrePage() {
 
       {/* Manifesto */}
       <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="px-6 md:px-12 py-32 max-w-3xl mx-auto text-center">
-        <p className="font-mono-label text-gold mb-6">Manifesto</p>
+        <p className="font-mono-label text-copper mb-6">Manifesto</p>
         <p className="font-display italic text-3xl md:text-5xl leading-[1.2]">
-          “Acredito que cada detalhe — desde o reflexo da luz num olhar até ao movimento mais subtil num abraço — conta uma história. A minha fotografia não é sobre posar; é sobre <span className="text-gold">sentir</span>.”
+          “Acredito que cada detalhe — desde o reflexo da luz num olhar até ao movimento mais subtil num abraço — conta uma história. A minha fotografia não é sobre posar; é sobre <span className="text-copper">sentir</span>.”
         </p>
       </motion.section>
 
@@ -80,7 +80,7 @@ function SobrePage() {
             { n: "04", l: "Comida" },
           ].map((s) => (
             <motion.div key={s.l} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
-              <p className="font-display text-6xl md:text-7xl text-gold">{s.n}</p>
+              <p className="font-display text-6xl md:text-7xl text-copper">{s.n}</p>
               <p className="font-mono-label mt-4 text-cream/70">{s.l}</p>
             </motion.div>
           ))}
@@ -89,12 +89,12 @@ function SobrePage() {
 
       {/* CTA */}
       <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="px-6 md:px-12 py-32 text-center max-w-3xl mx-auto">
-        <p className="font-script text-4xl text-gold mb-6">obrigada</p>
+        <p className="font-italic-serif text-4xl text-copper mb-6">obrigada</p>
         <h2 className="font-display text-4xl md:text-5xl">
           Por chegares até aqui.
         </h2>
         <p className="mt-6 text-foreground/70">Se quiseres trocar duas palavras sobre uma imagem, escreve.</p>
-        <Link to="/contacto" className="mt-10 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
+        <Link to="/contacto" className="mt-10 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500">
           Iniciar diálogo
         </Link>
       </motion.section>
