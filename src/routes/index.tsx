@@ -322,6 +322,20 @@ function HomePage() {
         </div>
       </Section>
 
+      {/* ============ NOTA PESSOAL — sem número, sem botão ============ */}
+      <Section className="px-6 md:px-12 py-36 md:py-48 bg-cream">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-italic-serif text-5xl md:text-6xl text-foreground/75 leading-[1.2]">
+            "Este sítio é o meu<br />caderno aberto —
+          </p>
+          <p className="font-display text-2xl md:text-3xl text-foreground/50 mt-6 leading-relaxed">
+            sem clientes, sem pressa,<br />
+            só atenção ao que insiste em ficar."
+          </p>
+          <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
+        </div>
+      </Section>
+
       <SiteFooter />
     </div>
   );
