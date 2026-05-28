@@ -57,19 +57,27 @@ export function LoadingScreen() {
       <motion.img
         src={logo}
         alt="Rosmaninho"
-        className="w-28 h-28 object-contain"
+        className="w-24 h-24 object-contain opacity-90"
         initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: 0.95, scale: 1 }}
         transition={{ duration: 1 }}
       />
       <motion.p
-        className="mt-6 font-script text-3xl text-cream"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        className="mt-8 font-italic-serif text-4xl text-copper"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.4 }}
       >
         Rosmaninho
       </motion.p>
+      <motion.span
+        className="mt-3 text-[10px] uppercase tracking-[0.5em] text-cream/50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.8 }}
+      >
+        Fotografia · Arquivo lento
+      </motion.span>
     </div>
   );
 }
