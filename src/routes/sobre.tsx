@@ -4,8 +4,8 @@ import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
-import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
-import retratoSol from "@/assets/retrato-sol.jpg";
+import farolPeniche from "@/assets/farol-peniche.jpg";
+import barcoDouro from "@/assets/barco-douro.jpg";
 import portoAzulejos from "@/assets/porto-azulejos.jpg";
 import marTetrapodos from "@/assets/mar-tetrapodos.jpg";
 
@@ -122,9 +122,9 @@ function SobrePage() {
       <section className="px-6 md:px-12 py-28 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
         <Fade className="md:col-span-5 md:sticky md:top-36">
           <div className="hover-zoom relative aspect-[3/4] overflow-hidden">
-            <img src={retratoEsplanada} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={farolPeniche} alt="Farol da fortaleza, Peniche" className="absolute inset-0 h-full w-full object-cover" />
           </div>
-          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Coimbra · Nov 2022</p>
+          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Peniche · Mai 2026</p>
         </Fade>
 
         <div className="md:col-span-7 space-y-12">
@@ -178,9 +178,9 @@ function SobrePage() {
 
           <Fade delay={0.2} className="md:col-span-6">
             <div className="hover-zoom relative aspect-[4/5] overflow-hidden">
-              <img src={retratoSol} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" />
             </div>
-            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Portugal · Nov 2022</p>
+            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Porto · Jan 2026</p>
           </Fade>
         </div>
       </section>
