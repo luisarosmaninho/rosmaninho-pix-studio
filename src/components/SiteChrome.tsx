@@ -128,20 +128,20 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
   return (
     <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ${headerBg} ${text}`}>
       <div className="flex items-center justify-between px-6 md:px-12 py-5">
-        <Link to="/" className="flex items-center gap-3" style={{ color: "inherit" }}>
-          <span className="font-script text-2xl md:text-3xl leading-none">Rosmaninho</span>
-          <span className="hidden md:block text-[10px] tracking-[0.32em] uppercase opacity-70">Fotografia</span>
+        <Link to="/" className="flex items-baseline gap-3" style={{ color: "inherit" }}>
+          <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
+          <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.28em] uppercase">
-          <Link to="/" activeOptions={{ exact: true }} className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Início</Link>
-          <Link to="/sobre" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Autora</Link>
-          <Link to="/portfolio" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Séries</Link>
-          <Link to="/diario" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Diário</Link>
-          <Link to="/contacto" className="hover:text-gold transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
+        <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.32em] uppercase">
+          <Link to="/" activeOptions={{ exact: true }} className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Início</Link>
+          <Link to="/sobre" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
+          <Link to="/portfolio" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
+          <Link to="/diario" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
+          <Link to="/contacto" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
         </nav>
         <Link
           to="/contacto"
-          className="md:hidden text-[10px] tracking-[0.28em] uppercase border-b border-current pb-0.5"
+          className="md:hidden text-[10px] tracking-[0.32em] uppercase border-b border-current pb-0.5"
           style={{ color: "inherit" }}
         >
           Diálogo
