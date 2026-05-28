@@ -4,6 +4,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
 import logo from "@/assets/logo-rosmaninho.png";
 
+/* ---------------- Film grain overlay ---------------- */
+export function GrainOverlay() {
+  return <div className="grain-overlay" aria-hidden="true" />;
+}
+
+/* ---------------- Scroll progress bar ---------------- */
+export function ScrollProgress() {
+  const barRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const update = () => {
+      const el = document.documentElement;
+      const progress = el.scrollTop / (el.scrollHeight - el.clientHeight);
+      if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`;
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return <div ref={barRef} className="scroll-progress" style={{ transform: "scaleX(0)" }} aria-hidden="true" />;
+}
+
 /* ---------------- Smooth scroll ---------------- */
 export function SmoothScroll() {
   useEffect(() => {
@@ -99,41 +119,111 @@ export function WhatsAppFab() {
   );
 }
 
+const navLinks = [
+  { to: "/", label: "Início", exact: true },
+  { to: "/sobre", label: "Autora" },
+  { to: "/portfolio", label: "Séries" },
+  { to: "/diario", label: "Diário" },
+  { to: "/notas", label: "Notas" },
+  { to: "/contacto", label: "Diálogo" },
+] as const;
+
 /* ---------------- Navigation ---------------- */
 export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   const isOverlay = variant === "overlay" && !scrolled;
-  const headerBg = scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : isOverlay ? "bg-transparent" : "bg-background";
+  const headerBg = scrolled ? "bg-background/90 backdrop-blur-md border-b border-border" : isOverlay ? "bg-transparent" : "bg-background";
   const text = isOverlay ? "text-cream" : "text-foreground";
 
   return (
-    <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ${headerBg} ${text}`}>
-      <div className="flex items-center justify-between px-6 md:px-12 py-5">
-        <Link to="/" className="flex items-baseline gap-3" style={{ color: "inherit" }}>
-          <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
-          <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.32em] uppercase">
-          <Link to="/" activeOptions={{ exact: true }} className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Início</Link>
-          <Link to="/sobre" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
-          <Link to="/portfolio" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
-          <Link to="/diario" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
-          <Link to="/contacto" className="link-underline hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
-        </nav>
-        <Link
-          to="/contacto"
-          className="md:hidden text-[10px] tracking-[0.32em] uppercase border-b border-current pb-0.5"
-          style={{ color: "inherit" }}
-        >
-          Diálogo
-        </Link>
-      </div>
-    </header>
+    <>
+      <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ${headerBg} ${text}`}>
+        <div className="flex items-center justify-between px-6 md:px-12 py-5">
+          <Link to="/" className="flex items-baseline gap-3" style={{ color: "inherit" }} onClick={() => setMenuOpen(false)}>
+            <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
+            <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.32em] uppercase">
+            {navLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                activeOptions={"exact" in l ? { exact: true } : undefined}
+                className="link-underline hover:text-copper transition-colors"
+                style={{ color: "inherit" }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Hamburger — mobile only */}
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5 z-[310] relative"
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            style={{ color: menuOpen ? "var(--cream)" : "inherit" }}
+          >
+            <span className={`block w-6 h-px bg-current transition-all duration-500 ${menuOpen ? "rotate-45 translate-y-[5px]" : ""}`} />
+            <span className={`block w-6 h-px bg-current transition-all duration-300 ${menuOpen ? "opacity-0 scale-x-0" : ""}`} />
+            <span className={`block w-6 h-px bg-current transition-all duration-500 ${menuOpen ? "-rotate-45 -translate-y-[5px]" : ""}`} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile fullscreen menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="mobile-menu md:hidden"
+            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+          >
+            <p className="font-mono-label text-cream/30 mb-12">Rosmaninho Fotografia</p>
+            <nav className="flex flex-col gap-1">
+              {navLinks.map((l, i) => (
+                <motion.div
+                  key={l.to}
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 + i * 0.07, ease: "easeOut" }}
+                >
+                  <Link
+                    to={l.to}
+                    onClick={() => setMenuOpen(false)}
+                    className="font-display text-5xl text-cream hover:text-copper transition-colors duration-300 block py-2"
+                  >
+                    {l.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+            <div className="mt-16 pt-8 border-t border-cream/15">
+              <a href="mailto:ola@rosmaninhofotografia.pt" className="font-mono-label text-cream/50 hover:text-copper transition-colors">
+                ola@rosmaninhofotografia.pt
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -157,6 +247,7 @@ export function SiteFooter() {
             <Link to="/sobre" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
             <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
             <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
+            <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Notas de Campo</Link>
             <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
           </div>
 

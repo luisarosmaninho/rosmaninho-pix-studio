@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SmoothScroll, CustomCursor, LoadingScreen } from "@/components/SiteChrome";
+import { SmoothScroll, CustomCursor, LoadingScreen, GrainOverlay, ScrollProgress } from "@/components/SiteChrome";
 
 function NotFoundComponent() {
   return (
@@ -76,6 +76,8 @@ function RootComponent() {
       <LoadingScreen />
       <SmoothScroll />
       <CustomCursor />
+      <GrainOverlay />
+      <ScrollProgress />
       <Outlet />
     </QueryClientProvider>
   );

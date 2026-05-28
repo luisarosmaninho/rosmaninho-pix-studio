@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as NotasRouteImport } from './routes/notas'
 import { Route as DiarioRouteImport } from './routes/diario'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +26,11 @@ const SobreRoute = SobreRouteImport.update({
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotasRoute = NotasRouteImport.update({
+  id: '/notas',
+  path: '/notas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiarioRoute = DiarioRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRouteWithChildren
+  '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRouteWithChildren
+  '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRouteWithChildren
+  '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/diario'
+    | '/notas'
     | '/portfolio'
     | '/sobre'
     | '/diario/$slug'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/diario'
+    | '/notas'
     | '/portfolio'
     | '/sobre'
     | '/diario/$slug'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/diario'
+    | '/notas'
     | '/portfolio'
     | '/sobre'
     | '/diario/$slug'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactoRoute: typeof ContactoRoute
   DiarioRoute: typeof DiarioRouteWithChildren
+  NotasRoute: typeof NotasRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   SobreRoute: typeof SobreRoute
 }
@@ -133,6 +146,13 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/portfolio'
       preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notas': {
+      id: '/notas'
+      path: '/notas'
+      fullPath: '/notas'
+      preLoaderRoute: typeof NotasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diario': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactoRoute: ContactoRoute,
   DiarioRoute: DiarioRouteWithChildren,
+  NotasRoute: NotasRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   SobreRoute: SobreRoute,
 }
