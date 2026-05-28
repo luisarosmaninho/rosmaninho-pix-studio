@@ -126,7 +126,7 @@ export const photos: Photo[] = [
   {
     id: "coimbra",
     src: coimbra,
-    title: "A encosta e as nuvens",
+    title: "O que a cidade não controla",
     category: "urbanas",
     orientation: "square",
     meta: { description: "A cidade cresceu de costas para o rio e de frente para o céu." },
@@ -134,7 +134,7 @@ export const photos: Photo[] = [
   {
     id: "porto-bridge",
     src: portoBridge,
-    title: "O arco sobre a barca",
+    title: "O ferro que ficou",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "O ferro dobra-se sobre a água. A barca não precisa de pressa." },
@@ -166,7 +166,7 @@ export const photos: Photo[] = [
   {
     id: "village-alley",
     src: villageAlley,
-    title: "Granito e nuvens brancas",
+    title: "Uma tarde sem sobressaltos",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "A pedra aquece ao sol. As varandas guardam flores de cor." },
@@ -174,7 +174,7 @@ export const photos: Photo[] = [
   {
     id: "stone-village",
     src: stoneVillage,
-    title: "A bandeira vermelha",
+    title: "A única cor na rua",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Uma bandeira vermelha, uma sombra longa, uma rua de granito." },
@@ -182,7 +182,7 @@ export const photos: Photo[] = [
   {
     id: "farol-peniche",
     src: farolPeniche,
-    title: "A torre vermelha",
+    title: "Sentinela",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Alguém sentou-se na pedra e ficou a olhar para o que não se vê daqui." },
@@ -222,7 +222,7 @@ export const photos: Photo[] = [
   {
     id: "porto-ribeira",
     src: portoRibeira,
-    title: "Roupa estendida e ferro forjado",
+    title: "Antes do vento",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "As fachadas guardam histórias atrás de cada varanda." },
@@ -256,7 +256,7 @@ export const photos: Photo[] = [
   {
     id: "queda-agua",
     src: quedaAgua,
-    title: "Queda dupla",
+    title: "O que o outono guarda",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "A água cai. O outono reflete-se na poça que ficou." },
@@ -288,7 +288,7 @@ export const photos: Photo[] = [
   {
     id: "barco-douro",
     src: barcoDouro,
-    title: "Bandeirinhas ao vento",
+    title: "Festa sem data",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "O barco está parado. As bandeirinhas não se importam." },
@@ -314,7 +314,7 @@ export const photos: Photo[] = [
   {
     id: "retrato-esplanada",
     src: retratoEsplanada,
-    title: "Tempo de esplanada",
+    title: "Alguém que não contava o tempo",
     category: "retratos",
     orientation: "landscape",
     meta: { description: "O outono ficou atrás dele. Ele não parecia incomodar-se." },
@@ -348,7 +348,7 @@ export const photos: Photo[] = [
   {
     id: "sandes-ribs",
     src: sandesRibs,
-    title: "O pão de sementes pretas",
+    title: "Antes de ser tocado",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "Tudo o que cabe num pão, mais batatas fritas do lado." },
@@ -364,7 +364,7 @@ export const photos: Photo[] = [
   {
     id: "ovos-mexidos",
     src: ovosMexidos,
-    title: "Dois tomates no topo",
+    title: "Uma manhã que ficou na mesa",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "Os ovos mexidos foram parar à torrada. Os tomates assentiram." },
@@ -372,7 +372,7 @@ export const photos: Photo[] = [
   {
     id: "cafe-matcha",
     src: cafeMatcha,
-    title: "Mesa redonda, duas escolhas",
+    title: "Não havia escolha errada",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "O matcha e o chantilly. A torrada ao meio. Nenhuma escolha foi errada." },
@@ -390,7 +390,7 @@ export const photos: Photo[] = [
   {
     id: "janela-antiga",
     src: janelaAntiga,
-    title: "Proibido parar aqui",
+    title: "Entre dois silêncios",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Uma passagem aérea entre dois prédios, sinais que ninguém lê." },
@@ -398,7 +398,7 @@ export const photos: Photo[] = [
   {
     id: "candeeiro-rua",
     src: candeeiroRua,
-    title: "O espiral de ferro",
+    title: "Antes do escuro",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "O candeeiro não precisa de justificar a sua forma." },
@@ -406,7 +406,7 @@ export const photos: Photo[] = [
   {
     id: "cidade-nevoa",
     src: cidadeNevoa,
-    title: "A névoa ficou entre os montes",
+    title: "Essa hora sem nome",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A cidade acorda antes da névoa se ir embora." },
@@ -414,7 +414,7 @@ export const photos: Photo[] = [
   {
     id: "telhados-nevoa",
     src: telhadosNevoa,
-    title: "O mar de nuvens",
+    title: "O que os telhados sabem",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A névoa fica presa entre os montes. Os telhados ficam de fora." },
@@ -430,7 +430,7 @@ export const photos: Photo[] = [
   {
     id: "praca-fonte",
     src: pracaFonte,
-    title: "Repuxos e pedra",
+    title: "Enquanto a água sobe",
     category: "urbanas",
     orientation: "square",
     meta: { description: "A água sobe antes de cair. A pedra fica onde sempre esteve." },
@@ -454,7 +454,7 @@ export const photos: Photo[] = [
   {
     id: "coimbra-cima",
     src: coimbraCima,
-    title: "Laranja e azul",
+    title: "Calor de outubro",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "Os telhados laranjas e o céu azul não precisam de mais nada entre eles." },
@@ -462,7 +462,7 @@ export const photos: Photo[] = [
   {
     id: "edificio-classico",
     src: edificioClassico,
-    title: "Os fios e o edifício",
+    title: "Desenho involuntário",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "Os fios elétricos não respeitam a arquitetura. Talvez nem precisem." },
@@ -470,7 +470,7 @@ export const photos: Photo[] = [
   {
     id: "porto-ribeira-panorama",
     src: portoRibeiraPanorama,
-    title: "Laranja sobre o rio",
+    title: "Vista de quem se afastou",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "Visto de longe, tudo se encaixa: o rio, os telhados, a encosta." },
@@ -478,7 +478,7 @@ export const photos: Photo[] = [
   {
     id: "metro-porto",
     src: metroPorto,
-    title: "O novo e o velho lado a lado",
+    title: "A pedra não se importou",
     category: "urbanas",
     orientation: "square",
     meta: { description: "O metro passa. Atrás dele, a pedra não se mexeu." },
@@ -522,7 +522,7 @@ export const photos: Photo[] = [
   {
     id: "rua-figura",
     src: ruaFigura,
-    title: "Uma figura ao longe",
+    title: "O fim tem sempre alguém",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "No fim da rua há sempre alguém que não tem pressa nenhuma." },
@@ -530,7 +530,7 @@ export const photos: Photo[] = [
   {
     id: "fachada-ornamentos",
     src: fachadaOrnamentos,
-    title: "Pedra lavrada e vidro azul",
+    title: "Ornamento e memória",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Os ornamentos de pedra multiplicam-se até ao topo. As janelas guardam o céu dentro." },
@@ -538,7 +538,7 @@ export const photos: Photo[] = [
   {
     id: "dom-luis-douro",
     src: domLuisDouro,
-    title: "Dois andares de ferro",
+    title: "O que se atravessa duas vezes",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A ponte tem dois pisos e o rio não escolhe nenhum deles." },
@@ -554,7 +554,7 @@ export const photos: Photo[] = [
   {
     id: "edificio-moderno",
     src: edificioModerno,
-    title: "Blocos e sombra",
+    title: "O ângulo que foge",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "O edifício recusa a linha reta. As varandas mergulham na sombra." },
@@ -562,7 +562,7 @@ export const photos: Photo[] = [
   {
     id: "banco-entardecer",
     src: bancoEntardecer,
-    title: "O banco vazio",
+    title: "Ficou calor onde alguém esteve",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "Ninguém ficou. O entardecer aqueceu a pedra de qualquer maneira." },
