@@ -46,12 +46,12 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 function HomePage() {
   // Selecção masonry — alturas variadas para ritmo
   const masonry = [
-    { src: portoStreet, h: "h-[520px]", cat: "Urbanas", title: "Rua da Madrugada" },
-    { src: sunsetBeach, h: "h-[360px]", cat: "Natureza", title: "Ocaso atlântico" },
-    { src: villageAlley, h: "h-[440px]", cat: "Retratos", title: "Pedra e céu" },
-    { src: river, h: "h-[380px]", cat: "Natureza", title: "À flor da água" },
-    { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas", title: "Telhados de Coimbra" },
-    { src: waterSplash, h: "h-[420px]", cat: "Iguarias", title: "Coroa de água" },
+    { src: portoStreet, h: "h-[520px]", cat: "Urbanas", title: "Quando ainda havia luz" },
+    { src: sunsetBeach, h: "h-[360px]", cat: "Natureza", title: "A solidão que não pesa" },
+    { src: villageAlley, h: "h-[440px]", cat: "Retratos", title: "Uma tarde sem sobressaltos" },
+    { src: river, h: "h-[380px]", cat: "Natureza", title: "Quando a água ainda é visível" },
+    { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas", title: "O horizonte que não se fecha" },
+    { src: waterSplash, h: "h-[420px]", cat: "Natureza", title: "Geometria da queda" },
   ];
 
   const latestEntry = journal[0];
