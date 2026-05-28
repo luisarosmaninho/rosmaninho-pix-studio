@@ -44,16 +44,33 @@ export type Photo = {
 };
 
 export const photos: Photo[] = [
+  // Urbanas
   { src: portoStreet, title: "Rua da Madrugada", location: "Porto", year: "2026", category: "urbanas", orientation: "portrait" },
   { src: coimbra, title: "Sobre o Mondego", location: "Coimbra", year: "2024", category: "urbanas", orientation: "square" },
-  { src: river, title: "À flor da água", location: "Mondego", year: "2024", category: "natureza", orientation: "landscape" },
-  { src: villageAlley, title: "Pedra e céu", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
   { src: portoBridge, title: "Dom Luís I", location: "Porto", year: "2024", category: "urbanas", orientation: "landscape" },
-  { src: sunsetBeach, title: "Ocaso atlântico", location: "Caparica", year: "2022", category: "natureza", orientation: "landscape" },
-  { src: stoneVillage, title: "Aldeia histórica", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
-  { src: waterfall, title: "Pequena queda", location: "Lousã", year: "2020", category: "natureza", orientation: "landscape" },
-  { src: waterSplash, title: "Coroa de água", location: "Estúdio", year: "2023", category: "comida", orientation: "landscape" },
   { src: coimbraSkyline, title: "Telhados de Coimbra", location: "Coimbra", year: "2023", category: "urbanas", orientation: "landscape" },
+  { src: portoDouro, title: "Janela para o Douro", location: "Porto", year: "2023", category: "urbanas", orientation: "portrait" },
+  { src: arcoCoimbra, title: "Arco de Almedina", location: "Coimbra", year: "2024", category: "urbanas", orientation: "portrait" },
+
+  // Natureza
+  { src: river, title: "À flor da água", location: "Mondego", year: "2024", category: "natureza", orientation: "landscape" },
+  { src: sunsetBeach, title: "Ocaso atlântico", location: "Caparica", year: "2022", category: "natureza", orientation: "landscape" },
+  { src: waterfall, title: "Pequena queda", location: "Lousã", year: "2020", category: "natureza", orientation: "landscape" },
+  { src: quedaAgua, title: "Espelho de outono", location: "Lousã", year: "2020", category: "natureza", orientation: "landscape" },
+  { src: ribeiroMusgo, title: "Ao rés do ribeiro", location: "Serra", year: "2023", category: "natureza", orientation: "landscape" },
+  { src: fioAgua, title: "Fio de água", location: "Jardim", year: "2023", category: "natureza", orientation: "landscape" },
+  { src: waterSplash, title: "Coroa de água", location: "Estúdio", year: "2023", category: "natureza", orientation: "landscape" },
+
+  // Retratos (lugares, matéria, presença)
+  { src: villageAlley, title: "Pedra e céu", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
+  { src: stoneVillage, title: "Aldeia histórica", location: "Monsanto", year: "2023", category: "retratos", orientation: "portrait" },
+
+  // Comida
+  { src: geladoBolacha, title: "Sorriso de bolacha", location: "Lisboa", year: "2023", category: "comida", orientation: "landscape" },
+  { src: risottoCourgette, title: "Risotto de curgete", location: "À mesa", year: "2022", category: "comida", orientation: "landscape" },
+  { src: sandesRibs, title: "Sandes & batatas", location: "Ribs", year: "2022", category: "comida", orientation: "landscape" },
+  { src: waffleOvo, title: "Waffle salgada", location: "Brunch", year: "2023", category: "comida", orientation: "landscape" },
+  { src: ovosMexidos, title: "Mexidos com tomate", location: "Brunch", year: "2023", category: "comida", orientation: "landscape" },
 ];
 
 export function photosByCategory(slug: CategorySlug) {
