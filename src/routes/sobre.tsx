@@ -47,12 +47,13 @@ function SobrePage() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="max-w-4xl"
+          className="max-w-5xl"
         >
-          <p className="font-mono-label text-copper mb-8">Autora · Coimbra</p>
+          <p className="font-mono-label text-copper mb-8">Luísa Rosmaninho · Coimbra</p>
           <h1 className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.92] tracking-tight">
-            Sou a <span className="font-italic-serif text-copper">Luísa</span>,<br />
-            ando muito a pé.
+            Prefiro<br />
+            chegar<br />
+            <span className="font-italic-serif text-copper">mais tarde</span>.
           </h1>
         </motion.div>
 
@@ -60,31 +61,31 @@ function SobrePage() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          transition={{ delay: 0.3 }}
-          className="mt-16 grid md:grid-cols-12 gap-12 items-start"
+          transition={{ delay: 0.35 }}
+          className="mt-20 grid md:grid-cols-12 gap-12 items-start"
         >
-          <div className="md:col-span-7 space-y-6 text-foreground/70 text-lg leading-relaxed">
+          <div className="md:col-span-6 space-y-6 text-foreground/68 text-lg leading-relaxed">
             <p>
-              Vivo em Coimbra, tenho sempre uma câmara comigo, e o passo de quem prefere chegar mais tarde.
+              Vivo em Coimbra. Tenho sempre uma câmara comigo. Trabalho em quatro séries abertas que vão crescendo à medida que ando, observo e disparo.
             </p>
             <p>
-              Este sítio é o meu caderno aberto — sem clientes, sem pressa, só atenção ao que insiste em ficar.
-            </p>
-            <p>
-              Trabalho em quatro séries paralelas. Vão crescendo à medida que ando, observo e disparo.
+              Este sítio não é um portefólio comercial — é o lugar onde as séries vivem enquanto crescem, onde o diário fica guardado, onde as notas de campo vão aparecendo.
             </p>
           </div>
-          <div className="md:col-span-5 flex flex-col gap-4">
+          <div className="md:col-span-6 md:col-start-8 flex flex-col gap-4">
             <div className="h-px bg-foreground/15 w-full" />
-            <div className="flex justify-between font-mono-label text-foreground/35">
+            <div className="flex justify-between font-mono-label text-foreground/32">
               <span>Fotografia de autor</span>
               <span>desde 2020</span>
             </div>
-            <div className="flex justify-between font-mono-label text-foreground/35">
+            <div className="flex justify-between font-mono-label text-foreground/32">
               <span>Coimbra, Portugal</span>
-              <span>40°12'N</span>
+              <span>40°12'N · 8°25'O</span>
             </div>
             <div className="h-px bg-foreground/15 w-full" />
+            <p className="font-italic-serif text-foreground/35 text-base mt-2">
+              "só atenção ao que insiste em ficar"
+            </p>
           </div>
         </motion.div>
       </section>
