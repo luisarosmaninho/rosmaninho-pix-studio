@@ -1,0 +1,142 @@
+Quero reformular ligeiramente as secções “Diário” e “Notas de Campo” sem perder a estética atual do website.
+
+IMPORTANTE:
+Manter:
+
+* tipografia atual
+* paleta de cores
+* identidade editorial minimalista
+* atmosfera contemplativa
+* espaçamento elegante
+* aparência premium/artística
+
+Não transformar o website em algo moderno demais, tecnológico ou caótico.
+
+O objetivo é apenas tornar estas secções:
+
+* mais humanas
+* mais vividas
+* mais cinematográficas
+* mais orgânicas
+* mais emocionais
+* menos “layout perfeito”
+
+────────────────────
+
+DIÁRIO
+
+Quero que a secção Diário pareça menos uma lista editorial limpa e mais um caderno visual vivido ao longo do tempo.
+
+Alterações desejadas:
+
+* criar mais ritmo visual entre entradas
+* adicionar pausas visuais
+* usar imagens entre textos
+* deixar algumas entradas mais isoladas
+* variar alinhamentos subtilmente
+* criar sensação de páginas encontradas
+* adicionar pequenos detalhes editoriais:
+
+  * horas
+  * estações
+  * clima
+  * localização
+  * coordenadas
+  * notas discretas
+
+Exemplo de metadata subtil:
+“Coimbra • 07:14 • vento húmido”
+
+As entradas não devem parecer artigos perfeitos.
+Devem parecer:
+
+* fragmentos
+* observações
+* memórias rápidas
+* momentos encontrados
+
+Adicionar:
+
+* imagens fullscreen ocasionais
+* frases isoladas
+* muito espaço vazio entre blocos
+* transições lentas e suaves
+
+O Diário deve parecer:
+
+* íntimo
+* silencioso
+* cinematográfico
+* contemplativo
+
+────────────────────
+
+NOTAS DE CAMPO
+
+Quero transformar esta secção num verdadeiro arquivo vivo de observações.
+
+Atualmente parece demasiado organizada.
+Quero torná-la:
+
+* mais orgânica
+* mais subtil
+* mais humana
+* mais descoberta
+
+Alterações desejadas:
+
+* variar ligeiramente tamanhos dos blocos
+* criar desalinhamentos subtis
+* algumas notas mais pequenas
+* algumas quase escondidas
+* aparência de fragmentos espalhados
+
+Adicionar:
+
+* notas que surgem lentamente
+* fade suave
+* opacity baixa
+* hover muito subtil
+* pequenas animações lentas
+
+IMPORTANTE:
+As notas não devem parecer frases feitas nem citações de Instagram.
+
+Devem parecer:
+
+* pensamentos reais
+* observações rápidas
+* fragmentos de memória
+* notas tiradas durante caminhadas
+* coisas observadas no momento
+
+Adicionar possibilidade de:
+
+* notas escondidas ao hover
+* notas que aparecem ao scroll
+* pequenos detalhes editoriais
+* sensação de descoberta silenciosa
+
+────────────────────
+
+ATMOSFERA GERAL
+
+O website deve continuar:
+
+* elegante
+* minimalista
+* editorial
+* artístico
+* respirado
+* silencioso
+
+Mas agora com mais:
+
+* presença humana
+* memória
+* imperfeição subtil
+* sensação de arquivo vivo
+* ritmo cinematográfico
+
+O objetivo NÃO é adicionar mais design.
+É adicionar mais alma.

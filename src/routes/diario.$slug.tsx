@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import { getJournalEntry, journal } from "@/lib/journal";
+import { getJournalEntry, journal, formatJournalDate } from "@/lib/journal";
 
 export const Route = createFileRoute("/diario/$slug")({
   beforeLoad: ({ params }) => {
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/diario/$slug")({
     const e = getJournalEntry(params.slug);
     return {
       meta: [
-        { title: `${e?.title ?? "Journal"} — Rosmaninho` },
+        { title: `${e?.title ?? "Diário"} — Rosmaninho` },
         { name: "description", content: e?.excerpt ?? "" },
         { property: "og:image", content: e?.photoSrc ?? "" },
       ],
@@ -24,11 +25,6 @@ export const Route = createFileRoute("/diario/$slug")({
   ),
 });
 
-function stamp(date: string) {
-  const d = new Date(date);
-  return `${d.getFullYear()} / ${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
@@ -38,68 +34,126 @@ function EntryPage() {
       <SiteNav variant="solid" />
 
       <article>
-        {/* Cabeçalho editorial */}
-        <header className="px-6 md:px-12 pt-32 md:pt-40 pb-16">
-          <div className="grid grid-cols-12 gap-6 items-baseline max-w-6xl mx-auto">
-            <div className="col-span-12 md:col-span-3">
-              <Link to="/diario" className="font-mono-label hover:text-accent transition-colors">
-                &larr; Journal
-              </Link>
-              <p className="font-mono-label mt-10">[ {stamp(entry.date)} ]</p>
-            </div>
-            <div className="col-span-12 md:col-span-9">
-              <h1 className="font-display italic text-4xl md:text-7xl leading-[1.05]">
-                {entry.title}
-              </h1>
-            </div>
-          </div>
+        {/* Header */}
+        <header className="px-6 md:px-12 pt-32 md:pt-44 pb-16 max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+          >
+            <Link to="/diario" className="font-mono-label text-foreground/35 hover:text-copper transition-colors inline-block mb-16">
+              ← Diário
+            </Link>
+
+            <h1 className="font-display italic text-4xl md:text-8xl leading-[1.0] max-w-4xl">
+              {entry.title}
+            </h1>
+          </motion.div>
         </header>
 
-        {/* Corpo — coluna central estreita, max 650px */}
-        <div className="px-6 md:px-12 pb-20">
-          <div className="mx-auto" style={{ maxWidth: "650px" }}>
-            <p className="font-display italic text-2xl md:text-3xl leading-[1.5] mb-16">
-              “{entry.excerpt}”
+        {/* Excerpt — large pull */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.2 }}
+          className="px-6 md:px-24 pb-24 max-w-4xl mx-auto"
+        >
+          <p className="font-italic-serif text-2xl md:text-4xl leading-[1.6] text-foreground/60">
+            {entry.excerpt}
+          </p>
+        </motion.div>
+
+        <div className="hairline mx-6 md:mx-12 mb-24" />
+
+        {/* First paragraph */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="px-6 md:px-12 pb-28 max-w-2xl mx-auto"
+        >
+          {entry.body.slice(0, 1).map((p, i) => (
+            <p key={i} className="body-text text-base md:text-lg leading-[1.9] text-foreground/80">
+              {p}
             </p>
+          ))}
+        </motion.div>
 
-            {entry.body.slice(0, 1).map((p, i) => (
-              <p key={i} className="body-text text-base mb-8" style={{ textAlign: "justify" }}>{p}</p>
-            ))}
+        {/* Full-width image */}
+        <motion.figure
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
+          className="mb-28"
+        >
+          <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+            <img
+              src={entry.photoSrc}
+              alt={entry.photoTitle}
+              className="w-full h-full object-cover"
+            />
           </div>
+          <figcaption className="px-6 md:px-12 font-mono-label text-foreground/28 mt-5">
+            {entry.photoTitle}
+          </figcaption>
+        </motion.figure>
 
-          {/* Sequência assimétrica: 1 grande + 2 verticais lado-a-lado */}
-          <div className="my-24 max-w-6xl mx-auto">
-            <figure className="w-full aspect-[16/10] overflow-hidden">
-              <img src={entry.photoSrc} alt={entry.photoTitle} className="w-full h-full object-cover" />
-            </figure>
-            <figcaption className="font-mono-label mt-4">
-              [ {entry.photoTitle.toUpperCase()} ]
-            </figcaption>
-          </div>
+        {/* Second paragraph */}
+        {entry.body.slice(1, 2).map((p, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="px-6 md:px-12 pb-24 max-w-2xl mx-auto"
+          >
+            <p className="body-text text-base md:text-lg leading-[1.9] text-foreground/80">{p}</p>
+          </motion.div>
+        ))}
 
-          {entry.body.slice(1, 2).map((p, i) => (
-            <div key={i} className="mx-auto mb-20" style={{ maxWidth: "650px" }}>
-              <p className="body-text text-base" style={{ textAlign: "justify" }}>{p}</p>
-            </div>
+        {/* Remaining paragraphs */}
+        <div className="px-6 md:px-12 pb-40 max-w-2xl mx-auto">
+          {entry.body.slice(2).map((p, i) => (
+            <motion.p
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="body-text text-base md:text-lg leading-[1.9] text-foreground/80 mb-12"
+            >
+              {p}
+            </motion.p>
           ))}
 
-          <div className="mx-auto" style={{ maxWidth: "650px" }}>
-            {entry.body.slice(2).map((p, i) => (
-              <p key={i} className="body-text text-base mb-8" style={{ textAlign: "justify" }}>{p}</p>
-            ))}
-            <div className="mt-16 hairline" />
-            <p className="font-mono-label mt-6">[ L.R. // FIM ]</p>
-          </div>
+          {/* Ending */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2 }}
+            className="mt-20"
+          >
+            <div className="w-12 h-px bg-foreground/20 mb-8" />
+            <p className="font-italic-serif text-copper text-2xl">L.R.</p>
+          </motion.div>
         </div>
 
         {/* Continuar */}
-        <section className="px-6 md:px-12 py-24 border-t border-border">
-          <p className="font-mono-label mb-12">[ CONTINUAR A LER ]</p>
-          <div className="grid md:grid-cols-2 gap-12">
+        <section className="px-6 md:px-12 py-24 border-t border-foreground/8">
+          <p className="font-mono-label text-foreground/30 mb-16">continuar a ler</p>
+          <div className="grid md:grid-cols-2 gap-16 max-w-4xl">
             {journal.filter((e) => e.slug !== slug).slice(0, 2).map((e) => (
-              <Link key={e.slug} to="/diario/$slug" params={{ slug: e.slug }} className="group block">
-                <p className="font-mono-label">[ {stamp(e.date)} ]</p>
-                <h3 className="font-display italic text-3xl md:text-4xl mt-3 leading-tight group-hover:text-accent transition-colors">
+              <Link
+                key={e.slug}
+                to="/diario/$slug"
+                params={{ slug: e.slug }}
+                className="group block"
+              >
+                <h3 className="font-display italic text-3xl md:text-4xl leading-tight group-hover:text-copper transition-colors duration-500">
                   {e.title}
                 </h3>
               </Link>

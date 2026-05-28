@@ -2,13 +2,16 @@ import type { CategorySlug } from "./photos";
 
 export type JournalEntry = {
   slug: string;
-  date: string; // ISO
+  date: string;
   title: string;
   excerpt: string;
-  body: string[]; // paragraphs
-  photoSrc: string; // image asset src
+  body: string[];
+  photoSrc: string;
   photoTitle: string;
   relatedCategory: CategorySlug;
+  place?: string;
+  time?: string;
+  climate?: string;
 };
 
 import portoStreet from "@/assets/porto-street.jpg";
@@ -29,8 +32,11 @@ export const journal: JournalEntry[] = [
       "Voltei para o café mais próximo, pedi uma bica e fiquei a pensar em como há lugares que só se mostram a quem os apanha desprevenidos.",
     ],
     photoSrc: portoStreet,
-    photoTitle: "Rua da Madrugada",
+    photoTitle: "A rua que ainda dormia",
     relatedCategory: "urbanas",
+    place: "Porto",
+    time: "06:14",
+    climate: "vento húmido",
   },
   {
     slug: "a-flor-da-agua",
@@ -43,8 +49,11 @@ export const journal: JournalEntry[] = [
       "Há uma lição nisto que vale para mais do que fotografia: às vezes o assunto principal só aparece quando aceitamos baixar-nos até ele.",
     ],
     photoSrc: river,
-    photoTitle: "À flor da água",
+    photoTitle: "À altura do rio",
     relatedCategory: "natureza",
+    place: "Mondego",
+    time: "15:30",
+    climate: "calor seco",
   },
   {
     slug: "pedra-e-ceu",
@@ -57,8 +66,11 @@ export const journal: JournalEntry[] = [
       "Pousei a câmara durante uns minutos só para ouvir. Não havia nada para ouvir. Era exatamente isso o som.",
     ],
     photoSrc: villageAlley,
-    photoTitle: "Pedra e céu",
+    photoTitle: "Onde o granito encontra o azul",
     relatedCategory: "retratos",
+    place: "Monsanto",
+    time: "11:00",
+    climate: "vento frio",
   },
   {
     slug: "ocaso-atlantico",
@@ -71,8 +83,11 @@ export const journal: JournalEntry[] = [
       "Há uma coisa que aprendi: o melhor da fotografia de paisagem está quase sempre depois do momento óbvio.",
     ],
     photoSrc: sunsetBeach,
-    photoTitle: "Ocaso atlântico",
+    photoTitle: "Cinco minutos antes do escuro",
     relatedCategory: "natureza",
+    place: "Costa da Caparica",
+    time: "17:45",
+    climate: "frio · vento",
   },
   {
     slug: "coroa-de-agua",
@@ -85,8 +100,11 @@ export const journal: JournalEntry[] = [
       "No final, escolhi este enquadramento: a coroa estava perfeita, com os respingos suspensos como se o tempo tivesse parado para posar. É uma fotografia que me lembra que paciência também é luz.",
     ],
     photoSrc: waterSplash,
-    photoTitle: "Coroa de água",
+    photoTitle: "Uma coroa que dura um milésimo",
     relatedCategory: "natureza",
+    place: "jardim",
+    time: "14:00",
+    climate: "sol direto",
   },
 ];
 
