@@ -9,102 +9,99 @@ export type JournalEntry = {
   photoSrc: string;
   photoTitle: string;
   relatedCategory: CategorySlug;
-  place?: string;
-  time?: string;
-  climate?: string;
 };
 
-import portoStreet from "@/assets/porto-street.jpg";
-import river from "@/assets/river.jpg";
-import villageAlley from "@/assets/village-alley.jpg";
-import sunsetBeach from "@/assets/sunset-beach.jpg";
-import waterSplash from "@/assets/water-splash.jpg";
+import mondegoFigura from "@/assets/mondego-figura.jpg";
+import telhadosNevoa from "@/assets/telhados-nevoa.jpg";
+import cafeMatcha from "@/assets/cafe-matcha.jpg";
+import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
+import ribeiroMusgo from "@/assets/ribeiro-musgo.jpg";
+import barcoDouro from "@/assets/barco-douro.jpg";
 
 export const journal: JournalEntry[] = [
   {
-    slug: "rua-da-madrugada",
-    date: "2026-03-09",
-    title: "A rua que ainda dormia",
-    excerpt: "Cheguei ao Porto antes do sol. As esplanadas estavam por abrir e os candeeiros ainda hesitavam entre a noite e o dia.",
+    slug: "figura-no-mondego",
+    date: "2026-04-12",
+    title: "A figura que o rio não engoliu",
+    excerpt: "Havia uma pessoa parada a meio do Mondego. Não estava a nadar, não estava a pescar — estava simplesmente lá, como se o rio fosse um lugar de pensar.",
     body: [
-      "Há manhãs em que a cidade pertence só a quem decide acordar cedo. Saí do hotel às seis, com a câmara ao ombro e os pés ainda meio dormentes. A rua estava molhada — talvez tivesse chovido, talvez fosse só a humidade do rio a subir pelas calçadas.",
-      "Parei no meio do passeio e fiquei a olhar. As cadeiras ainda dobradas, o chapéu de sol fechado, os candeeiros amarelos a competir com o azul-rosado que crescia ao fundo. Foi a primeira fotografia do dia e a única que precisei de fazer.",
-      "Voltei para o café mais próximo, pedi uma bica e fiquei a pensar em como há lugares que só se mostram a quem os apanha desprevenidos.",
+      "Cheguei à margem quando o sol ainda estava baixo e a água tinha aquela cor de chumbo que só existe de manhã cedo. Não esperava encontrar ninguém. É esse o contrato silencioso com os lugares a esta hora — pertences-te a ti.",
+      "Mas havia ali uma figura, de costas, com a água pelos joelhos. Imóvel. Não estava a fazer nada que eu conseguisse perceber. Só estava. Levantei a câmara devagar, como quem não quer perturbar um sonho alheio, e disparei uma vez. Uma única vez.",
+      "Depois guardei a câmara e fiquei a olhar também. Durante uns minutos, fomos os dois a fazer o mesmo — estar no rio sem razão nenhuma. Às vezes é isso que a fotografia me ensina: que há valor enorme no que não se explica.",
     ],
-    photoSrc: portoStreet,
-    photoTitle: "A rua que ainda dormia",
+    photoSrc: mondegoFigura,
+    photoTitle: "Figura no Mondego ao amanhecer",
+    relatedCategory: "natureza",
+  },
+  {
+    slug: "telhados-com-nevoa",
+    date: "2026-02-03",
+    title: "A cidade que desapareceu a seguir",
+    excerpt: "Coimbra estava coberta de névoa quando acordei. Subi ao ponto mais alto que consegui encontrar e percebi que a cidade tinha desaparecido.",
+    body: [
+      "É estranho fotografar algo que não se vê. Os telhados emergiam da névoa como ilhas de uma paisagem submersa — vermelhos, laranja queimado, o ponteiro de uma torre aqui e ali. Tudo o que ficava abaixo estava apagado.",
+      "Há uma quietude particular neste tipo de manhã. A cidade está acordada lá em baixo — o barulho dos autocarros, os passos apressados, o cheiro do café — mas daqui de cima não chega nada disso. Só silêncio branco.",
+      "Fiz várias fotografias mas esta foi a única que ficou. As outras tentavam mostrar demasiado. Esta aceita que há coisas que a névoa tem o direito de guardar para si.",
+    ],
+    photoSrc: telhadosNevoa,
+    photoTitle: "Telhados na névoa, Coimbra",
     relatedCategory: "urbanas",
-    place: "Porto",
-    time: "06:14",
-    climate: "vento húmido",
   },
   {
-    slug: "a-flor-da-agua",
-    date: "2024-07-22",
-    title: "À altura do rio",
-    excerpt: "Para fotografar o Mondego, deitei-me. Foi assim, com o queixo a roçar a corrente, que percebi o que o rio queria mostrar.",
+    slug: "matcha-da-manha",
+    date: "2025-11-18",
+    title: "Um verde que não há no campo",
+    excerpt: "Nunca tinha visto um verde assim numa chávena. Fiquei a olhar para ele mais tempo do que seria razoável antes de o beber.",
     body: [
-      "É curioso como mudamos a fotografia só por mudar de altura. Estava na margem e a vista era a do costume — montes, casas brancas, céu. Tirei os ténis, entrei na água até aos joelhos e baixei-me até a câmara quase tocar na superfície.",
-      "De repente o rio deixou de ser cenário. Tornou-se primeiro plano, com toda a sua textura — os reflexos, as pedras douradas no fundo, o leve tremor da corrente. As montanhas continuaram lá, mas pequenas, distantes, quase modestas.",
-      "Há uma lição nisto que vale para mais do que fotografia: às vezes o assunto principal só aparece quando aceitamos baixar-nos até ele.",
+      "Pedi o matcha por capricho. Não sou particularmente fã, mas a cor — aquele verde opaco, quase pó, com a espuma fina à superfície — era demasiado boa para ignorar. Pus a chávena perto da janela onde batia uma luz de novembro, pálida e lateral.",
+      "Há uma categoria de beleza que existe só em coisas quotidianas apanhadas no sítio certo. Uma tosta mal dobrada, um café com a colher ainda dentro, o reflexo de uma janela num prato. Não são imagens de que toda a gente fala, mas são as que eu procuro.",
+      "Bebi o matcha. Era amargo. A fotografia ficou melhor do que a bebida.",
     ],
-    photoSrc: river,
-    photoTitle: "À altura do rio",
-    relatedCategory: "natureza",
-    place: "Mondego",
-    time: "15:30",
-    climate: "calor seco",
+    photoSrc: cafeMatcha,
+    photoTitle: "Matcha com espuma, novembro",
+    relatedCategory: "iguarias",
   },
   {
-    slug: "pedra-e-ceu",
-    date: "2023-05-14",
-    title: "Onde o granito encontra o azul",
-    excerpt: "Monsanto não se fotografa: contempla-se. O resto acontece sozinho.",
+    slug: "retrato-na-esplanada",
+    date: "2025-09-06",
+    title: "Quando ninguém está a ser fotografado",
+    excerpt: "As melhores fotografias de pessoas são aquelas em que elas ainda não sabem que vão existir.",
     body: [
-      "Subi a aldeia devagar, com pausas para o coração e para os olhos. As casas estão entaladas entre penedos enormes, como se a vila tivesse crescido entre os dedos da serra.",
-      "Nesta foto, o que me prendeu foi a relação entre a parede de granito — áspera, antiga, com a cor da terra — e o azul violento do céu naquele dia de Maio. Duas matérias que parecem opostas e que, juntas, fazem Portugal.",
-      "Pousei a câmara durante uns minutos só para ouvir. Não havia nada para ouvir. Era exatamente isso o som.",
+      "Estávamos sentadas na esplanada há já algum tempo quando percebi que a luz tinha mudado. Caía de lado, dourada e ligeiramente cansada, a luz das cinco da tarde de setembro. Peguei na câmara sem dizer nada.",
+      "Ela estava com o olhar algures à minha esquerda — naquele estado de presença ausente que acontece quando estamos bem com alguém e não há necessidade de encher o silêncio. Foi exatamente aí que disparei.",
+      "Há retratos que são sobre a cara. Este é sobre o estado. A cara está lá, claro — mas o que me interessa é aquela qualidade particular do ar à sua volta, que diz: esta pessoa está sossegada, e eu estava a tempo de registar isso.",
     ],
-    photoSrc: villageAlley,
-    photoTitle: "Onde o granito encontra o azul",
+    photoSrc: retratoEsplanada,
+    photoTitle: "Retrato na esplanada, setembro",
     relatedCategory: "retratos",
-    place: "Monsanto",
-    time: "11:00",
-    climate: "vento frio",
   },
   {
-    slug: "ocaso-atlantico",
-    date: "2022-01-29",
-    title: "Cinco minutos antes do escuro",
-    excerpt: "Toda a gente fotografa o pôr do sol. Eu prefiro o instante seguinte, quando o céu fica rosa e ninguém olha.",
+    slug: "ribeiro-e-musgo",
+    date: "2025-06-29",
+    title: "O sítio onde o tempo não tem pressa",
+    excerpt: "Encontrei um ribeiro com pedras tão cobertas de musgo que parecia um lugar inventado. Fiquei ali mais tempo do que devia.",
     body: [
-      "A Costa da Caparica em Janeiro é outra coisa — vazia, fria, generosa. Cheguei perto da hora dourada já cansada, mas há uma luz que obriga a continuar.",
-      "Esperei o sol descer e, em vez de guardar a câmara, fiquei mais cinco minutos. Foi nesses minutos que aconteceu: o céu desbotou para um pêssego suave, o mar tornou-se espelho, e duas pessoas apareceram, do nada, a caminhar na areia molhada.",
-      "Há uma coisa que aprendi: o melhor da fotografia de paisagem está quase sempre depois do momento óbvio.",
+      "Tinha saído cedo para uma caminhada sem destino certo — o melhor tipo. No meio de um bosque que não estava no mapa de ninguém, o ruído da água apareceu antes do ribeiro. Segui-o.",
+      "As pedras estavam completamente cobertas de musgo verde-escuro, húmido, quase luminoso na sombra. A água não corria depressa — escorregava, devagar, como se também soubesse que não havia razão para ir mais rápido. Baixei-me e fiquei assim, com a câmara rente às pedras, à escuta.",
+      "Passei ali uma hora. Não fiz muitas fotografias — quando um lugar é assim, a câmara às vezes atrapalha. Mas esta ficou, e sempre que a vejo ouço o ribeiro de novo.",
     ],
-    photoSrc: sunsetBeach,
-    photoTitle: "Cinco minutos antes do escuro",
+    photoSrc: ribeiroMusgo,
+    photoTitle: "Ribeiro com musgo no bosque",
     relatedCategory: "natureza",
-    place: "Costa da Caparica",
-    time: "17:45",
-    climate: "frio · vento",
   },
   {
-    slug: "coroa-de-agua",
-    date: "2023-08-15",
-    title: "Uma coroa que dura um milésimo",
-    excerpt: "Há formas que existem durante menos tempo do que levamos a piscá-los. Esta é uma delas.",
+    slug: "barco-no-douro",
+    date: "2026-01-17",
+    title: "O barco que ninguém conduzia",
+    excerpt: "Estava ancorado, sozinho, num canto do Douro onde a luz da manhã chegava com atraso. Parecia esperar por algo que nunca ia chegar.",
     body: [
-      "Esta é uma fotografia simples e absurdamente difícil. Quis registar uma coisa que ninguém vê — a forma que a água faz quando algo cai sobre ela, antes de voltar a ser superfície.",
-      "Montei a câmara num pequeno tripé à beira do tanque, pus o disparo em rajada e fui atirando pedras com a mão livre. Disparei. Repetimos umas trinta vezes. A maioria resultou em nada — um respingo desfocado, um enquadramento torto, um milésimo de segundo de atraso.",
-      "No final, escolhi este enquadramento: a coroa estava perfeita, com os respingos suspensos como se o tempo tivesse parado para posar. É uma fotografia que me lembra que paciência também é luz.",
+      "Janeiro no Porto tem uma qualidade de luz que não existe noutros meses nem noutras cidades. É uma luz fria mas não hostil — uma luz que não promete calor mas também não o nega. Fui ao Douro cedo, antes dos turistas e dos rabelos de tour.",
+      "O barco estava lá, amarrado a um cais de pedra, pintado de vermelho-escuro que já não era bem vermelho. A água à sua volta refletia o céu branco com aquela perfeição ligeiramente perturbadora dos dias sem vento.",
+      "Não há ninguém nesta fotografia — e é exatamente isso que me interessa nela. O barco existe, o cais existe, o rio existe. Mas o tempo parou. Há imagens que são sobre a ausência, e esta é uma delas.",
     ],
-    photoSrc: waterSplash,
-    photoTitle: "Uma coroa que dura um milésimo",
-    relatedCategory: "natureza",
-    place: "jardim",
-    time: "14:00",
-    climate: "sol direto",
+    photoSrc: barcoDouro,
+    photoTitle: "Barco ancorado no Douro, janeiro",
+    relatedCategory: "urbanas",
   },
 ];
 
