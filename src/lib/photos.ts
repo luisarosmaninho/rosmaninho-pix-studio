@@ -8,6 +8,16 @@ import sunsetBeach from "@/assets/sunset-beach.jpg";
 import waterfall from "@/assets/waterfall.jpg";
 import waterSplash from "@/assets/water-splash.jpg";
 import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
+import quedaAgua from "@/assets/queda-agua.jpg";
+import ribeiroMusgo from "@/assets/ribeiro-musgo.jpg";
+import portoDouro from "@/assets/porto-douro.jpg";
+import geladoBolacha from "@/assets/gelado-bolacha.jpg";
+import fioAgua from "@/assets/fio-agua.jpg";
+import risottoCourgette from "@/assets/risotto-courgette.jpg";
+import sandesRibs from "@/assets/sandes-ribs.jpg";
+import waffleOvo from "@/assets/waffle-ovo.jpg";
+import ovosMexidos from "@/assets/ovos-mexidos.jpg";
+import arcoCoimbra from "@/assets/arco-coimbra.jpg";
 
 export type CategorySlug = "urbanas" | "natureza" | "retratos" | "comida";
 
