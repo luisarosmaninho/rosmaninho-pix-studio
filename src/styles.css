@@ -191,17 +191,18 @@
   }
 
   /* Cursor */
-  .cursor-dot, .cursor-ring {
+  .cursor-dot {
     position: fixed;
     top: 0; left: 0;
     pointer-events: none;
     z-index: 9999;
+    width: 6px; height: 6px;
     border-radius: 9999px;
+    background: var(--copper);
     transform: translate(-50%, -50%);
-    mix-blend-mode: difference;
+    mix-blend-mode: normal;
+    transition: transform 0.12s ease;
   }
-  .cursor-dot { width: 5px; height: 5px; background: #fff; transition: transform 0.15s ease; }
-  .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.45); transition: transform 0.35s ease, width 0.3s, height 0.3s; }
 
   /* Hover image zoom */
   .hover-zoom { overflow: hidden; }

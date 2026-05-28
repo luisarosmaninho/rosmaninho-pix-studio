@@ -1,0 +1,146 @@
+Quero manter a identidade atual do website porque a direção artística já está muito forte. O objetivo NÃO é refazer o site do zero, mas sim elevar a experiência visual e emocional para um nível mais cinematográfico e editorial.
+
+MANTER:
+
+* a paleta creme/bege atual
+* os tons castanhos quentes
+* a tipografia elegante e editorial
+* o logo exatamente como está
+* a identidade minimalista
+* o estilo “arquivo artístico”
+* o layout clean
+* o conceito de journal/diário
+* o ambiente calmo e sofisticado
+* o uso de muito espaço vazio
+* a sensação de revista/livro
+* o tom poético e emocional dos textos
+* o design refinado da página de contacto
+* a direção visual das galerias
+* a estética “quiet luxury”
+
+NÃO quero:
+
+* cores vibrantes
+* efeitos exagerados
+* animações rápidas
+* aparência tecnológica
+* estilo corporate
+* aparência de template
+* design demasiado moderno/futurista
+* elementos gaming
+* demasiados efeitos visuais
+
+QUERO ALTERAR E MELHORAR:
+
+1. EXPERIÊNCIA GERAL
+   Quero que o website pareça mais cinematográfico, mais lento e mais imersivo.
+
+Adicionar:
+
+* smooth scrolling premium
+* transições mais suaves
+* reveals lentos
+* animações mais elegantes
+* efeitos cinematográficos subtis
+* sensação de filme analógico
+
+2. INTRO DO WEBSITE
+   Criar uma intro elegante antes da homepage:
+
+* fundo minimal
+* logo aparece lentamente
+* frase emocional
+* fade suave para o site
+
+3. HOMEPAGE
+   Melhorar a hero section para parecer mais impactante:
+
+* imagens mais cinematográficas
+* melhor composição visual
+* transições mais suaves
+* pequenos detalhes editoriais
+* sensação mais artística
+
+4. JOURNAL
+   Transformar o journal numa experiência mais editorial:
+
+* layout tipo livro/revista
+* imagens fullscreen
+* títulos maiores
+* mais espaço respirado
+* metadata artística
+* coordenadas
+* hora/local
+* notas poéticas
+
+5. PORTFÓLIO
+   Melhorar a galeria:
+
+* layout mais editorial
+* composições assimétricas
+* hover elegante
+* transições suaves
+* lightbox premium fullscreen
+* experiência mais imersiva
+
+6. AUTORA
+   Melhorar a página “Autora”:
+
+* layout mais emocional
+* storytelling visual
+* frases destacadas
+* secção sobre processo criativo
+* texto mais íntimo
+* imagem cinematográfica maior
+
+7. MICRODETALHES
+   Adicionar:
+
+* cursor personalizado
+* grain subtil
+* texturas analógicas leves
+* progress bar elegante
+* hover refinado
+* blur subtil na navbar
+* animações de fade cinematográficas
+
+8. NOTAS DE CAMPO
+   Adicionar uma nova secção chamada:
+   “Notas de Campo”
+
+Com:
+
+* pensamentos curtos
+* observações poéticas
+* frases pequenas
+* reflexões sobre fotografia, luz, cidades e momentos
+
+9. SOM AMBIENTE OPCIONAL
+   Adicionar uma opção discreta de som ambiente:
+
+* vento
+* cidade distante
+* ruído analógico
+* gaivotas
+* passos
+
+Muito subtil e opcional.
+
+10. MOBILE
+    Melhorar bastante a experiência mobile:
+
+* layout editorial adaptado
+* animações suaves
+* melhor espaçamento
+* menu fullscreen elegante
+* experiência premium em telemóvel
+
+O objetivo final é que o website pareça:
+
+* um arquivo emocional
+* um diário visual
+* uma galeria artística moderna
+* um filme silencioso
+* uma marca editorial premium real
+
+A fotografia deve continuar a ser sempre o elemento principal.

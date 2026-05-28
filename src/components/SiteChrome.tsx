@@ -19,29 +19,15 @@ export function SmoothScroll() {
 /* ---------------- Custom cursor ---------------- */
 export function CustomCursor() {
   const dot = useRef<HTMLDivElement>(null);
-  const ring = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    let rx = 0, ry = 0, x = 0, y = 0;
     const move = (e: MouseEvent) => {
-      x = e.clientX; y = e.clientY;
-      if (dot.current) dot.current.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
-    };
-    const tick = () => {
-      rx += (x - rx) * 0.18; ry += (y - ry) * 0.18;
-      if (ring.current) ring.current.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
-      requestAnimationFrame(tick);
+      if (dot.current) dot.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
     };
     window.addEventListener("mousemove", move);
-    tick();
     return () => window.removeEventListener("mousemove", move);
   }, []);
   if (typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches) return null;
-  return (
-    <>
-      <div ref={ring} className="cursor-ring hidden md:block" />
-      <div ref={dot} className="cursor-dot hidden md:block" />
-    </>
-  );
+  return <div ref={dot} className="cursor-dot hidden md:block" />;
 }
 
 /* ---------------- Loading screen ---------------- */

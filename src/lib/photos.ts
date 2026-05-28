@@ -66,7 +66,7 @@ export const photos: Photo[] = [
   { src: geladoBolacha, title: "Sorriso de bolacha", year: "2023", category: "comida", orientation: "landscape" },
   { src: risottoCourgette, title: "Risotto de curgete", year: "2022", category: "comida", orientation: "landscape" },
   { src: sandesRibs, title: "Sandes & batatas", year: "2022", category: "comida", orientation: "landscape" },
-  { src: waffleOvo, title: "Waffle salgada", year: "2023", category: "comida", orientation: "landscape" },
+  { src: waffleOvo, title: "Panqueca salgada", year: "2023", category: "comida", orientation: "landscape" },
   { src: ovosMexidos, title: "Mexidos com tomate", year: "2023", category: "comida", orientation: "landscape" },
 ];
 
