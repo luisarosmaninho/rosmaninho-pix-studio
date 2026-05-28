@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photos, categories, photosByCategory } from "@/lib/photos";
+import { journal, formatJournalDate } from "@/lib/journal";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 import river from "@/assets/river.jpg";
 import villageAlley from "@/assets/village-alley.jpg";
 import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
+import waterSplash from "@/assets/water-splash.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,9 +23,8 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-import type { Variants } from "framer-motion";
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: "easeOut" } },
 };
 
@@ -32,7 +34,7 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
       variants={fadeUp}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.15 }}
       className={className}
     >
       {children}
@@ -41,200 +43,191 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 }
 
 function HomePage() {
-  const portfolioCover = [
-    { src: portoStreet, span: "row-span-2" },
-    { src: sunsetBeach, span: "" },
-    { src: river, span: "" },
-    { src: villageAlley, span: "row-span-2" },
-    { src: coimbraSkyline, span: "" },
-    { src: photos[2].src, span: "" },
+  // Selecção masonry — alturas variadas para ritmo
+  const masonry = [
+    { src: portoStreet, h: "h-[520px]", cat: "Urbanas", title: "Rua da Madrugada" },
+    { src: sunsetBeach, h: "h-[360px]", cat: "Natureza", title: "Ocaso atlântico" },
+    { src: villageAlley, h: "h-[440px]", cat: "Retratos", title: "Pedra e céu" },
+    { src: river, h: "h-[380px]", cat: "Natureza", title: "À flor da água" },
+    { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas", title: "Telhados de Coimbra" },
+    { src: waterSplash, h: "h-[420px]", cat: "Comida", title: "Coroa de água" },
   ];
+
+  const latestEntry = journal[0];
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       <SiteNav variant="overlay" />
 
-      {/* HERO */}
-      <section className="relative h-screen w-full overflow-hidden">
+      {/* ============ HERO — editorial, oversized ============ */}
+      <section className="relative min-h-screen w-full overflow-hidden bg-foreground">
         <motion.img
           src={portoStreet}
           alt="Rosmaninho Fotografia"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-80"
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 3, ease: "easeOut" }}
+          transition={{ duration: 3.4, ease: "easeOut" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/40 to-foreground/85" />
+
+        {/* Metadata superior */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.2 }}
+          className="absolute top-24 inset-x-0 px-6 md:px-12 flex justify-between text-cream/70 text-[10px] tracking-[0.4em] uppercase"
+        >
+          <span>N.º 001 · Vol. I</span>
+          <span className="hidden md:inline">40°12'N · 8°25'W</span>
+          <span>MMXXVI</span>
+        </motion.div>
+
+        {/* Headline */}
+        <div className="relative min-h-screen flex flex-col justify-end pb-24 md:pb-28 px-6 md:px-12">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            className="font-script text-3xl md:text-5xl text-gold mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.4 }}
+            className="font-mono-label text-copper mb-6"
           >
-            Rosmaninho Fotografia
+            Arquivo lento · Coimbra
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.4, delay: 1.5, ease: "easeOut" }}
-            className="font-display text-cream text-4xl md:text-7xl lg:text-8xl max-w-5xl leading-[1.05]"
+            transition={{ duration: 1.4, delay: 1.6, ease: "easeOut" }}
+            className="font-display text-cream text-[64px] leading-[0.95] md:text-[140px] lg:text-[180px] max-w-6xl tracking-tight"
           >
-            Onde o Tempo Para<br />e a Emoção Fica.
+            Onde o tempo<br />
+            <span className="font-italic-serif text-copper">para</span>, e a emoção fica.
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 2.1 }}
-            className="mt-8 max-w-2xl text-cream/80 text-base md:text-lg font-light"
-          >
-            Um arquivo lento de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e caderno.
-          </motion.p>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 2.4 }}
-            className="mt-12 flex flex-col sm:flex-row gap-4"
+            transition={{ duration: 1, delay: 2.1 }}
+            className="mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
           >
-            <Link to="/portfolio" className="btn-ghost-light">Ver as séries</Link>
-            <Link to="/diario" className="btn-solid-dark bg-cream text-foreground hover:bg-gold hover:text-cream">Ler o diário</Link>
+            <p className="max-w-md text-cream/75 text-base leading-relaxed">
+              Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/portfolio" className="btn-ghost-light">Ver séries</Link>
+              <Link to="/diario" className="btn-copper">Ler diário</Link>
+            </div>
           </motion.div>
         </div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 3, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-cream/60 text-[10px] uppercase tracking-[0.4em]"
+          transition={{ delay: 2.6, duration: 1 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-cream/50 text-[10px] uppercase tracking-[0.5em]"
         >
-          ↓ Descer
+          desce devagar ↓
         </motion.div>
       </section>
 
-      {/* AUTORA */}
-      <Section className="px-6 md:px-12 py-32 md:py-44 bg-cream">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-5 relative">
-            <div className="hover-zoom aspect-[3/4] relative">
-              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
-            </div>
-            <p className="font-script text-3xl text-gold absolute -bottom-6 -right-2 md:right-6 bg-cream px-4 py-2">Luísa</p>
-          </div>
-          <div className="md:col-span-7 md:pl-8">
-            <p className="font-mono-label text-gold mb-4">A autora</p>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
-              Fotografo o que <span className="italic text-gold">me obriga a parar.</span>
-            </h2>
-            <p className="mt-8 text-foreground/80 leading-relaxed max-w-xl">
-              Sou a Luísa Rosmaninho. Vivo em Coimbra, ando muito a pé e tenho sempre uma câmara comigo. Esta página é o meu caderno aberto — uma coleção de imagens que vou fazendo entre cidades, serras, mesas e rostos. Sem clientes, sem pressa, só atenção.
-            </p>
+      {/* ============ MANIFESTO breve ============ */}
+      <Section className="px-6 md:px-12 py-28 md:py-40 bg-background">
+        <div className="max-w-5xl mx-auto">
+          <p className="font-mono-label text-copper mb-8">§ 01 — Manifesto</p>
+          <p className="font-display text-3xl md:text-5xl lg:text-6xl leading-[1.08] tracking-tight">
+            Não fotografo para mostrar — fotografo para <span className="font-italic-serif text-copper">demorar</span>. Cada imagem é uma forma educada de pedir ao mundo que <span className="font-italic-serif">fique</span> mais um momento.
+          </p>
+        </div>
+      </Section>
 
-            <div className="mt-12 grid grid-cols-3 gap-6 max-w-md">
+      {/* ============ AUTORA — 7/5 asymmetric ============ */}
+      <Section className="px-6 md:px-12 py-28 md:py-40 bg-cream">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-end">
+          <div className="md:col-span-5 order-2 md:order-1">
+            <p className="font-mono-label text-copper mb-6">§ 02 — Autora</p>
+            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[0.98]">
+              Sou a <span className="font-italic-serif text-copper">Luísa</span>,
+              <br />ando muito a pé.
+            </h2>
+            <div className="mt-10 space-y-5 text-foreground/75 max-w-md leading-relaxed">
+              <p>
+                Vivo em Coimbra, tenho sempre uma câmara comigo, e o passo de quem prefere chegar mais tarde. Este sítio é o meu caderno aberto — sem clientes, sem pressa, só atenção ao que insiste em ficar.
+              </p>
+              <p>
+                Trabalho em quatro séries paralelas. Vão crescendo à medida que ando, observo e disparo.
+              </p>
+            </div>
+
+            <div className="mt-12 grid grid-cols-3 gap-6 border-t border-foreground/15 pt-8 max-w-md">
               {[
                 { n: "04", l: "Séries" },
                 { n: photos.length.toString().padStart(2, "0"), l: "Imagens" },
-                { n: "+5", l: "Anos" },
+                { n: "VI", l: "Anos" },
               ].map((s) => (
                 <div key={s.l}>
-                  <p className="font-display text-4xl md:text-5xl text-gold">{s.n}</p>
+                  <p className="font-display text-5xl md:text-6xl text-copper">{s.n}</p>
                   <p className="font-mono-label mt-2">{s.l}</p>
                 </div>
               ))}
             </div>
 
-            <Link to="/sobre" className="mt-10 inline-block text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-gold hover:border-gold transition-colors">
+            <Link to="/sobre" className="mt-12 inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Conhecer a autora →
             </Link>
           </div>
+
+          <div className="md:col-span-7 order-1 md:order-2 relative">
+            <div className="hover-zoom warm-tone aspect-[4/5] relative">
+              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
+            </div>
+            <div className="absolute -bottom-4 -left-4 md:-left-8 bg-cream px-5 py-3 border border-foreground/10">
+              <p className="font-mono-label text-foreground/60">[ Autorretrato · Monsanto · 2023 ]</p>
+            </div>
+          </div>
         </div>
       </Section>
 
-      {/* SÉRIES PRÉVIA (grid) */}
-      <Section className="px-6 md:px-12 py-32 md:py-44">
+      {/* ============ SÉRIES — masonry editorial ============ */}
+      <Section className="px-6 md:px-12 py-28 md:py-40">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
             <div>
-              <p className="font-mono-label text-gold mb-4">Arquivo</p>
-              <h2 className="font-display text-4xl md:text-6xl">As <span className="italic">séries</span>.</h2>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {categories.map((c) => (
-                <Link
-                  key={c.slug}
-                  to="/portfolio/$category"
-                  params={{ category: c.slug }}
-                  className="text-[11px] uppercase tracking-[0.28em] border border-foreground/20 px-4 py-2 hover:bg-foreground hover:text-background transition-colors"
-                >
-                  {c.title}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[240px]">
-            {portfolioCover.map((p, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
-                className={`hover-zoom relative ${p.span}`}
-              >
-                <img src={p.src} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-16 text-center">
-            <Link to="/portfolio" className="inline-block text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-gold hover:border-gold transition-colors">
-              Ver o arquivo completo →
-            </Link>
-          </div>
-        </div>
-      </Section>
-
-      {/* SÉRIES VISUAIS — lista editorial em vez de "Serviços" */}
-      <Section className="px-6 md:px-12 py-32 md:py-44 bg-foreground text-cream">
-        <div className="max-w-6xl mx-auto">
-          <div className="md:flex md:items-end md:justify-between gap-12 mb-20">
-            <div>
-              <p className="font-mono-label text-gold mb-4">Séries visuais</p>
-              <h2 className="font-display text-4xl md:text-6xl text-cream">
-                Quatro maneiras de <span className="italic text-gold">olhar</span>.
+              <p className="font-mono-label text-copper mb-6">§ 03 — Séries</p>
+              <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
+                Quatro maneiras<br /><span className="font-italic-serif text-copper">de olhar</span>.
               </h2>
             </div>
-            <p className="mt-6 md:mt-0 max-w-sm text-cream/70 text-sm leading-relaxed">
-              O arquivo organiza-se em quatro séries abertas. Nenhuma está fechada — vão crescendo à medida que ando, observo e disparo.
+            <p className="max-w-sm text-foreground/70 text-sm leading-relaxed">
+              Urbanas, Natureza, Retratos, Comida. Quatro pastas abertas — nenhuma fechada — que se vão tocando ao longo dos anos.
             </p>
           </div>
 
-          <ul className="flex flex-col">
+          {/* Categories list */}
+          <ul className="border-t border-foreground/15 mb-20">
             {categories.map((c, i) => {
               const cover = photosByCategory(c.slug)[0];
               const count = photosByCategory(c.slug).length;
               return (
-                <li key={c.slug} className={i === 0 ? "border-y border-cream/15" : "border-b border-cream/15"}>
+                <li key={c.slug} className="border-b border-foreground/15">
                   <Link
                     to="/portfolio/$category"
                     params={{ category: c.slug }}
-                    className="group grid grid-cols-12 gap-6 py-10 md:py-14 items-center"
+                    className="group grid grid-cols-12 gap-6 py-8 md:py-10 items-center"
                   >
                     <div className="col-span-2 md:col-span-1">
-                      <p className="font-mono-label text-gold">0{i + 1}</p>
+                      <p className="font-mono-label text-copper">0{i + 1}</p>
                     </div>
                     <div className="col-span-10 md:col-span-5">
-                      <h3 className="font-display text-3xl md:text-5xl text-cream group-hover:text-gold transition-colors">
+                      <h3 className="font-display text-4xl md:text-6xl group-hover:text-copper transition-colors duration-500 leading-none">
                         {c.title}
                       </h3>
                     </div>
-                    <div className="col-span-12 md:col-span-4 text-cream/70 text-sm leading-relaxed">
+                    <div className="col-span-12 md:col-span-4 text-foreground/65 text-sm leading-relaxed">
                       {c.description}
                     </div>
                     <div className="col-span-12 md:col-span-2 flex items-center justify-between md:justify-end gap-6">
-                      <span className="font-mono-label text-cream/50">{count} img</span>
+                      <span className="font-mono-label">{count} img</span>
                       {cover && (
-                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
                           <img src={cover.src} alt="" className="w-full h-full object-cover" />
                         </div>
                       )}
@@ -244,45 +237,86 @@ function HomePage() {
               );
             })}
           </ul>
+
+          {/* Masonry preview */}
+          <div className="masonry">
+            {masonry.map((p, i) => (
+              <motion.figure
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 1, delay: (i % 3) * 0.12, ease: "easeOut" }}
+                className="hover-zoom warm-tone relative group"
+              >
+                <div className={`${p.h} w-full relative overflow-hidden`}>
+                  <img src={p.src} alt={p.title} className="absolute inset-0 h-full w-full object-cover" />
+                </div>
+                <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <p className="font-mono-label text-copper">[ {p.cat} ]</p>
+                  <p className="font-display text-2xl text-cream mt-1">{p.title}</p>
+                </figcaption>
+              </motion.figure>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
+              Ver o arquivo completo →
+            </Link>
+          </div>
         </div>
       </Section>
 
-      {/* MARQUEE */}
-      <section className="overflow-hidden py-16 border-y border-foreground/10 bg-cream">
-        <div className="marquee flex whitespace-nowrap font-display text-6xl md:text-8xl italic text-foreground/30">
+      {/* ============ MARQUEE ============ */}
+      <section className="overflow-hidden py-14 border-y border-foreground/10 bg-cream">
+        <div className="marquee flex whitespace-nowrap font-display text-[80px] md:text-[140px] text-copper/60 leading-none">
           {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="mx-12">Urbanas · Natureza · Retratos · Comida · </span>
+            <span key={i} className="mx-10">
+              Urbanas <span className="font-italic-serif text-foreground/40">·</span> Natureza <span className="font-italic-serif text-foreground/40">·</span> Retratos <span className="font-italic-serif text-foreground/40">·</span> Comida <span className="font-italic-serif text-foreground/40">·</span>
+            </span>
           ))}
         </div>
       </section>
 
-      {/* DIÁRIO TEASER */}
-      <Section className="px-6 md:px-12 py-32 md:py-44">
-        <div className="max-w-5xl mx-auto text-center">
-          <p className="font-mono-label text-gold mb-4">Diário</p>
-          <h2 className="font-display text-4xl md:text-6xl leading-tight">
-            Notas curtas sobre <span className="italic">algumas fotos</span>.
-          </h2>
-          <p className="mt-8 text-foreground/70 max-w-xl mx-auto">
-            Um caderno em aberto. Escrevo devagar, sobre o que estava a acontecer antes, durante e depois de uma imagem.
-          </p>
-          <Link to="/diario" className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
-            Abrir diário
-          </Link>
+      {/* ============ DIÁRIO — última entrada em destaque ============ */}
+      <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          <div className="md:col-span-7 hover-zoom warm-tone aspect-[4/3] relative">
+            <img src={latestEntry.photoSrc} alt={latestEntry.photoTitle} className="absolute inset-0 h-full w-full object-cover" />
+          </div>
+          <div className="md:col-span-5">
+            <p className="font-mono-label text-copper mb-6">§ 04 — Diário · última entrada</p>
+            <p className="font-mono-label text-cream/50 mb-4">{formatJournalDate(latestEntry.date)}</p>
+            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl text-cream leading-[0.98]">
+              {latestEntry.title}
+            </h2>
+            <p className="mt-8 text-cream/70 leading-relaxed">
+              {latestEntry.excerpt}
+            </p>
+            <div className="mt-12 flex flex-col sm:flex-row gap-4">
+              <Link to="/diario/$slug" params={{ slug: latestEntry.slug }} className="btn-copper">
+                Ler entrada
+              </Link>
+              <Link to="/diario" className="inline-flex items-center gap-3 border border-cream/40 px-7 py-3.5 text-[11px] uppercase tracking-[0.32em] text-cream hover:bg-cream hover:text-foreground transition-all duration-500">
+                Todas as entradas
+              </Link>
+            </div>
+          </div>
         </div>
       </Section>
 
-      {/* DIÁLOGO */}
-      <Section className="px-6 md:px-12 py-32 md:py-44 bg-cream">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="font-script text-4xl md:text-5xl text-gold mb-6">diálogo</p>
-          <h2 className="font-display text-4xl md:text-6xl leading-tight">
-            Se quiseres <span className="italic">falar</span>, escreve.
+      {/* ============ DIÁLOGO ============ */}
+      <Section className="px-6 md:px-12 py-32 md:py-44 bg-background">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="font-mono-label text-copper mb-6">§ 05 — Diálogo</p>
+          <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
+            Se quiseres <span className="font-italic-serif text-copper">falar</span>,<br />escreve devagar.
           </h2>
-          <p className="mt-8 text-foreground/70 max-w-xl mx-auto">
-            Não há sessões nem tabelas. Apenas uma conversa, se quiseres trocar impressões sobre uma imagem, um lugar ou uma ideia.
+          <p className="mt-10 text-foreground/70 max-w-xl mx-auto leading-relaxed">
+            Não há tabelas nem pacotes. Apenas uma conversa, sobre uma imagem, um lugar, uma ideia — ou uma cópia em papel que queiras ter à parede.
           </p>
-          <Link to="/contacto" className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-xs uppercase tracking-[0.28em] hover:bg-gold transition-colors duration-500">
+          <Link to="/contacto" className="mt-12 inline-block btn-copper">
             Iniciar diálogo
           </Link>
         </div>
