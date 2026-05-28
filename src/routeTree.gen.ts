@@ -15,6 +15,8 @@ import { Route as NotasRouteImport } from './routes/notas'
 import { Route as DiarioRouteImport } from './routes/diario'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
+import { Route as DiarioIndexRouteImport } from './routes/diario.index'
 import { Route as PortfolioCategoryRouteImport } from './routes/portfolio.$category'
 import { Route as DiarioSlugRouteImport } from './routes/diario.$slug'
 
@@ -48,6 +50,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortfolioRoute,
+} as any)
+const DiarioIndexRoute = DiarioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DiarioRoute,
+} as any)
 const PortfolioCategoryRoute = PortfolioCategoryRouteImport.update({
   id: '/$category',
   path: '/$category',
@@ -68,16 +80,18 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
+  '/diario/': typeof DiarioIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
-  '/diario': typeof DiarioRouteWithChildren
   '/notas': typeof NotasRoute
-  '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
+  '/diario': typeof DiarioIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +103,8 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
+  '/diario/': typeof DiarioIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,16 +117,18 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
+    | '/diario/'
+    | '/portfolio/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/contacto'
-    | '/diario'
     | '/notas'
-    | '/portfolio'
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
+    | '/diario'
+    | '/portfolio'
   id:
     | '__root__'
     | '/'
@@ -121,6 +139,8 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
+    | '/diario/'
+    | '/portfolio/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,6 +196,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/'
+      fullPath: '/portfolio/'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof PortfolioRoute
+    }
+    '/diario/': {
+      id: '/diario/'
+      path: '/'
+      fullPath: '/diario/'
+      preLoaderRoute: typeof DiarioIndexRouteImport
+      parentRoute: typeof DiarioRoute
+    }
     '/portfolio/$category': {
       id: '/portfolio/$category'
       path: '/$category'
@@ -195,10 +229,12 @@ declare module '@tanstack/react-router' {
 
 interface DiarioRouteChildren {
   DiarioSlugRoute: typeof DiarioSlugRoute
+  DiarioIndexRoute: typeof DiarioIndexRoute
 }
 
 const DiarioRouteChildren: DiarioRouteChildren = {
   DiarioSlugRoute: DiarioSlugRoute,
+  DiarioIndexRoute: DiarioIndexRoute,
 }
 
 const DiarioRouteWithChildren =
@@ -206,10 +242,12 @@ const DiarioRouteWithChildren =
 
 interface PortfolioRouteChildren {
   PortfolioCategoryRoute: typeof PortfolioCategoryRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
 
 const PortfolioRouteChildren: PortfolioRouteChildren = {
   PortfolioCategoryRoute: PortfolioCategoryRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
 }
 
 const PortfolioRouteWithChildren = PortfolioRoute._addFileChildren(
