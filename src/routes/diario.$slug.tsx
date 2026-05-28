@@ -33,15 +33,10 @@ function stamp(date: string) {
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
-  // duas imagens secundárias para a sequência assimétrica
+  // duas imagens secundárias da mesma categoria — sem fallback para outras categorias
   const extras = photos
     .filter((p) => p.src !== entry.photoSrc && p.category === entry.relatedCategory)
     .slice(0, 2);
-  // fallback se a categoria não tiver duas
-  while (extras.length < 2) {
-    const more = photos.find((p) => p.src !== entry.photoSrc && !extras.includes(p));
-    if (more) extras.push(more); else break;
-  }
 
   return (
     <div className="bg-background text-foreground">
