@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
-import { notas, formatNotaDate, type Nota, type NotaSize } from "@/lib/notas";
+import { notas, type Nota, type NotaSize } from "@/lib/notas";
 
 export const Route = createFileRoute("/notas")({
   head: () => ({
@@ -48,13 +48,10 @@ function NotaCard({ nota, index }: { nota: Nota; index: number }) {
       className={`break-inside-avoid mb-3 group cursor-default ${isFragment ? "transition-opacity duration-700" : ""}`}
     >
       <div className={`border border-foreground/8 ${config.padding}`}>
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-5">
+        {/* Tag */}
+        <div className="mb-5">
           <span className={`font-mono-label text-copper ${isFragment ? "opacity-50" : ""}`}>
             {nota.tag}
-          </span>
-          <span className="font-mono-label text-foreground/28 text-right">
-            {formatNotaDate(nota.date)}
           </span>
         </div>
 
@@ -62,13 +59,6 @@ function NotaCard({ nota, index }: { nota: Nota; index: number }) {
         <p className={`font-display italic leading-[1.45] text-foreground/90 ${config.textSize}`}>
           {nota.text}
         </p>
-
-        {/* Location / time metadata */}
-        {(nota.location || nota.time) && (
-          <p className="font-mono-label text-foreground/22 mt-5">
-            {[nota.location, nota.time].filter(Boolean).join(" · ")}
-          </p>
-        )}
 
         {/* Accent line */}
         <div className="mt-6 w-6 h-px bg-copper/25 group-hover:w-12 transition-all duration-700" />
@@ -79,8 +69,7 @@ function NotaCard({ nota, index }: { nota: Nota; index: number }) {
 
 function NotasPage() {
   const [activeTag, setActiveTag] = useState<Nota["tag"] | null>(null);
-  const sorted = [...notas].sort((a, b) => b.date.localeCompare(a.date));
-  const visible = activeTag ? sorted.filter((n) => n.tag === activeTag) : sorted;
+  const visible = activeTag ? notas.filter((n) => n.tag === activeTag) : notas;
 
   return (
     <div className="min-h-screen bg-background text-foreground">

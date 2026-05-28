@@ -4,7 +4,7 @@ import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { photos, categories, photosByCategory } from "@/lib/photos";
-import { journal, formatJournalDate } from "@/lib/journal";
+import { journal } from "@/lib/journal";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 import river from "@/assets/river.jpg";
@@ -186,9 +186,6 @@ function HomePage() {
             <div className="hover-zoom warm-tone aspect-[4/5] relative">
               <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
             </div>
-            <div className="absolute -bottom-4 -left-4 md:-left-8 bg-cream px-5 py-3 border border-foreground/10">
-              <p className="font-mono-label text-foreground/60">[ Autorretrato · Monsanto · 2023 ]</p>
-            </div>
           </div>
         </div>
       </Section>
@@ -295,7 +292,6 @@ function HomePage() {
           </div>
           <div className="md:col-span-5">
             <p className="font-mono-label text-copper mb-6">§ 04 — Diário · última entrada</p>
-            <p className="font-mono-label text-cream/50 mb-4">{formatJournalDate(latestEntry.date)}</p>
             <h2 className="font-display text-5xl md:text-6xl lg:text-7xl text-cream leading-[0.98]">
               {latestEntry.title}
             </h2>

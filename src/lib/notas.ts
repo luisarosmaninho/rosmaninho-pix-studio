@@ -2,119 +2,86 @@ export type NotaSize = "large" | "medium" | "small" | "fragment";
 
 export type Nota = {
   id: string;
-  date: string;
   text: string;
   tag: "luz" | "cidade" | "tempo" | "silêncio" | "água" | "olhar";
   size: NotaSize;
-  location?: string;
-  time?: string;
 };
 
 export const notas: Nota[] = [
   {
     id: "luz-janela",
-    date: "2026-04-03",
-    text: "A luz de fim de tarde não pede licença. Entra, pousa no chão como quem conhece a casa, e vai-se antes que te lembres de agradecer.",
+    text: "Não sei bem porque parei ali. A luz estava a atravessar o estore de uma forma que não me dava descanso.",
     tag: "luz",
     size: "large",
-    location: "Coimbra",
-    time: "18:40",
   },
   {
     id: "cidade-vazia",
-    date: "2026-03-22",
-    text: "Há uma versão da cidade que só existe antes das oito da manhã. Mais honesta. Menos ensaiada.",
+    text: "Às sete da manhã a cidade é de outra pessoa. Nunca percebi de quem.",
     tag: "cidade",
     size: "medium",
-    location: "Porto",
-    time: "07:08",
   },
   {
     id: "camara-pausa",
-    date: "2026-03-09",
-    text: "Antes de disparar, paro. Esse segundo de pausa é metade da fotografia.",
+    text: "Parei. Respirei. Disparei. Não sei qual dos três fez a fotografia.",
     tag: "olhar",
     size: "small",
   },
   {
     id: "rio-espelho",
-    date: "2026-02-18",
-    text: "O rio não reflete o céu. Inventa uma versão melhor dele.",
+    text: "A água não estava parada. Parecia.",
     tag: "água",
     size: "fragment",
-    location: "Mondego",
   },
   {
     id: "silencio-monsanto",
-    date: "2025-12-14",
-    text: "Em Monsanto não há silêncio completo — há granito a respirar. Aprende-se a distinguir.",
+    text: "Sentei-me numa pedra e fiquei quieta até o sítio se esquecer de mim.",
     tag: "silêncio",
     size: "medium",
-    location: "Monsanto",
-    time: "11:15",
   },
   {
     id: "sombra-hora",
-    date: "2025-11-30",
-    text: "A sombra muda a cada hora. Fotografar o mesmo sítio ao meio-dia e às quatro da tarde é fotografar dois lugares diferentes.",
+    text: "Volto ao mesmo sítio a horas diferentes só para ver o que a luz decide fazer.",
     tag: "luz",
     size: "medium",
   },
   {
     id: "tempo-foto",
-    date: "2025-10-07",
-    text: "Uma fotografia não congela o tempo. Faz-lhe uma pergunta que ele não pode responder.",
+    text: "Há dias em que não fotografo. Fico só a ver. Não sei se é a mesma coisa.",
     tag: "tempo",
     size: "large",
-    location: "Coimbra",
-    time: "14:22",
   },
   {
     id: "rua-molhada",
-    date: "2025-09-19",
-    text: "As ruas molhadas dobram a cidade. De repente há duas versões de tudo — e a de baixo é sempre mais suave.",
+    text: "Choveu. A rua ficou com dois céus. Fiquei com dois problemas de enquadramento.",
     tag: "cidade",
     size: "small",
-    location: "Lisboa",
-    time: "19:10",
   },
   {
     id: "agua-queda",
-    date: "2025-08-02",
-    text: "A água que cai não pensa. É a única coisa no mundo completamente livre de intenção.",
+    text: "A água caía. Não fiz nada. Às vezes é isso.",
     tag: "água",
     size: "fragment",
   },
   {
     id: "olhar-cansaco",
-    date: "2025-07-14",
-    text: "Os melhores olhares são os distraídos. Quando alguém esquece que está a ser fotografado, aparece.",
+    text: "Quando alguém esquece que existe câmara, aparece. É a única regra que não falha.",
     tag: "olhar",
     size: "medium",
   },
   {
     id: "fim-dia",
-    date: "2025-06-21",
-    text: "O solstício de verão. A luz durou tanto que me esqueci de fotografar — fiquei só a ver.",
+    text: "Fiquei até ao fim da luz. Depois fiquei mais um pouco, no escuro, por inércia.",
     tag: "luz",
     size: "large",
-    location: "Peniche",
-    time: "21:03",
   },
   {
     id: "pausa-coimbra",
-    date: "2025-05-08",
-    text: "Coimbra desce para o rio como quem não quer. Devagar, de vielas, com pausas para o coração.",
+    text: "Coimbra tem escadas para todo o lado. Eventualmente o coração aceita.",
     tag: "cidade",
     size: "small",
-    location: "Coimbra",
   },
 ];
 
 export function notasByTag(tag: Nota["tag"]) {
   return notas.filter((n) => n.tag === tag);
-}
-
-export function formatNotaDate(iso: string) {
-  return new Date(iso).toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" });
 }
