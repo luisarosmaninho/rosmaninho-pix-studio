@@ -3,8 +3,13 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photos, categories, type CategorySlug, type Photo } from "@/lib/photos";
+import { getPhotoConfig } from "@/lib/photo-config-fns";
 
 export const Route = createFileRoute("/portfolio/")({
+  loader: async () => {
+    const config = await getPhotoConfig();
+    return { config };
+  },
   head: () => ({
     meta: [
       { title: "Portfólio — Rosmaninho Fotografia" },
@@ -16,10 +21,27 @@ export const Route = createFileRoute("/portfolio/")({
   component: PortfolioPage,
 });
 
+function applyConfig(all: Photo[], config: { hidden: string[]; order: string[] }): Photo[] {
+  let result = all.filter((p) => !config.hidden.includes(p.id));
+  if (config.order.length > 0) {
+    result = [...result].sort((a, b) => {
+      const ai = config.order.indexOf(a.id);
+      const bi = config.order.indexOf(b.id);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+  return result;
+}
+
 function PortfolioPage() {
+  const { config } = Route.useLoaderData();
+  const allPhotos = applyConfig(photos, config);
   const [filter, setFilter] = useState<CategorySlug | "all">("all");
   const [lightbox, setLightbox] = useState<Photo | null>(null);
-  const visible = filter === "all" ? photos : photos.filter((p) => p.category === filter);
+  const visible = filter === "all" ? allPhotos : allPhotos.filter((p) => p.category === filter);
 
   const lightboxIndex = lightbox ? visible.indexOf(lightbox) : -1;
 

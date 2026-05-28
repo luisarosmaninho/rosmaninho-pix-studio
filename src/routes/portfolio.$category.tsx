@@ -3,11 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { categories, getCategory, photosByCategory, type CategorySlug, type Photo } from "@/lib/photos";
+import { getPhotoConfig } from "@/lib/photo-config-fns";
 
 export const Route = createFileRoute("/portfolio/$category")({
   parseParams: (params) => ({ category: params.category as CategorySlug }),
   beforeLoad: ({ params }) => {
     if (!getCategory(params.category)) throw notFound();
+  },
+  loader: async () => {
+    const config = await getPhotoConfig();
+    return { config };
   },
   head: ({ params }) => {
     const cat = getCategory(params.category as CategorySlug);
@@ -242,8 +247,9 @@ function MetaStrip({ photo, index }: { photo: Photo; index: number }) {
 /* ---- Main page ---- */
 function CategoryPage() {
   const { category } = Route.useParams();
+  const { config } = Route.useLoaderData();
   const cat = getCategory(category)!;
-  const pics = photosByCategory(category);
+  const pics = photosByCategory(category).filter((p) => !config.hidden.includes(p.id));
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const otherCats = categories.filter((c) => c.slug !== category);
 
