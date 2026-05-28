@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import type { Variants } from "framer-motion";
+import { SiteNav, SiteFooter } from "@/components/SiteChrome";
+import { Whisper } from "@/components/Whisper";
 import { getJournalEntry, journal, formatJournalDate } from "@/lib/journal";
 
 export const Route = createFileRoute("/diario/$slug")({
@@ -11,7 +13,7 @@ export const Route = createFileRoute("/diario/$slug")({
     const e = getJournalEntry(params.slug);
     return {
       meta: [
-        { title: `${e?.title ?? "Diário"} — Rosmaninho` },
+        { title: `${e?.title ?? "Diário"} — Rosmaninho Fotografia` },
         { name: "description", content: e?.excerpt ?? "" },
         { property: "og:image", content: e?.photoSrc ?? "" },
       ],
@@ -25,142 +27,200 @@ export const Route = createFileRoute("/diario/$slug")({
   ),
 });
 
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: "easeOut" } },
+};
+
+function Fade({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
+  const others = journal.filter((e) => e.slug !== slug).slice(0, 2);
 
   return (
     <div className="bg-background text-foreground">
       <SiteNav variant="solid" />
 
       <article>
-        {/* Header */}
-        <header className="px-6 md:px-12 pt-32 md:pt-44 pb-16 max-w-6xl mx-auto">
+
+        {/* ── Cabeçalho ── */}
+        <header className="px-6 md:px-12 pt-32 md:pt-48 pb-16 max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
           >
-            <Link to="/diario" className="font-mono-label text-foreground/35 hover:text-copper transition-colors inline-block mb-16">
+            <Link
+              to="/diario"
+              className="font-mono-label text-foreground/35 hover:text-copper transition-colors inline-block mb-14"
+            >
               ← Diário
             </Link>
 
-            <h1 className="font-display italic text-4xl md:text-8xl leading-[1.0] max-w-4xl">
+            <p className="font-mono-label text-copper mb-8">
+              {formatJournalDate(entry.date)}
+              {entry.place ? ` · ${entry.place}` : ""}
+            </p>
+
+            <h1 className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.95] tracking-tight max-w-4xl">
               {entry.title}
             </h1>
           </motion.div>
+
+          {/* Metadata strip */}
+          {(entry.place || entry.time || entry.climate) && (
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="show"
+              transition={{ delay: 0.3 }}
+              className="mt-14 flex flex-wrap gap-10 border-t border-foreground/12 pt-8"
+            >
+              {entry.place && (
+                <div>
+                  <p className="font-mono-label text-foreground/28 mb-1">Lugar</p>
+                  <p className="font-mono-label text-foreground/60">{entry.place}</p>
+                </div>
+              )}
+              {entry.time && (
+                <div>
+                  <p className="font-mono-label text-foreground/28 mb-1">Hora</p>
+                  <p className="font-mono-label text-foreground/60">{entry.time}</p>
+                </div>
+              )}
+              {entry.climate && (
+                <div>
+                  <p className="font-mono-label text-foreground/28 mb-1">Clima</p>
+                  <p className="font-mono-label text-foreground/60">{entry.climate}</p>
+                </div>
+              )}
+            </motion.div>
+          )}
         </header>
 
-        {/* Excerpt — large pull */}
+        {/* ── Excerto em destaque ── */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.2 }}
-          className="px-6 md:px-24 pb-24 max-w-4xl mx-auto"
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          transition={{ delay: 0.2 }}
+          className="px-6 md:px-16 lg:px-24 pb-24 max-w-4xl mx-auto"
         >
-          <p className="font-italic-serif text-2xl md:text-4xl leading-[1.6] text-foreground/60">
+          <p className="font-italic-serif text-2xl md:text-4xl leading-[1.55] text-foreground/60">
             {entry.excerpt}
           </p>
         </motion.div>
 
         <div className="hairline mx-6 md:mx-12 mb-24" />
 
-        {/* First paragraph */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="px-6 md:px-12 pb-28 max-w-2xl mx-auto"
-        >
+        {/* ── Primeiro parágrafo ── */}
+        <Fade className="px-6 md:px-12 pb-28 max-w-2xl mx-auto">
           {entry.body.slice(0, 1).map((p, i) => (
-            <p key={i} className="body-text text-base md:text-lg leading-[1.9] text-foreground/80">
+            <p key={i} className="body-text text-base md:text-lg leading-[1.9] text-foreground/78">
               {p}
             </p>
           ))}
-        </motion.div>
+        </Fade>
 
-        {/* Full-width image */}
-        <motion.figure
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
-          className="mb-28"
-        >
-          <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-            <img
-              src={entry.photoSrc}
-              alt={entry.photoTitle}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <figcaption className="px-6 md:px-12 font-mono-label text-foreground/28 mt-5">
-            {entry.photoTitle}
-          </figcaption>
-        </motion.figure>
+        {/* ── Imagem principal ── */}
+        <Fade delay={0.1} className="mb-28">
+          <figure>
+            <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+              <img
+                src={entry.photoSrc}
+                alt={entry.photoTitle}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <figcaption className="px-6 md:px-12 font-mono-label text-foreground/28 mt-5">
+              {entry.photoTitle}
+              {entry.place ? ` · ${entry.place}` : ""}
+            </figcaption>
+          </figure>
+        </Fade>
 
-        {/* Second paragraph */}
+        {/* ── Segundo parágrafo ── */}
         {entry.body.slice(1, 2).map((p, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="px-6 md:px-12 pb-24 max-w-2xl mx-auto"
-          >
-            <p className="body-text text-base md:text-lg leading-[1.9] text-foreground/80">{p}</p>
-          </motion.div>
+          <Fade key={i} className="px-6 md:px-12 pb-24 max-w-2xl mx-auto">
+            <p className="body-text text-base md:text-lg leading-[1.9] text-foreground/78">{p}</p>
+          </Fade>
         ))}
 
-        {/* Remaining paragraphs */}
-        <div className="px-6 md:px-12 pb-40 max-w-2xl mx-auto">
+        {/* ── Restantes parágrafos ── */}
+        <div className="px-6 md:px-12 pb-40 max-w-2xl mx-auto space-y-12">
           {entry.body.slice(2).map((p, i) => (
-            <motion.p
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="body-text text-base md:text-lg leading-[1.9] text-foreground/80 mb-12"
-            >
-              {p}
-            </motion.p>
+            <Fade key={i}>
+              <p className="body-text text-base md:text-lg leading-[1.9] text-foreground/78">{p}</p>
+            </Fade>
           ))}
 
-          {/* Ending */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2 }}
-            className="mt-20"
-          >
+          {/* Assinatura */}
+          <Fade delay={0.1} className="mt-20">
             <div className="w-12 h-px bg-foreground/20 mb-8" />
             <p className="font-italic-serif text-copper text-2xl">L.R.</p>
-          </motion.div>
+            <Whisper text={`${entry.place ?? "Coimbra"} · ${new Date(entry.date).getFullYear()}`} delay={1.2} className="mt-4" />
+          </Fade>
         </div>
 
-        {/* Continuar */}
-        <section className="px-6 md:px-12 py-24 border-t border-foreground/8">
+      </article>
+
+      {/* ── Continuar a ler ── */}
+      {others.length > 0 && (
+        <section className="px-6 md:px-12 py-28 border-t border-foreground/8 max-w-6xl mx-auto">
           <p className="font-mono-label text-foreground/30 mb-16">continuar a ler</p>
-          <div className="grid md:grid-cols-2 gap-16 max-w-4xl">
-            {journal.filter((e) => e.slug !== slug).slice(0, 2).map((e) => (
+          <div className="grid md:grid-cols-2 gap-16">
+            {others.map((e, i) => (
               <Link
                 key={e.slug}
                 to="/diario/$slug"
                 params={{ slug: e.slug }}
                 className="group block"
               >
-                <h3 className="font-display italic text-3xl md:text-4xl leading-tight group-hover:text-copper transition-colors duration-500">
-                  {e.title}
-                </h3>
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <div className="overflow-hidden mb-6 aspect-[16/10]">
+                    <img
+                      src={e.photoSrc}
+                      alt={e.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <p className="font-mono-label text-foreground/35 mb-3">
+                    {formatJournalDate(e.date)}
+                    {e.place ? ` · ${e.place}` : ""}
+                  </p>
+                  <h3 className="font-display text-2xl md:text-3xl leading-tight group-hover:text-copper transition-colors duration-500">
+                    {e.title}
+                  </h3>
+                  <p className="mt-3 text-foreground/55 text-sm leading-relaxed line-clamp-2">
+                    {e.excerpt}
+                  </p>
+                </motion.div>
               </Link>
             ))}
           </div>
         </section>
-      </article>
+      )}
 
       <SiteFooter />
     </div>
