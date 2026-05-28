@@ -17,6 +17,11 @@ import sandesRibs from "@/assets/sandes-ribs.jpg";
 import waffleOvo from "@/assets/waffle-ovo.jpg";
 import ovosMexidos from "@/assets/ovos-mexidos.jpg";
 import arcoCoimbra from "@/assets/arco-coimbra.jpg";
+import retratoCidade from "@/assets/retrato-cidade.jpg";
+import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
+import retratoSol from "@/assets/retrato-sol.jpg";
+import farolPeniche from "@/assets/farol-peniche.jpg";
+import arvoreCalcada from "@/assets/arvore-calcada.jpg";
 
 export type CategorySlug = "urbanas" | "natureza" | "retratos" | "iguarias";
 
@@ -65,8 +70,8 @@ export const categories: Category[] = [
   {
     slug: "retratos",
     title: "Retratos",
-    description: "Rostos, pedra e silêncio — quem é, e onde está.",
-    intro: "Um retrato não é apenas um rosto. É um lugar, um momento, uma matéria — pedra, luz, silêncio. Estes retratos são sobre presença: a de quem está, e a do que fica depois de ir.",
+    description: "Rostos, presença e o instante em que alguém se revela.",
+    intro: "Um retrato não é apenas um rosto. É uma cumplicidade — breve, às vezes inesperada. Estes retratos são sobre presença: a de quem está, e a do que fica depois de ir.",
     quote: "Fotografar alguém é uma forma de atenção.",
     quoteSource: "L.R.",
   },
@@ -130,6 +135,38 @@ export const photos: Photo[] = [
     orientation: "portrait",
     meta: { date: "Abr 2024", time: "11:30", coords: "40°12'N 8°25'O", note: "Entrar pela pedra antiga é entrar noutro tempo." },
   },
+  {
+    src: villageAlley,
+    title: "Pedra e céu",
+    year: "2023",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { date: "Set 2023", time: "16:10", coords: "40°26'N 7°14'O", note: "O granito guarda o calor do dia para a noite." },
+  },
+  {
+    src: stoneVillage,
+    title: "Aldeia histórica",
+    year: "2023",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { date: "Set 2023", time: "17:45", coords: "40°25'N 7°15'O", note: "As pedras recordam tudo. Só nós esquecemos." },
+  },
+  {
+    src: farolPeniche,
+    title: "Farol da fortaleza",
+    year: "2026",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { date: "Mai 2026", time: "12:10", coords: "39°21'N 9°22'O", note: "O farol não sabe o que guia. Sabe apenas apontar." },
+  },
+  {
+    src: arvoreCalcada,
+    title: "Floração de maio",
+    year: "2026",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { date: "Mai 2026", time: "12:44", coords: "Portugal", note: "Há árvores que recusam passar despercebidas." },
+  },
 
   // Natureza
   {
@@ -183,20 +220,28 @@ export const photos: Photo[] = [
 
   // Retratos
   {
-    src: villageAlley,
-    title: "Pedra e céu",
-    year: "2023",
+    src: retratoCidade,
+    title: "Olhar de relance",
+    year: "2026",
     category: "retratos",
-    orientation: "portrait",
-    meta: { date: "Set 2023", time: "16:10", coords: "40°26'N 7°14'O", note: "O granito guarda o calor do dia para a noite." },
+    orientation: "landscape",
+    meta: { date: "Jan 2026", time: "15:20", coords: "Lisboa", note: "Há pessoas que carregam a cidade nos olhos." },
   },
   {
-    src: stoneVillage,
-    title: "Aldeia histórica",
-    year: "2023",
+    src: retratoEsplanada,
+    title: "À beira do rio",
+    year: "2022",
     category: "retratos",
-    orientation: "portrait",
-    meta: { date: "Set 2023", time: "17:45", coords: "40°25'N 7°15'O", note: "As pedras recordam tudo. Só nós esquecemos." },
+    orientation: "landscape",
+    meta: { date: "Nov 2022", time: "13:45", coords: "Coimbra", note: "Estar sítio é também uma forma de pertencer." },
+  },
+  {
+    src: retratoSol,
+    title: "Luz de fim de tarde",
+    year: "2022",
+    category: "retratos",
+    orientation: "landscape",
+    meta: { date: "Nov 2022", time: "17:30", coords: "Portugal", note: "O sol da tarde tem cumplicidade com quem o deixa entrar." },
   },
 
   // Iguarias
