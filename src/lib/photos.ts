@@ -43,10 +43,7 @@ export type Category = {
 };
 
 export type PhotoMeta = {
-  date: string;
-  time: string;
-  coords: string;
-  note: string;
+  description: string;
 };
 
 export type Photo = {
@@ -103,7 +100,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Jan 2026", time: "05:47", coords: "41°08'N 8°36'O", note: "Há ruas que se lembram das pessoas que já não estão." },
+    meta: { description: "Há ruas que se lembram das pessoas que já não estão." },
   },
   {
     id: "coimbra",
@@ -112,7 +109,7 @@ export const photos: Photo[] = [
     year: "2024",
     category: "urbanas",
     orientation: "square",
-    meta: { date: "Mar 2024", time: "18:23", coords: "40°12'N 8°25'O", note: "O rio sabia onde estava mesmo quando eu não sabia." },
+    meta: { description: "O rio sabia onde estava mesmo quando eu não sabia." },
   },
   {
     id: "porto-bridge",
@@ -121,7 +118,7 @@ export const photos: Photo[] = [
     year: "2024",
     category: "urbanas",
     orientation: "landscape",
-    meta: { date: "Nov 2024", time: "17:01", coords: "41°08'N 8°36'O", note: "Cada ponte é uma decisão de atravessar." },
+    meta: { description: "Cada ponte é uma decisão de atravessar." },
   },
   {
     id: "coimbra-skyline",
@@ -130,7 +127,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "urbanas",
     orientation: "landscape",
-    meta: { date: "Set 2023", time: "19:44", coords: "40°12'N 8°25'O", note: "Coimbra vista de cima parece uma promessa cumprida." },
+    meta: { description: "Coimbra vista de cima parece uma promessa cumprida." },
   },
   {
     id: "porto-douro",
@@ -139,7 +136,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Out 2023", time: "16:55", coords: "41°09'N 8°36'O", note: "A cidade abriu-se como um livro pela metade." },
+    meta: { description: "A cidade abriu-se como um livro pela metade." },
   },
   {
     id: "arco-coimbra",
@@ -148,7 +145,7 @@ export const photos: Photo[] = [
     year: "2024",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Abr 2024", time: "11:30", coords: "40°12'N 8°25'O", note: "Entrar pela pedra antiga é entrar noutro tempo." },
+    meta: { description: "Entrar pela pedra antiga é entrar noutro tempo." },
   },
   {
     id: "village-alley",
@@ -157,7 +154,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Set 2023", time: "16:10", coords: "40°26'N 7°14'O", note: "O granito guarda o calor do dia para a noite." },
+    meta: { description: "O granito guarda o calor do dia para a noite." },
   },
   {
     id: "stone-village",
@@ -166,7 +163,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Set 2023", time: "17:45", coords: "40°25'N 7°15'O", note: "As pedras recordam tudo. Só nós esquecemos." },
+    meta: { description: "As pedras recordam tudo. Só nós esquecemos." },
   },
   {
     id: "farol-peniche",
@@ -175,7 +172,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Mai 2026", time: "12:10", coords: "39°21'N 9°22'O", note: "O farol não sabe o que guia. Sabe apenas apontar." },
+    meta: { description: "O farol não sabe o que guia. Sabe apenas apontar." },
   },
   {
     id: "arvore-calcada",
@@ -184,7 +181,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Mai 2026", time: "12:44", coords: "Portugal", note: "Há árvores que recusam passar despercebidas." },
+    meta: { description: "Há árvores que recusam passar despercebidas." },
   },
   {
     id: "porto-cupula",
@@ -193,7 +190,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "16:30", coords: "41°08'N 8°36'O", note: "Porto constrói-se sobre si próprio, camada a camada." },
+    meta: { description: "Porto constrói-se sobre si próprio, camada a camada." },
   },
   {
     id: "porto-azulejos",
@@ -202,7 +199,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Jan 2026", time: "17:05", coords: "41°08'N 8°36'O", note: "O azulejo é a pele da cidade." },
+    meta: { description: "O azulejo é a pele da cidade." },
   },
   {
     id: "porto-rua-calcada",
@@ -211,7 +208,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "portrait",
-    meta: { date: "Jan 2026", time: "17:45", coords: "41°08'N 8°36'O", note: "As ruas vazias são as mais cheias de coisas a dizer." },
+    meta: { description: "As ruas vazias são as mais cheias de coisas a dizer." },
   },
   {
     id: "porto-ribeira",
@@ -220,7 +217,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "14:20", coords: "41°08'N 8°36'O", note: "Cada janela é uma história que não se conta." },
+    meta: { description: "Cada janela é uma história que não se conta." },
   },
   {
     id: "porto-luisi",
@@ -229,7 +226,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "urbanas",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "13:55", coords: "41°08'N 8°36'O", note: "O Dom Luís pertence à cidade como o rio pertence ao mar." },
+    meta: { description: "O Dom Luís pertence à cidade como o rio pertence ao mar." },
   },
 
   // Natureza
@@ -240,7 +237,7 @@ export const photos: Photo[] = [
     year: "2024",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Abr 2024", time: "09:12", coords: "40°18'N 8°28'O", note: "A água guarda tudo o que cai nela." },
+    meta: { description: "A água guarda tudo o que cai nela." },
   },
   {
     id: "sunset-beach",
@@ -249,7 +246,7 @@ export const photos: Photo[] = [
     year: "2022",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Jul 2022", time: "21:03", coords: "38°42'N 9°24'O", note: "O sol demora mais a ir do que parece." },
+    meta: { description: "O sol demora mais a ir do que parece." },
   },
   {
     id: "queda-agua",
@@ -258,7 +255,7 @@ export const photos: Photo[] = [
     year: "2020",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Out 2020", time: "14:37", coords: "40°21'N 8°17'O", note: "O outono tem uma luz que pede silêncio." },
+    meta: { description: "O outono tem uma luz que pede silêncio." },
   },
   {
     id: "ribeiro-musgo",
@@ -267,7 +264,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Mai 2023", time: "08:50", coords: "40°19'N 8°20'O", note: "Há uma velocidade que só a água conhece." },
+    meta: { description: "Há uma velocidade que só a água conhece." },
   },
   {
     id: "fio-agua",
@@ -276,7 +273,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Jun 2023", time: "10:05", coords: "40°22'N 8°18'O", note: "Devagar também é uma forma de chegar." },
+    meta: { description: "Devagar também é uma forma de chegar." },
   },
   {
     id: "water-splash",
@@ -285,7 +282,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Ago 2023", time: "13:22", coords: "40°20'N 8°19'O", note: "O momento antes de cair é o mais livre." },
+    meta: { description: "O momento antes de cair é o mais livre." },
   },
   {
     id: "barco-douro",
@@ -294,7 +291,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "12:30", coords: "41°08'N 8°36'O", note: "O rio é paciente. Os barcos é que chegam e partem." },
+    meta: { description: "O rio é paciente. Os barcos é que chegam e partem." },
   },
   {
     id: "mar-tetrapodos",
@@ -303,7 +300,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "natureza",
     orientation: "landscape",
-    meta: { date: "Mai 2026", time: "11:15", coords: "39°21'N 9°22'O", note: "O mar e o betão chegaram a um acordo que nenhum dos dois recorda." },
+    meta: { description: "O mar e o betão chegaram a um acordo que nenhum dos dois recorda." },
   },
 
   // Retratos
@@ -314,7 +311,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "retratos",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "15:20", coords: "Lisboa", note: "Há pessoas que carregam a cidade nos olhos." },
+    meta: { description: "Há pessoas que carregam a cidade nos olhos." },
   },
   {
     id: "retrato-esplanada",
@@ -323,7 +320,7 @@ export const photos: Photo[] = [
     year: "2022",
     category: "retratos",
     orientation: "landscape",
-    meta: { date: "Nov 2022", time: "13:45", coords: "Coimbra", note: "Estar num sítio é também uma forma de pertencer." },
+    meta: { description: "Estar num sítio é também uma forma de pertencer." },
   },
   {
     id: "retrato-sol",
@@ -332,7 +329,7 @@ export const photos: Photo[] = [
     year: "2022",
     category: "retratos",
     orientation: "landscape",
-    meta: { date: "Nov 2022", time: "17:30", coords: "Portugal", note: "O sol da tarde tem cumplicidade com quem o deixa entrar." },
+    meta: { description: "O sol da tarde tem cumplicidade com quem o deixa entrar." },
   },
 
   // Iguarias
@@ -343,7 +340,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Jul 2023", time: "15:30", coords: "Coimbra", note: "Comer devagar é também uma forma de atenção." },
+    meta: { description: "Comer devagar é também uma forma de atenção." },
   },
   {
     id: "risotto-courgette",
@@ -352,7 +349,7 @@ export const photos: Photo[] = [
     year: "2022",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Mar 2022", time: "13:05", coords: "Porto", note: "Há refeições que são um intervalo no tempo." },
+    meta: { description: "Há refeições que são um intervalo no tempo." },
   },
   {
     id: "sandes-ribs",
@@ -361,7 +358,7 @@ export const photos: Photo[] = [
     year: "2022",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Jun 2022", time: "12:48", coords: "Lisboa", note: "Comida simples, feita com cuidado, é luxo suficiente." },
+    meta: { description: "Comida simples, feita com cuidado, é luxo suficiente." },
   },
   {
     id: "waffle-ovo",
@@ -370,7 +367,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Fev 2023", time: "10:17", coords: "Coimbra", note: "O pequeno-almoço tardio tem a sua própria filosofia." },
+    meta: { description: "O pequeno-almoço tardio tem a sua própria filosofia." },
   },
   {
     id: "ovos-mexidos",
@@ -379,7 +376,7 @@ export const photos: Photo[] = [
     year: "2023",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Abr 2023", time: "11:03", coords: "Coimbra", note: "Ovos mexidos às onze da manhã. A vida tem outro ritmo." },
+    meta: { description: "Ovos mexidos às onze da manhã. A vida tem outro ritmo." },
   },
   {
     id: "cafe-matcha",
@@ -388,7 +385,7 @@ export const photos: Photo[] = [
     year: "2026",
     category: "iguarias",
     orientation: "landscape",
-    meta: { date: "Jan 2026", time: "10:45", coords: "Porto", note: "Dois cafés numa mesa redonda é uma promessa de conversa." },
+    meta: { description: "Dois cafés numa mesa redonda é uma promessa de conversa." },
   },
 ];
 

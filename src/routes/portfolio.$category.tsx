@@ -70,13 +70,7 @@ function RevealPhoto({
       {/* Standard caption on hover */}
       <div className="absolute inset-x-0 bottom-0 px-6 py-5 bg-gradient-to-t from-black/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <p className="font-display text-xl text-cream">{photo.title}</p>
-        <div className="flex items-center gap-3 mt-1">
-          <span className="font-mono-label text-cream/55">{photo.meta.date}</span>
-          <span className="font-mono-label text-cream/35">·</span>
-          <span className="font-mono-label text-cream/55">{photo.meta.time}</span>
-          <span className="font-mono-label text-cream/35">·</span>
-          <span className="font-mono-label text-cream/55">{photo.meta.coords}</span>
-        </div>
+        <p className="font-italic-serif text-cream/60 mt-1 text-sm italic">{photo.meta.description}</p>
       </div>
 
       {/* Hidden phrase — revealed after 2.2s of hover */}
@@ -86,7 +80,7 @@ function RevealPhoto({
       >
         <div className="absolute inset-0 bg-black/40" />
         <p className="relative font-display italic text-cream text-center text-2xl md:text-3xl px-10 leading-relaxed max-w-md">
-          "{photo.meta.note}"
+          "{photo.meta.description}"
         </p>
       </div>
     </figure>
@@ -136,8 +130,6 @@ function Lightbox({
           <span className="font-mono-label text-cream/40">
             {String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
           </span>
-          <span className="font-mono-label text-cream/25">—</span>
-          <span className="font-mono-label text-cream/40">{photo.meta.coords}</span>
         </div>
         <button
           onClick={onClose}
@@ -190,11 +182,8 @@ function Lightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <p className="font-display text-2xl text-cream">{photo.title}</p>
-        <p className="font-mono-label text-cream/40 mt-2">
-          {photo.meta.date} · {photo.meta.time}
-        </p>
-        <p className="font-italic-serif text-cream/30 mt-3 text-sm italic">
-          "{photo.meta.note}"
+        <p className="font-italic-serif text-cream/40 mt-3 text-sm italic">
+          "{photo.meta.description}"
         </p>
       </div>
     </motion.div>
@@ -233,13 +222,7 @@ function MetaStrip({ photo, index }: { photo: Photo; index: number }) {
       <span className="font-mono-label text-foreground/30">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <div className="flex items-center gap-4 font-mono-label text-foreground/35">
-        <span>{photo.meta.coords}</span>
-        <span className="text-foreground/20">—</span>
-        <span>{photo.meta.date}</span>
-        <span className="text-foreground/20">·</span>
-        <span>{photo.meta.time}</span>
-      </div>
+      <p className="font-italic-serif text-foreground/40 text-sm italic">{photo.meta.description}</p>
     </motion.div>
   );
 }

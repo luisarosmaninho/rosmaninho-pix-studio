@@ -152,9 +152,8 @@ function PortfolioPage() {
             <img src={lightbox.src} alt={lightbox.title} className="max-h-[85vh] w-auto mx-auto object-contain" />
             <figcaption className="text-cream text-center mt-6">
               <p className="font-display text-3xl">{lightbox.title}</p>
-              <p className="font-mono-label text-cream/60 mt-2">{lightbox.year}</p>
-              {lightbox.meta?.coords && (
-                <p className="font-mono-label text-cream/35 mt-1">{lightbox.meta.coords}</p>
+              {lightbox.meta?.description && (
+                <p className="font-italic-serif text-cream/50 mt-2 text-sm italic">"{lightbox.meta.description}"</p>
               )}
             </figcaption>
           </figure>
