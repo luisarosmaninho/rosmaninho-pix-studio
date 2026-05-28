@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
+import { Whisper, WhisperLight } from "@/components/Whisper";
 import villageAlley from "@/assets/village-alley.jpg";
 import stoneVillage from "@/assets/stone-village.jpg";
 import river from "@/assets/river.jpg";
@@ -71,6 +72,7 @@ function SobrePage() {
             <p>
               Este sítio não é um portefólio comercial — é o lugar onde as séries vivem enquanto crescem, onde o diário fica guardado, onde as notas de campo vão aparecendo.
             </p>
+            <Whisper text="o passo de quem prefere chegar mais tarde" delay={1.6} style="italic" className="pt-4" />
           </div>
           <div className="md:col-span-6 md:col-start-8 flex flex-col gap-4">
             <div className="h-px bg-foreground/15 w-full" />
@@ -102,6 +104,7 @@ function SobrePage() {
         <p className="font-display italic text-4xl md:text-5xl leading-[1.15] text-foreground/80">
           "Nunca consegui olhar para a fotografia como apenas tirar fotografias. Para mim, sempre foi muito mais do que isso."
         </p>
+        <Whisper text="Coimbra · 2020 —" delay={2} className="mt-8" />
       </Fade>
 
       <div className="hairline mx-6 md:mx-12" />
@@ -141,6 +144,7 @@ function SobrePage() {
             <p className="text-foreground/68 leading-relaxed">
               Grande parte daquilo que faço nasce da observação. Gosto de perceber as pessoas, os ambientes, a luz e as emoções antes sequer de pegar na câmara. E talvez seja exatamente isso que mais gosto na fotografia: obriga-me a olhar para o mundo com mais calma, mais atenção e mais sensibilidade.
             </p>
+            <Whisper text="a câmara ensinou-me a olhar antes de disparar" delay={1.5} style="italic" className="mt-8" />
           </Fade>
         </div>
       </section>
@@ -159,6 +163,7 @@ function SobrePage() {
             <p className="text-cream/65 leading-relaxed">
               Ao mesmo tempo, quero que tudo pareça leve e natural. Não gosto de transformar momentos em algo artificial. Prefiro conversas genuínas, movimentos espontâneos, gargalhadas inesperadas e aquela beleza imperfeita que torna cada pessoa diferente.
             </p>
+            <WhisperLight text="muita gente nunca irá reparar · eu reparo" delay={1.8} style="italic" className="mt-8" />
           </Fade>
 
           <Fade delay={0.2} className="md:col-span-6">

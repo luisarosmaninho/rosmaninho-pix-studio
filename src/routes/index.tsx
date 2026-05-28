@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
+import { Whisper, WhisperLight } from "@/components/Whisper";
 import { photos, categories, photosByCategory } from "@/lib/photos";
 import { journal, formatJournalDate } from "@/lib/journal";
 import portoStreet from "@/assets/porto-street.jpg";
@@ -131,11 +132,15 @@ function HomePage() {
 
       {/* ============ MANIFESTO breve ============ */}
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-background">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto relative">
           <p className="font-mono-label text-copper mb-8">§ 01 — Manifesto</p>
           <p className="font-display text-3xl md:text-5xl lg:text-6xl leading-[1.08] tracking-tight">
             Não fotografo para mostrar — fotografo para <span className="font-italic-serif text-copper">demorar</span>. Cada imagem é uma forma educada de pedir ao mundo que <span className="font-italic-serif">fique</span> mais um momento.
           </p>
+          <div className="mt-12 flex justify-between items-end">
+            <Whisper text="arquivo lento · Coimbra · MMXX —" delay={1.4} />
+            <Whisper text="40°12′N · 8°25′O" delay={2} />
+          </div>
         </div>
       </Section>
 
@@ -174,6 +179,7 @@ function HomePage() {
             <Link to="/sobre" className="mt-12 inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Conhecer a autora →
             </Link>
+            <Whisper text="observação contínua · quatro séries abertas" delay={1.8} className="mt-8" />
           </div>
 
           <div className="md:col-span-7 order-1 md:order-2 relative">
@@ -261,7 +267,8 @@ function HomePage() {
             ))}
           </div>
 
-          <div className="mt-16 text-center">
+          <div className="mt-16 flex items-center justify-between">
+            <Whisper text="vão crescendo à medida que ando" delay={1.2} style="italic" />
             <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Ver o arquivo completo →
             </Link>
@@ -309,7 +316,8 @@ function HomePage() {
 
       {/* ============ DIÁLOGO ============ */}
       <Section className="px-6 md:px-12 py-32 md:py-44 bg-background">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center relative">
+          <Whisper text="escreve devagar · há uma conversa possível" delay={1.6} className="mb-12" />
           <p className="font-mono-label text-copper mb-6">§ 05 — Diálogo</p>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
             Se quiseres <span className="font-italic-serif text-copper">falar</span>,<br />escreve devagar.
@@ -325,7 +333,7 @@ function HomePage() {
 
       {/* ============ NOTA PESSOAL — sem número, sem botão ============ */}
       <Section className="px-6 md:px-12 py-36 md:py-48 bg-cream">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center relative">
           <p className="font-italic-serif text-5xl md:text-6xl text-foreground/75 leading-[1.2]">
             "Este sítio é o meu<br />caderno aberto —
           </p>

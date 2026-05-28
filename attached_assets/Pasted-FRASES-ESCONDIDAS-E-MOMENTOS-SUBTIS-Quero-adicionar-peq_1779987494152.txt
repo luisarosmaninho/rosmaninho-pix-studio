@@ -1,0 +1,112 @@
+FRASES ESCONDIDAS E MOMENTOS SUBTIS
+
+Quero adicionar pequenos detalhes escondidos e momentos subtis ao longo do website para aumentar a profundidade emocional e cinematográfica da experiência SEM alterar a estética minimalista atual.
+
+Estas frases e detalhes devem funcionar como parte da atmosfera do website e não como elementos principais do design.
+
+OBJETIVO:
+Fazer o website parecer mais humano, mais íntimo, mais artístico e mais vivo, mantendo sempre o minimalismo elegante atual.
+
+────────────────────
+
+COMPORTAMENTO
+
+As frases e detalhes devem:
+
+* surgir lentamente
+* aparecer apenas em certos momentos
+* parecer descobertas naturais
+* ser discretos
+* nunca distrair da fotografia
+* integrar-se naturalmente no design
+* criar sensação de memória, silêncio e observação
+
+Podem aparecer:
+
+* durante o scroll
+* ao parar o cursor numa imagem
+* ao entrar numa nova secção
+* ao abrir uma série
+* no final de páginas
+* perto das margens
+* entre imagens
+* em zonas vazias
+* em transições suaves
+* em momentos de pausa
+
+────────────────────
+
+ESTILO VISUAL
+
+Quero:
+
+* tipografia pequena editorial
+* opacity baixa
+* fades suaves
+* movimento muito subtil
+* animações lentas
+* bastante espaço vazio
+* blur subtil em certas aparições
+* integração elegante com a fotografia
+* visual atmosférico e silencioso
+
+As frases devem parecer:
+
+* notas encontradas
+* pensamentos soltos
+* memórias
+* observações pessoais
+* fragmentos de um diário visual
+
+────────────────────
+
+DETALHES ESCONDIDOS
+
+Adicionar também:
+
+* coordenadas discretas
+* horas
+* datas
+* metadata artística
+* pequenas notas atmosféricas
+* detalhes editoriais mínimos
+* informação subtil integrada no layout
+
+Tudo extremamente discreto e cinematográfico.
+
+────────────────────
+
+IMPORTANTE
+
+NÃO quero:
+
+* popups
+* elementos chamativos
+* texto demasiado visível
+* animações rápidas
+* excesso de movimento
+* efeitos exagerados
+
+Tudo deve continuar:
+
+* minimalista
+* elegante
+* respirado
+* emocional
+* editorial
+* cinematográfico
+* sofisticado
+
+────────────────────
+
+SENSAÇÃO FINAL
+
+O website deve parecer:
+
+* um arquivo emocional vivo
+* um diário visual artístico
+* uma experiência silenciosa
+* uma galeria contemporânea
+* um espaço humano e observador
+
+Sem perder a simplicidade elegante já existente.
