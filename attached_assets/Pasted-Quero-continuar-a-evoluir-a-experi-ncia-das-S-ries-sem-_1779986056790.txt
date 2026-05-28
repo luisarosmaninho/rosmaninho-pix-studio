@@ -1,0 +1,196 @@
+Quero continuar a evoluir a experiência das “Séries” sem alterar drasticamente a identidade visual atual do website. O objetivo NÃO é refazer o design, mas sim adicionar profundidade emocional, detalhe editorial e pequenas experiências imersivas mantendo o mesmo minimalismo elegante.
+
+MANTER:
+
+* a estética atual
+* a paleta creme/bege
+* os tons castanhos quentes
+* o estilo editorial
+* a tipografia atual
+* o layout clean
+* o espaço vazio
+* a navbar
+* a homepage praticamente igual
+* o conceito de “arquivo”
+* o visual minimalista
+* a identidade “quiet luxury”
+* o ambiente calmo e cinematográfico
+
+NÃO quero:
+
+* efeitos exagerados
+* animações demasiado visíveis
+* elementos flashy
+* estética tecnológica
+* mudanças radicais no layout
+* excesso de informação visual
+
+QUERO APENAS APROFUNDAR A EXPERIÊNCIA.
+
+────────────────────
+
+1. TRANSFORMAR AS SÉRIES EM EXPERIÊNCIAS EDITORIAIS
+
+Atualmente as séries funcionam como categorias/galerias.
+Quero que passem a funcionar como pequenos ensaios visuais cinematográficos.
+
+Ao clicar numa série:
+
+* abrir uma subpágina dedicada
+* manter a identidade visual atual
+* manter o minimalismo
+* manter o estilo editorial
+
+Mas adicionar:
+
+* hero image cinematográfica
+* título grande
+* pequenas introduções poéticas
+* storytelling visual
+* imagens fullscreen
+* sequência mais imersiva
+* composições assimétricas
+* frases pequenas entre imagens
+* scroll mais cinematográfico
+
+A experiência deve parecer:
+
+* um capítulo de livro
+* um diário visual
+* uma galeria artística digital
+* um pequeno filme silencioso
+
+────────────────────
+
+2. DETALHES EDITORIAIS SUBTIS
+
+Adicionar pequenos detalhes elegantes dentro das séries:
+
+* coordenadas GPS
+* datas
+* hora/local
+* temperatura
+* metadata artística
+* notas pequenas
+* observações poéticas
+
+Exemplos:
+
+“Porto — 06:14”
+“12ºC”
+“silêncio húmido”
+“arquivo lento”
+
+Tudo extremamente discreto e minimal.
+
+────────────────────
+
+3. FRASES ESCONDIDAS E MOMENTOS SUBTIS
+
+Quero adicionar pequenas frases escondidas e detalhes secretos ao longo do website SEM alterar a estética minimalista atual.
+
+Essas frases devem:
+
+* aparecer lentamente
+* surgir apenas em certos momentos
+* ser discretas
+* parecer descobertas naturais
+* nunca distrair da fotografia
+
+Exemplos de comportamento:
+
+* ao parar o cursor numa imagem durante alguns segundos
+* ao fazer scroll até determinada zona
+* ao passar lentamente por uma fotografia
+* ao abrir uma série
+* ao chegar ao fim de uma página
+
+As frases devem aparecer com:
+
+* fade suave
+* opacity baixa
+* tipografia pequena editorial
+* animações lentas
+* muito subtis
+
+Exemplos de frases:
+
+“Coimbra, 19:42”
+“Hoje a luz parecia antiga.”
+“Há ruas que parecem lembrar-se das pessoas.”
+“feito devagar”
+“alguns momentos não querem ser perfeitos”
+“vento húmido”
+“silêncio entre prédios”
+“a fotografia ensinou-me a reparar”
+
+IMPORTANTE:
+Estas frases devem parecer parte da atmosfera do site e NÃO elementos chamativos.
+
+────────────────────
+
+4. EXPERIÊNCIA MAIS IMERSIVA
+
+Melhorar subtilmente:
+
+* smooth scrolling
+* fades
+* reveals
+* transições
+* hover das imagens
+* movimento das galerias
+
+Mas tudo:
+
+* lento
+* elegante
+* cinematográfico
+* discreto
+
+────────────────────
+
+5. LIGHTBOX MAIS PREMIUM
+
+Melhorar a visualização das fotografias:
+
+* fullscreen clean
+* fundo escuro elegante
+* transições suaves
+* navegação minimalista
+* experiência mais artística
+
+────────────────────
+
+6. ATMOSFERA CINEMATOGRÁFICA
+
+Adicionar MUITO subtilmente:
+
+* grain analógico leve
+* textura cinematográfica
+* pequenas imperfeições bonitas
+* sensação de filme
+
+Sem perder o look clean e sofisticado.
+
+────────────────────
+
+7. SENSAÇÃO FINAL
+
+O website deve continuar claramente o mesmo projeto.
+
+Apenas:
+
+* mais profundo
+* mais emocional
+* mais artístico
+* mais imersivo
+* mais cinematográfico
+
+O objetivo é que pareça:
+
+* um arquivo emocional
+* um diário visual
+* uma revista editorial moderna
+* uma experiência artística silenciosa
+
+Sem perder a simplicidade elegante atual.
