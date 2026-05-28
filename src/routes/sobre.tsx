@@ -88,7 +88,7 @@ function SobrePage() {
             </div>
             <div className="flex justify-between font-mono-label text-foreground/32">
               <span>Quatro séries abertas</span>
-              <span>{new Date().getFullYear() - 2020} anos de arquivo</span>
+              <span>arquivo em aberto</span>
             </div>
             <div className="h-px bg-foreground/15 w-full" />
             <p className="font-italic-serif text-foreground/35 text-base mt-2">

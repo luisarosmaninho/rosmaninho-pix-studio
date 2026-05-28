@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper } from "@/components/Whisper";
-import { journal, formatJournalDate } from "@/lib/journal";
+import { journal } from "@/lib/journal";
 
 export const Route = createFileRoute("/diario/")({
   head: () => ({
@@ -55,7 +55,7 @@ function JournalIndex() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.4, delay: 0.6 }}
-          className="mt-16 grid grid-cols-3 gap-6 border-t border-foreground/15 pt-8 max-w-sm"
+          className="mt-16 grid grid-cols-2 gap-6 border-t border-foreground/15 pt-8 max-w-sm"
         >
           <div>
             <p className="font-display text-4xl text-copper">{sorted.length}</p>
@@ -64,10 +64,6 @@ function JournalIndex() {
           <div>
             <p className="font-display text-4xl text-copper">04</p>
             <p className="font-mono-label mt-1">Séries</p>
-          </div>
-          <div>
-            <p className="font-display text-4xl text-copper">VI</p>
-            <p className="font-mono-label mt-1">Anos</p>
           </div>
         </motion.div>
       </section>
@@ -90,39 +86,24 @@ function JournalIndex() {
               params={{ slug: entry.slug }}
               className="group relative flex flex-col md:grid md:grid-cols-12 gap-6 py-16 md:py-20 border-b border-foreground/8 overflow-hidden"
             >
-              {/* Nº e data */}
-              <div className="md:col-span-3 flex md:flex-col justify-between md:justify-start gap-4 md:gap-3">
+              {/* Nº */}
+              <div className="md:col-span-1">
                 <p className="font-mono-label text-copper">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <p className="font-mono-label text-foreground/30">
-                  {formatJournalDate(entry.date)}
-                </p>
-                {entry.place && (
-                  <p className="hidden md:block font-mono-label text-foreground/25">
-                    {entry.place}
-                  </p>
-                )}
               </div>
 
               {/* Conteúdo */}
-              <div className="md:col-span-7">
+              <div className="md:col-span-9">
                 <h2 className="font-display text-3xl md:text-5xl leading-[1.05] group-hover:text-copper transition-colors duration-500">
                   {entry.title}
                 </h2>
                 <p className="mt-5 text-foreground/60 max-w-xl leading-relaxed body-text">
                   {entry.excerpt}
                 </p>
-                <div className="mt-8 flex items-center gap-6">
-                  <span className="font-mono-label text-foreground/35 group-hover:text-copper transition-colors duration-500">
-                    ler entrada →
-                  </span>
-                  {entry.climate && (
-                    <span className="hidden md:inline font-mono-label text-foreground/20">
-                      {entry.climate}
-                    </span>
-                  )}
-                </div>
+                <span className="font-mono-label mt-8 inline-block text-foreground/35 group-hover:text-copper transition-colors duration-500">
+                  ler entrada →
+                </span>
               </div>
 
               {/* Miniatura ao hover */}

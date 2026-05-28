@@ -163,11 +163,10 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-3 gap-6 border-t border-foreground/15 pt-8 max-w-md">
+            <div className="mt-12 grid grid-cols-2 gap-6 border-t border-foreground/15 pt-8 max-w-md">
               {[
                 { n: "04", l: "Séries" },
                 { n: photos.length.toString().padStart(2, "0"), l: "Imagens" },
-                { n: "VI", l: "Anos" },
               ].map((s) => (
                 <div key={s.l}>
                   <p className="font-display text-5xl md:text-6xl text-copper">{s.n}</p>

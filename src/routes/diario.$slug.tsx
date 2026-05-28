@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper } from "@/components/Whisper";
-import { getJournalEntry, journal, formatJournalDate } from "@/lib/journal";
+import { getJournalEntry, journal } from "@/lib/journal";
 
 export const Route = createFileRoute("/diario/$slug")({
   beforeLoad: ({ params }) => {
@@ -72,45 +72,10 @@ function EntryPage() {
               ← Diário
             </Link>
 
-            <p className="font-mono-label text-copper mb-8">
-              {formatJournalDate(entry.date)}
-              {entry.place ? ` · ${entry.place}` : ""}
-            </p>
-
             <h1 className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.95] tracking-tight max-w-4xl">
               {entry.title}
             </h1>
           </motion.div>
-
-          {/* Metadata strip */}
-          {(entry.place || entry.time || entry.climate) && (
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              transition={{ delay: 0.3 }}
-              className="mt-14 flex flex-wrap gap-10 border-t border-foreground/12 pt-8"
-            >
-              {entry.place && (
-                <div>
-                  <p className="font-mono-label text-foreground/28 mb-1">Lugar</p>
-                  <p className="font-mono-label text-foreground/60">{entry.place}</p>
-                </div>
-              )}
-              {entry.time && (
-                <div>
-                  <p className="font-mono-label text-foreground/28 mb-1">Hora</p>
-                  <p className="font-mono-label text-foreground/60">{entry.time}</p>
-                </div>
-              )}
-              {entry.climate && (
-                <div>
-                  <p className="font-mono-label text-foreground/28 mb-1">Clima</p>
-                  <p className="font-mono-label text-foreground/60">{entry.climate}</p>
-                </div>
-              )}
-            </motion.div>
-          )}
         </header>
 
         {/* ── Excerto em destaque ── */}
@@ -149,7 +114,6 @@ function EntryPage() {
             </div>
             <figcaption className="px-6 md:px-12 font-mono-label text-foreground/28 mt-5">
               {entry.photoTitle}
-              {entry.place ? ` · ${entry.place}` : ""}
             </figcaption>
           </figure>
         </Fade>
@@ -173,7 +137,6 @@ function EntryPage() {
           <Fade delay={0.1} className="mt-20">
             <div className="w-12 h-px bg-foreground/20 mb-8" />
             <p className="font-italic-serif text-copper text-2xl">L.R.</p>
-            <Whisper text={`${entry.place ?? "Coimbra"} · ${new Date(entry.date).getFullYear()}`} delay={1.2} className="mt-4" />
           </Fade>
         </div>
 
@@ -205,10 +168,6 @@ function EntryPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
-                  <p className="font-mono-label text-foreground/35 mb-3">
-                    {formatJournalDate(e.date)}
-                    {e.place ? ` · ${e.place}` : ""}
-                  </p>
                   <h3 className="font-display text-2xl md:text-3xl leading-tight group-hover:text-copper transition-colors duration-500">
                     {e.title}
                   </h3>
