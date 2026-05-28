@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { z } from "zod";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
@@ -10,8 +10,6 @@ export const Route = createFileRoute("/contacto")({
     meta: [
       { title: "Diálogo — Rosmaninho Fotografia" },
       { name: "description", content: "Uma conversa aberta. Escreve sobre uma imagem, um lugar ou uma ideia." },
-      { property: "og:title", content: "Diálogo — Rosmaninho" },
-      { property: "og:description", content: "Sem sessões nem tabelas. Apenas uma conversa." },
     ],
   }),
   component: ContactoPage,
@@ -20,7 +18,6 @@ export const Route = createFileRoute("/contacto")({
 const schema = z.object({
   nome: z.string().trim().min(2, "Diz-me o teu nome").max(100),
   email: z.string().trim().email("Email inválido").max(255),
-  assunto: z.string().min(1, "Escolhe um assunto"),
   mensagem: z.string().trim().min(10, "Conta-me um pouco mais").max(1500),
 });
 
@@ -46,110 +43,156 @@ function ContactoPage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen pt-24">
-        {/* Left: form */}
-        <div className="px-6 md:px-12 lg:px-20 py-16 lg:py-24 flex flex-col justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+
+        {/* ── Coluna esquerda: texto + formulário ── */}
+        <div className="px-6 md:px-12 lg:px-20 pt-36 pb-24 flex flex-col justify-between">
+
+          {/* Abertura */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+            className="max-w-lg"
+          >
+            <p className="font-mono-label text-copper mb-8">Diálogo · Coimbra</p>
+            <h1 className="font-display text-[clamp(3.5rem,8vw,6rem)] leading-[0.92]">
+              Se algo ficou,<br />
+              <span className="font-italic-serif text-copper">escreve</span>.
+            </h1>
+            <p className="mt-8 text-foreground/65 leading-relaxed max-w-sm text-lg">
+              Não há tabelas nem pacotes. Não há respostas automáticas. Há uma conversa possível — sobre uma imagem, um lugar, um momento, ou uma impressão que queiras ter à parede.
+            </p>
+            <p className="mt-4 text-foreground/65 leading-relaxed max-w-sm">
+              Respondo quando o tempo deixar, com calma.
+            </p>
+          </motion.div>
+
+          {/* Formulário ou confirmação */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="max-w-xl"
+            transition={{ duration: 1.1, delay: 0.3 }}
+            className="mt-16 max-w-lg"
           >
-            <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">diálogo</p>
-            <h1 className="font-display text-4xl md:text-6xl leading-[1.05]">
-              Vamos <span className="italic">falar</span>.
-            </h1>
-            <p className="mt-6 text-foreground/70 max-w-md">
-              Sem formulários complicados. Escreve sobre uma imagem, um lugar ou uma ideia — respondo quando o tempo deixar, com calma.
-            </p>
-
-            {sent ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mt-12 border border-copper p-8 bg-cream"
-              >
-                <p className="font-display text-2xl text-copper">Recebido com carinho.</p>
-                <p className="mt-3 text-foreground/70">Volto a ti em breve por email.</p>
-              </motion.div>
-            ) : (
-              <form onSubmit={onSubmit} className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Field label="Nome" name="nome" error={errors.nome} />
-                <Field label="Email" name="email" type="email" error={errors.email} />
-                <div className="md:col-span-2 flex flex-col gap-2">
-                  <label className="font-mono-label">Assunto</label>
-                  <select
-                    name="assunto"
-                    defaultValue=""
-                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors"
-                  >
-                    <option value="" disabled>Escolhe...</option>
-                    <option value="imagem">Sobre uma imagem</option>
-                    <option value="serie">Sobre uma série</option>
-                    <option value="diario">Sobre um texto do diário</option>
-                    <option value="impressao">Pedir uma impressão</option>
-                    <option value="outro">Outro</option>
-                  </select>
-                  {errors.assunto && <span className="text-xs text-destructive">{errors.assunto}</span>}
-                </div>
-                <div className="md:col-span-2 flex flex-col gap-2">
-                  <label className="font-mono-label">Mensagem</label>
-                  <textarea
-                    name="mensagem"
-                    rows={5}
-                    placeholder="Escreve o que te apetecer..."
-                    className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors resize-none"
-                  />
-                  {errors.mensagem && <span className="text-xs text-destructive">{errors.mensagem}</span>}
-                </div>
-                <button
-                  type="submit"
-                  className="md:col-span-2 mt-4 bg-foreground text-cream px-8 py-4 text-xs uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500 self-start"
+            <AnimatePresence mode="wait">
+              {sent ? (
+                <motion.div
+                  key="sent"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="py-12 border-t border-b border-foreground/15"
                 >
-                  Enviar mensagem
-                </button>
-              </form>
-            )}
+                  <p className="font-italic-serif text-4xl text-copper mb-4">Recebido.</p>
+                  <p className="text-foreground/65 leading-relaxed">
+                    Fica descansado — li com atenção. Volto a ti em breve, por email, sem pressa.
+                  </p>
+                  <p className="font-mono-label text-foreground/30 mt-8">L.R. · Rosmaninho</p>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  onSubmit={onSubmit}
+                  className="space-y-8"
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <Field label="Nome" name="nome" error={errors.nome} placeholder="o teu nome" />
+                    <Field label="Email" name="email" type="email" error={errors.email} placeholder="o teu email" />
+                  </div>
 
-            <div className="mt-16 pt-8 border-t border-foreground/10 grid grid-cols-2 gap-6 text-sm">
-              <div>
-                <p className="font-mono-label mb-2">Email</p>
-                <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper">ola@rosmaninhofotografia.pt</a>
+                  <div className="flex flex-col gap-3">
+                    <label className="font-mono-label text-foreground/50">Mensagem</label>
+                    <textarea
+                      name="mensagem"
+                      rows={6}
+                      placeholder="Escreve o que te trouxe até aqui — uma imagem que ficou, um lugar, uma ideia, ou simplesmente algo que quiseres partilhar."
+                      className="bg-transparent border-b border-foreground/20 py-3 text-sm text-foreground placeholder:text-foreground/30 focus:border-copper focus:outline-none transition-colors duration-500 resize-none leading-relaxed"
+                    />
+                    {errors.mensagem && (
+                      <span className="text-xs text-copper">{errors.mensagem}</span>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="group flex items-center gap-4 bg-foreground text-cream px-8 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500"
+                  >
+                    Enviar
+                    <span className="opacity-40 group-hover:opacity-100 transition-opacity">→</span>
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
+
+            {/* Contactos directos */}
+            {!sent && (
+              <div className="mt-16 pt-8 border-t border-foreground/10 flex flex-wrap gap-x-12 gap-y-4 text-sm">
+                <div>
+                  <p className="font-mono-label text-foreground/35 mb-1">Email directo</p>
+                  <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper transition-colors">
+                    ola@rosmaninhofotografia.pt
+                  </a>
+                </div>
+                <div>
+                  <p className="font-mono-label text-foreground/35 mb-1">Instagram</p>
+                  <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">
+                    @luisarosmaninh
+                  </a>
+                </div>
               </div>
-              <div>
-                <p className="font-mono-label mb-2">Instagram</p>
-                <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper">@luisarosmaninh</a>
-              </div>
-            </div>
+            )}
           </motion.div>
         </div>
 
-        {/* Right: image */}
+        {/* ── Coluna direita: imagem atmosférica ── */}
         <div className="relative hidden lg:block">
-          <img src={sunsetBeach} alt="Diálogo" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60" />
-          <div className="absolute bottom-12 left-12 right-12 text-cream">
-            <p className="font-italic-serif text-4xl text-copper">uma conversa</p>
-            <p className="font-display text-3xl mt-3 max-w-md">Sem pressa, sem agenda.</p>
-          </div>
+          <img
+            src={sunsetBeach}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-foreground/20 via-foreground/50 to-foreground/80" />
+
+          {/* Nota no canto inferior */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.4, delay: 0.8 }}
+            className="absolute bottom-12 left-12 right-12 text-cream"
+          >
+            <p className="font-italic-serif text-5xl text-copper mb-3">"</p>
+            <p className="font-display text-3xl md:text-4xl leading-[1.15] max-w-sm">
+              Não há pressa. Há uma conversa, se quiseres tê-la.
+            </p>
+            <div className="mt-8 h-px bg-cream/20 max-w-xs" />
+            <p className="font-mono-label text-cream/35 mt-4">Coimbra · Portugal</p>
+          </motion.div>
         </div>
-      </section>
+      </div>
 
       <SiteFooter />
     </div>
   );
 }
 
-function Field({ label, name, type = "text", error }: { label: string; name: string; type?: string; error?: string }) {
+function Field({
+  label, name, type = "text", error, placeholder,
+}: {
+  label: string; name: string; type?: string; error?: string; placeholder?: string;
+}) {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="font-mono-label">{label}</label>
+    <div className="flex flex-col gap-3">
+      <label className="font-mono-label text-foreground/50">{label}</label>
       <input
         name={name}
         type={type}
-        className="bg-transparent border-b border-foreground/30 py-2 text-sm focus:border-copper focus:outline-none transition-colors"
+        placeholder={placeholder}
+        className="bg-transparent border-b border-foreground/20 py-3 text-sm placeholder:text-foreground/30 focus:border-copper focus:outline-none transition-colors duration-500"
       />
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-xs text-copper">{error}</span>}
     </div>
   );
 }
