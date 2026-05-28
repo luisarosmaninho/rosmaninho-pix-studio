@@ -97,12 +97,11 @@ function SobrePage() {
         </div>
       </Fade>
 
-      {/* ── Frase simples ── */}
+      {/* ── Frase de abertura ── */}
       <Fade className="px-6 md:px-12 py-28 md:py-36 max-w-3xl mx-auto">
-        <p className="font-display italic text-4xl md:text-6xl leading-[1.1] text-foreground/80">
-          "A fotografia ensinou-me a reparar. Antes de tudo o resto."
+        <p className="font-display italic text-4xl md:text-5xl leading-[1.15] text-foreground/80">
+          "Nunca consegui olhar para a fotografia como apenas tirar fotografias. Para mim, sempre foi muito mais do que isso."
         </p>
-        <p className="font-mono-label text-foreground/30 mt-8">L.R.</p>
       </Fade>
 
       <div className="hairline mx-6 md:mx-12" />
@@ -117,52 +116,48 @@ function SobrePage() {
 
         <div className="md:col-span-7 space-y-12">
           <Fade>
-            <p className="font-mono-label text-copper mb-6">§ 01 — O começo</p>
+            <p className="font-mono-label text-copper mb-6">§ 01 — Guardar</p>
             <p className="font-display text-3xl md:text-4xl leading-[1.15] mb-8">
-              Comecei sem método. Saía, andava, parava.
+              A minha forma de guardar o que passa demasiado depressa.
             </p>
             <p className="text-foreground/68 leading-relaxed">
-              Às vezes voltava para casa sem uma imagem que prestasse. Isso não me acontecia para desistir — acontecia para aprender a olhar antes de disparar. A câmara foi chegando ao lugar onde o caderno sempre esteve: ao lado, em silêncio, à espera.
+              A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa. Gosto de reparar nos detalhes que muitas vezes passam despercebidos: a maneira como a luz entra por uma janela ao final da tarde, um olhar distraído, um sorriso inesperado, o silêncio confortável entre duas pessoas — ou aquela sensação impossível de explicar que certos momentos conseguem ter.
             </p>
           </Fade>
 
           <Fade delay={0.1}>
             <div className="border-l-2 border-copper/30 pl-8 py-2">
               <p className="font-italic-serif text-2xl md:text-3xl text-foreground/75 leading-relaxed">
-                "Sou uma pessoa bastante emocional e criativa, e acho que isso acaba inevitavelmente por se refletir no trabalho."
+                "Sou uma pessoa bastante emocional e criativa, e acho que isso acaba inevitavelmente por se refletir no meu trabalho."
               </p>
             </div>
           </Fade>
 
           <Fade delay={0.15}>
-            <p className="font-mono-label text-copper mb-4">§ 02 — O olhar</p>
+            <p className="font-mono-label text-copper mb-4">§ 02 — Verdadeiras</p>
             <p className="text-foreground/68 leading-relaxed mb-5">
-              Não procuro imagens perfeitas. Procuro imagens verdadeiras. A diferença não está na técnica — está em perceber quando um momento ainda não acabou de acontecer.
+              Não procuro criar imagens demasiado perfeitas ou forçadas. Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais. Quero que as pessoas se revejam nelas, que sintam alguma coisa quando as olham e que consigam voltar àquele momento mesmo muitos anos depois.
             </p>
             <p className="text-foreground/68 leading-relaxed">
-              Grande parte daquilo que faço nasce da observação. Gosto de perceber os lugares, a luz e o que está no ar antes de pegar na câmara. E talvez seja exatamente isso que mais gosto na fotografia: obriga-me a andar mais devagar.
+              Grande parte daquilo que faço nasce da observação. Gosto de perceber as pessoas, os ambientes, a luz e as emoções antes sequer de pegar na câmara. E talvez seja exatamente isso que mais gosto na fotografia: obriga-me a olhar para o mundo com mais calma, mais atenção e mais sensibilidade.
             </p>
           </Fade>
         </div>
       </section>
 
-      {/* ── Secção escura — O caderno ── */}
+      {/* ── Secção escura — O detalhe ── */}
       <section className="bg-foreground text-cream px-6 md:px-12 py-28 md:py-36">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
           <Fade className="md:col-span-6 space-y-8">
-            <p className="font-mono-label text-copper mb-2">§ 03 — O caderno</p>
+            <p className="font-mono-label text-copper mb-2">§ 03 — O detalhe</p>
             <p className="font-display text-4xl md:text-5xl text-cream leading-[1.1]">
-              Sem clientes,<br />sem pressa.
+              Provavelmente<br />ninguém repara.<br /><span className="font-italic-serif text-copper">Eu reparo.</span>
             </p>
             <p className="text-cream/65 leading-relaxed">
-              Este sítio não é um portefólio comercial. É um caderno aberto — o lugar onde as séries vivem enquanto crescem, onde o diário fica guardado, onde as notas de campo vão aparecendo.
+              Existe um lado muito pessoal em tudo isto. Sou extremamente perfeccionista com os detalhes, mesmo os mais pequenos. Muitas vezes passo horas a pensar numa composição, numa edição, numa cor, numa sombra ou numa sensação específica que quero transmitir. Provavelmente muita gente nunca irá reparar conscientemente nesses detalhes… mas eu reparo. E para mim, isso faz toda a diferença.
             </p>
             <p className="text-cream/65 leading-relaxed">
-              Não há pressa de acabar nenhuma série. Elas vão crescendo à medida que ando. Algumas imagens ficam a amadurecer durante meses antes de aparecerem aqui.
-            </p>
-            <div className="h-px bg-cream/15 max-w-xs" />
-            <p className="font-italic-serif text-cream/50 text-xl">
-              "só atenção ao que insiste em ficar"
+              Ao mesmo tempo, quero que tudo pareça leve e natural. Não gosto de transformar momentos em algo artificial. Prefiro conversas genuínas, movimentos espontâneos, gargalhadas inesperadas e aquela beleza imperfeita que torna cada pessoa diferente.
             </p>
           </Fade>
 
@@ -201,7 +196,23 @@ function SobrePage() {
         </div>
       </Fade>
 
-      {/* ── Fecho — muito simples ── */}
+      {/* ── Propósito ── */}
+      <Fade className="px-6 md:px-12 py-28 max-w-6xl mx-auto">
+        <p className="font-mono-label text-copper mb-8">§ 05 — O porquê</p>
+        <p className="font-display text-4xl md:text-6xl leading-[1.05] mb-12 max-w-4xl">
+          A Rosmaninho Fotografia nasceu exatamente dessa vontade: criar algo <span className="font-italic-serif text-copper">íntimo</span>, artístico e emocional.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl">
+          <p className="text-foreground/68 leading-relaxed">
+            Um espaço onde a fotografia não serve apenas para mostrar como um momento parecia, mas principalmente como ele se <em>sentia</em>.
+          </p>
+          <p className="text-foreground/68 leading-relaxed">
+            No fundo, aquilo que procuro capturar é simples: emoções verdadeiras, momentos sinceros e memórias que continuam vivas muito depois do clique.
+          </p>
+        </div>
+      </Fade>
+
+      {/* ── Fecho ── */}
       <motion.section
         variants={fadeUp}
         initial="hidden"

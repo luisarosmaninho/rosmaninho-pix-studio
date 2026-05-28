@@ -145,15 +145,16 @@ function HomePage() {
           <div className="md:col-span-5 order-2 md:order-1">
             <p className="font-mono-label text-copper mb-6">§ 02 — Autora</p>
             <h2 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[0.98]">
-              Sou a <span className="font-italic-serif text-copper">Luísa</span>,
-              <br />ando muito a pé.
+              Nunca apenas<br />
+              <span className="font-italic-serif text-copper">tirar</span><br />
+              fotografias.
             </h2>
             <div className="mt-10 space-y-5 text-foreground/75 max-w-md leading-relaxed">
               <p>
-                Vivo em Coimbra, tenho sempre uma câmara comigo, e o passo de quem prefere chegar mais tarde. Este sítio é o meu caderno aberto — sem clientes, sem pressa, só atenção ao que insiste em ficar.
+                A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa.
               </p>
               <p>
-                Trabalho em quatro séries paralelas. Vão crescendo à medida que ando, observo e disparo.
+                Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.
               </p>
             </div>
 
