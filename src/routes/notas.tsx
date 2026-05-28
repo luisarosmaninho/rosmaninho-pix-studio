@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { notas, formatNotaDate, type Nota } from "@/lib/notas";
 
@@ -23,7 +24,9 @@ const tags: { value: Nota["tag"]; label: string }[] = [
 ];
 
 function NotasPage() {
+  const [activeTag, setActiveTag] = useState<Nota["tag"] | null>(null);
   const sorted = [...notas].sort((a, b) => b.date.localeCompare(a.date));
+  const visible = activeTag ? sorted.filter((n) => n.tag === activeTag) : sorted;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -43,20 +46,35 @@ function NotasPage() {
           </p>
         </motion.div>
 
-        {/* Tags */}
+        {/* Tags — filterable */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
           className="mt-12 flex flex-wrap gap-3"
         >
+          <button
+            onClick={() => setActiveTag(null)}
+            className={`text-[10px] uppercase tracking-[0.32em] border px-4 py-2 transition-colors duration-300 ${
+              activeTag === null
+                ? "bg-foreground text-background border-foreground"
+                : "border-foreground/20 text-foreground/60 hover:border-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            Todas
+          </button>
           {tags.map((t) => (
-            <span
+            <button
               key={t.value}
-              className="text-[10px] uppercase tracking-[0.32em] border border-foreground/20 px-4 py-2 text-foreground/60"
+              onClick={() => setActiveTag(activeTag === t.value ? null : t.value)}
+              className={`text-[10px] uppercase tracking-[0.32em] border px-4 py-2 transition-colors duration-300 ${
+                activeTag === t.value
+                  ? "bg-foreground text-background border-foreground"
+                  : "border-foreground/20 text-foreground/60 hover:border-foreground/50 hover:text-foreground/80"
+              }`}
             >
               {t.label}
-            </span>
+            </button>
           ))}
         </motion.div>
       </section>
@@ -65,27 +83,41 @@ function NotasPage() {
 
       {/* Notas grid */}
       <section className="px-6 md:px-12 py-20 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-foreground/10">
-          {sorted.map((nota, i) => (
-            <motion.article
-              key={nota.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.9, delay: (i % 3) * 0.1, ease: "easeOut" }}
-              className="bg-background p-8 md:p-10 flex flex-col gap-6 group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono-label text-copper">{nota.tag}</span>
-                <span className="font-mono-label text-foreground/35">{formatNotaDate(nota.date)}</span>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTag ?? "all"}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-foreground/10"
+          >
+            {visible.map((nota, i) => (
+              <motion.article
+                key={nota.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.9, delay: (i % 3) * 0.1, ease: "easeOut" }}
+                className="bg-background p-8 md:p-10 flex flex-col gap-6 group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono-label text-copper">{nota.tag}</span>
+                  <span className="font-mono-label text-foreground/35">{formatNotaDate(nota.date)}</span>
+                </div>
+                <p className="font-display italic text-xl md:text-2xl leading-[1.35] text-foreground/90 flex-1">
+                  "{nota.text}"
+                </p>
+                <div className="w-8 h-px bg-copper/40 group-hover:w-16 transition-all duration-700" />
+              </motion.article>
+            ))}
+            {visible.length === 0 && (
+              <div className="col-span-full bg-background p-16 text-center text-foreground/40 font-mono-label text-sm">
+                Nenhuma nota nesta categoria por agora.
               </div>
-              <p className="font-display italic text-xl md:text-2xl leading-[1.35] text-foreground/90 flex-1">
-                "{nota.text}"
-              </p>
-              <div className="w-8 h-px bg-copper/40 group-hover:w-16 transition-all duration-700" />
-            </motion.article>
-          ))}
-        </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </section>
 
       {/* Nota final */}
