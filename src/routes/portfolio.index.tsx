@@ -13,9 +13,9 @@ export const Route = createFileRoute("/portfolio/")({
   head: () => ({
     meta: [
       { title: "Portfólio — Rosmaninho Fotografia" },
-      { name: "description", content: "Arquivo fotográfico: casamentos, retratos, lifestyle e branding." },
+      { name: "description", content: "Arquivo fotográfico: urbanas, natureza, retratos e iguarias." },
       { property: "og:title", content: "Portfólio — Rosmaninho" },
-      { property: "og:description", content: "Casamentos, retratos, lifestyle e branding." },
+      { property: "og:description", content: "Urbanas, natureza, retratos e iguarias." },
     ],
   }),
   component: PortfolioPage,
@@ -74,7 +74,7 @@ function PortfolioPage() {
         <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">arquivo</p>
         <h1 className="font-display text-5xl md:text-7xl leading-tight">Portfólio.</h1>
         <p className="mt-6 max-w-2xl text-foreground/70">
-          Uma selecção de momentos — casamentos, retratos, lifestyle e branding — em que o tempo decidiu ficar.
+          Uma selecção de momentos — urbanas, natureza, retratos e iguarias — em que o tempo decidiu ficar.
         </p>
 
         <div className="mt-12 flex flex-wrap gap-3">

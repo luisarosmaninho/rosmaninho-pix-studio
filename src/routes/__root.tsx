@@ -42,7 +42,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Rosmaninho Fotografia — Onde o tempo para e a emoção fica" },
-      { name: "description", content: "Fotografia cinematográfica de casamentos, retratos, lifestyle e branding por Luísa Rosmaninho. Coimbra, Portugal." },
+      { name: "description", content: "Fotografia de urbanas, natureza, retratos e iguarias por Luísa Rosmaninho. Coimbra, Portugal." },
       { property: "og:title", content: "Rosmaninho Fotografia" },
       { property: "og:description", content: "Capto a poesia dos teus dias mais especiais com um olhar cinematográfico e intemporal." },
       { property: "og:type", content: "website" },
