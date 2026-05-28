@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { z } from "zod";
+import { sendContactEmail } from "@/lib/contact-fn";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 
 export const Route = createFileRoute("/contacto")({
@@ -23,9 +24,11 @@ const schema = z.object({
 
 function ContactoPage() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState("");
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const parsed = schema.safeParse(Object.fromEntries(fd));
@@ -36,7 +39,16 @@ function ContactoPage() {
       return;
     }
     setErrors({});
-    setSent(true);
+    setServerError("");
+    setSending(true);
+    try {
+      await sendContactEmail({ data: parsed.data });
+      setSent(true);
+    } catch {
+      setServerError("Não consegui enviar a mensagem. Tenta por email directamente.");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -116,12 +128,17 @@ function ContactoPage() {
                     )}
                   </div>
 
+                  {serverError && (
+                    <p className="text-xs text-copper border border-copper/20 px-4 py-3">{serverError}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="group flex items-center gap-4 bg-foreground text-cream px-8 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500"
+                    disabled={sending}
+                    className="group flex items-center gap-4 bg-foreground text-cream px-8 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Enviar
-                    <span className="opacity-40 group-hover:opacity-100 transition-opacity">→</span>
+                    {sending ? "A enviar…" : "Enviar"}
+                    {!sending && <span className="opacity-40 group-hover:opacity-100 transition-opacity">→</span>}
                   </button>
                 </motion.form>
               )}
@@ -156,7 +173,6 @@ function ContactoPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-foreground/20 via-foreground/50 to-foreground/80" />
 
-          {/* Nota no canto inferior */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

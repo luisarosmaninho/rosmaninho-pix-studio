@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { photos, categories, type Photo, type CategorySlug } from "@/lib/photos";
-import { getPhotoConfig, savePhotoConfig } from "@/lib/photo-config-fns";
+import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/photo-config-fns";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
@@ -37,7 +37,8 @@ function AdminPage() {
 
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
-  const [authError, setAuthError] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
   const [list, setList] = useState<AdminPhoto[]>(() => applyInitialOrder(photos, config));
   const [filter, setFilter] = useState<CategorySlug | "all">("all");
   const [saving, setSaving] = useState(false);
@@ -49,13 +50,21 @@ function AdminPage() {
     [list, filter]
   );
 
-  function handleAuth(e: React.FormEvent) {
+  async function handleAuth(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length > 0) {
+    if (!password.trim()) {
+      setAuthError("Preenche a password.");
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      await verifyAdminPassword({ data: { password } });
       setAuthed(true);
-      setAuthError(false);
-    } else {
-      setAuthError(true);
+    } catch {
+      setAuthError("Password incorrecta.");
+    } finally {
+      setAuthLoading(false);
     }
   }
 
@@ -131,20 +140,22 @@ function AdminPage() {
             <input
               type="password"
               value={password}
-              onChange={(e) => { setPassword(e.target.value); setAuthError(false); }}
+              onChange={(e) => { setPassword(e.target.value); setAuthError(""); }}
               placeholder="Password"
               autoFocus
-              className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/20"
+              disabled={authLoading}
+              className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/20 disabled:opacity-50"
             />
             {authError && (
-              <p className="text-red-400 text-xs tracking-wide">Preenche a password.</p>
+              <p className="text-red-400 text-xs tracking-wide">{authError}</p>
             )}
           </div>
           <button
             type="submit"
-            className="w-full bg-white text-black text-[11px] uppercase tracking-[0.28em] py-3 hover:bg-white/90 transition-colors"
+            disabled={authLoading}
+            className="w-full bg-white text-black text-[11px] uppercase tracking-[0.28em] py-3 hover:bg-white/90 transition-colors disabled:opacity-50"
           >
-            Entrar
+            {authLoading ? "A verificar…" : "Entrar"}
           </button>
         </form>
       </div>
