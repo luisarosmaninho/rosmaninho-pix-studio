@@ -154,37 +154,38 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
 /* ---------------- Footer ---------------- */
 export function SiteFooter() {
   return (
-    <footer className="bg-foreground text-cream px-6 md:px-12 pt-24 pb-10">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-        <div className="md:col-span-5 flex flex-col gap-5">
-          <span className="font-script text-5xl text-cream">Rosmaninho</span>
-          <p className="text-sm leading-relaxed text-cream/70 max-w-sm">
-            Um arquivo lento de imagens e notas — urbanas, natureza, retratos e comida. Feito devagar, em Coimbra.
-          </p>
+    <footer className="bg-foreground text-cream px-6 md:px-12 pt-28 pb-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-16 border-b border-cream/15">
+          <div className="md:col-span-6 flex flex-col gap-6">
+            <span className="font-italic-serif text-6xl md:text-7xl text-copper leading-none">Rosmaninho</span>
+            <p className="text-sm leading-relaxed text-cream/65 max-w-md">
+              Um arquivo lento de imagens e notas — urbanas, natureza, retratos e comida. Feito devagar, em Coimbra.
+            </p>
+            <p className="font-mono-label text-cream/40">est. 2020 · Coimbra · Portugal</p>
+          </div>
+
+          <div className="md:col-span-3 flex flex-col gap-3 text-sm">
+            <p className="font-mono-label text-cream/40 mb-3">Navegação</p>
+            <Link to="/" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Início</Link>
+            <Link to="/sobre" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
+            <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
+            <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
+            <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
+          </div>
+
+          <div className="md:col-span-3 flex flex-col gap-3 text-sm">
+            <p className="font-mono-label text-cream/40 mb-3">Contacto</p>
+            <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper transition-colors">ola@rosmaninhofotografia.pt</a>
+            <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">Instagram</a>
+            <a href="https://wa.me/351900000000" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">WhatsApp</a>
+          </div>
         </div>
 
-        <div className="md:col-span-3 flex flex-col gap-3 text-sm">
-          <p className="font-mono-label text-cream/50 mb-2">Navegação</p>
-          <Link to="/" className="hover:text-gold" style={{ color: "inherit" }}>Início</Link>
-          <Link to="/sobre" className="hover:text-gold" style={{ color: "inherit" }}>Autora</Link>
-          <Link to="/portfolio" className="hover:text-gold" style={{ color: "inherit" }}>Séries</Link>
-          <Link to="/diario" className="hover:text-gold" style={{ color: "inherit" }}>Diário</Link>
-          <Link to="/contacto" className="hover:text-gold" style={{ color: "inherit" }}>Diálogo</Link>
+        <div className="mt-8 flex flex-col md:flex-row justify-between gap-3 text-[10px] tracking-[0.32em] uppercase text-cream/40">
+          <p>© {new Date().getFullYear()} Rosmaninho Fotografia</p>
+          <p>Feito com luz, café e paciência</p>
         </div>
-
-        <div className="md:col-span-4 flex flex-col gap-3 text-sm">
-          <p className="font-mono-label text-cream/50 mb-2">Contacto</p>
-          <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-gold">ola@rosmaninhofotografia.pt</a>
-          <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-gold">Instagram @luisarosmaninh</a>
-          <a href="https://wa.me/351900000000" target="_blank" rel="noreferrer" className="hover:text-gold">WhatsApp +351 900 000 000</a>
-        </div>
-      </div>
-
-      <div className="mt-16 h-px bg-cream/15" />
-
-      <div className="mt-6 flex flex-col md:flex-row justify-between gap-3 text-[11px] tracking-[0.2em] uppercase text-cream/50">
-        <p>© {new Date().getFullYear()} Rosmaninho Fotografia — Todos os direitos reservados.</p>
-        <p>Coimbra · Portugal</p>
       </div>
     </footer>
   );
