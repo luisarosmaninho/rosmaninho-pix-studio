@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { getJournalEntry, journal } from "@/lib/journal";
-import { photos } from "@/lib/photos";
 
 export const Route = createFileRoute("/diario/$slug")({
   beforeLoad: ({ params }) => {
@@ -33,10 +32,6 @@ function stamp(date: string) {
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
-  // duas imagens secundárias da mesma categoria — sem fallback para outras categorias
-  const extras = photos
-    .filter((p) => p.src !== entry.photoSrc && p.category === entry.relatedCategory)
-    .slice(0, 2);
 
   return (
     <div className="bg-background text-foreground">
@@ -87,16 +82,6 @@ function EntryPage() {
               <p className="body-text text-base" style={{ textAlign: "justify" }}>{p}</p>
             </div>
           ))}
-
-          {extras.length === 2 && (
-            <div className="grid grid-cols-2 gap-6 my-24 max-w-6xl mx-auto">
-              {extras.map((p, i) => (
-                <figure key={i} className="aspect-[3/4] overflow-hidden">
-                  <img src={p.src} alt={p.title} className="w-full h-full object-cover" />
-                </figure>
-              ))}
-            </div>
-          )}
 
           <div className="mx-auto" style={{ maxWidth: "650px" }}>
             {entry.body.slice(2).map((p, i) => (
