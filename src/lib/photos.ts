@@ -18,7 +18,7 @@ import waffleOvo from "@/assets/waffle-ovo.jpg";
 import ovosMexidos from "@/assets/ovos-mexidos.jpg";
 import arcoCoimbra from "@/assets/arco-coimbra.jpg";
 
-export type CategorySlug = "urbanas" | "natureza" | "retratos" | "comida";
+export type CategorySlug = "urbanas" | "natureza" | "retratos" | "iguarias";
 
 export type Category = {
   slug: CategorySlug;
@@ -71,8 +71,8 @@ export const categories: Category[] = [
     quoteSource: "L.R.",
   },
   {
-    slug: "comida",
-    title: "Comida",
+    slug: "iguarias",
+    title: "Iguarias",
     description: "Mesas, texturas e o instante antes do primeiro garfo.",
     intro: "Antes do primeiro garfo, existe uma brevidade extraordinária. Uma mesa posta, uma luz que bate de lado, o vapor de algo acabado de sair do forno. Estas imagens vivem nesses segundos antes.",
     quote: "A comida é a única arte que desaparece ao ser apreciada.",
@@ -204,7 +204,7 @@ export const photos: Photo[] = [
     src: geladoBolacha,
     title: "Sorriso de bolacha",
     year: "2023",
-    category: "comida",
+    category: "iguarias",
     orientation: "landscape",
     meta: { date: "Jul 2023", time: "15:30", coords: "Coimbra", note: "Comer devagar é também uma forma de atenção." },
   },
@@ -212,7 +212,7 @@ export const photos: Photo[] = [
     src: risottoCourgette,
     title: "Risotto de curgete",
     year: "2022",
-    category: "comida",
+    category: "iguarias",
     orientation: "landscape",
     meta: { date: "Mar 2022", time: "13:05", coords: "Porto", note: "Há refeições que são um intervalo no tempo." },
   },
@@ -220,7 +220,7 @@ export const photos: Photo[] = [
     src: sandesRibs,
     title: "Sandes & batatas",
     year: "2022",
-    category: "comida",
+    category: "iguarias",
     orientation: "landscape",
     meta: { date: "Jun 2022", time: "12:48", coords: "Lisboa", note: "Comida simples, feita com cuidado, é luxo suficiente." },
   },
@@ -228,7 +228,7 @@ export const photos: Photo[] = [
     src: waffleOvo,
     title: "Panqueca salgada",
     year: "2023",
-    category: "comida",
+    category: "iguarias",
     orientation: "landscape",
     meta: { date: "Fev 2023", time: "10:17", coords: "Coimbra", note: "O pequeno-almoço tardio tem a sua própria filosofia." },
   },
@@ -236,7 +236,7 @@ export const photos: Photo[] = [
     src: ovosMexidos,
     title: "Mexidos com tomate",
     year: "2023",
-    category: "comida",
+    category: "iguarias",
     orientation: "landscape",
     meta: { date: "Abr 2023", time: "11:03", coords: "Coimbra", note: "Ovos mexidos às onze da manhã. A vida tem outro ritmo." },
   },

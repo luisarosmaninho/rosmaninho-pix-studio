@@ -180,7 +180,7 @@ function SobrePage() {
             { n: "01", t: "Urbanas", d: "Ruas, pontes e telhados — a cidade enquanto matéria viva. Porto e Coimbra, principalmente." },
             { n: "02", t: "Natureza", d: "Água, luz e paisagem. O tempo lento dos lugares que não precisam de pessoas para existir." },
             { n: "03", t: "Retratos", d: "Rostos, pedra e silêncio. Quem é, e onde está — que às vezes é a mesma coisa." },
-            { n: "04", t: "Comida", d: "Mesas, texturas e o instante antes do primeiro garfo. A beleza do ordinário." },
+            { n: "04", t: "Iguarias", d: "Mesas, texturas e o instante antes do primeiro garfo. A beleza do ordinário." },
           ].map((s) => (
             <div key={s.n} className="bg-background px-8 py-10 group">
               <p className="font-mono-label text-copper mb-6">{s.n}</p>

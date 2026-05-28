@@ -274,7 +274,7 @@ function HomePage() {
         <div className="marquee flex whitespace-nowrap font-display text-[80px] md:text-[140px] text-copper/60 leading-none">
           {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="mx-10">
-              Urbanas <span className="font-italic-serif text-foreground/40">·</span> Natureza <span className="font-italic-serif text-foreground/40">·</span> Retratos <span className="font-italic-serif text-foreground/40">·</span> Comida <span className="font-italic-serif text-foreground/40">·</span>
+              Urbanas <span className="font-italic-serif text-foreground/40">·</span> Natureza <span className="font-italic-serif text-foreground/40">·</span> Retratos <span className="font-italic-serif text-foreground/40">·</span> Iguarias <span className="font-italic-serif text-foreground/40">·</span>
             </span>
           ))}
         </div>
