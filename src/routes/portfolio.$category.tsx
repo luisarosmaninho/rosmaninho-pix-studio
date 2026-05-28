@@ -296,10 +296,7 @@ function CategoryPage() {
               <div className="h-px bg-cream/15 w-full" />
               <div className="flex justify-between font-mono-label text-cream/35">
                 <span>{pics.length} fotografias</span>
-                <span>
-                  {pics.reduce((min, p) => Math.min(min, parseInt(p.year)), Infinity)}–
-                  {pics.reduce((max, p) => Math.max(max, parseInt(p.year)), 0)}
-                </span>
+                <span>arquivo lento</span>
               </div>
               <div className="flex justify-between font-mono-label text-cream/35">
                 <span>Luísa Rosmaninho</span>

@@ -110,7 +110,6 @@ function PortfolioPage() {
             <img src={p.src} alt={p.title} className="w-full h-auto block" />
             <figcaption className="absolute inset-x-0 bottom-0 p-5 text-cream bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <p className="font-display text-2xl">{p.title}</p>
-              <p className="font-mono-label text-cream/70 mt-1">{p.year}</p>
             </figcaption>
           </motion.figure>
         ))}
