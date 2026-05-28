@@ -118,7 +118,7 @@ export const photos: Photo[] = [
   {
     id: "porto-street",
     src: portoStreet,
-    title: "Âmbar ao fundo",
+    title: "Quando ainda havia luz",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Os candeeiros acendem antes de o sol desaparecer. As cadeiras esperam." },
@@ -142,7 +142,7 @@ export const photos: Photo[] = [
   {
     id: "coimbra-skyline",
     src: coimbraSkyline,
-    title: "Mais céu do que cidade",
+    title: "O horizonte que não se fecha",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "Há dias em que o horizonte engole tudo o resto." },
@@ -150,7 +150,7 @@ export const photos: Photo[] = [
   {
     id: "porto-douro",
     src: portoDouro,
-    title: "Entre paredes, o rio",
+    title: "A promessa no fim da rua",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "O rio aparece no fim de cada rua, como uma promessa." },
@@ -158,7 +158,7 @@ export const photos: Photo[] = [
   {
     id: "arco-coimbra",
     src: arcoCoimbra,
-    title: "A penumbra do arco",
+    title: "O frio da pedra antiga",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Há sempre uma sombra fria por baixo das pedras mais velhas." },
@@ -190,7 +190,7 @@ export const photos: Photo[] = [
   {
     id: "arvore-calcada",
     src: arvoreCalcada,
-    title: "A árvore mais barulhenta da rua",
+    title: "A primavera não avisou",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "A primavera faz barulho quando uma árvore inteira decide florescer de vez." },
@@ -198,7 +198,7 @@ export const photos: Photo[] = [
   {
     id: "porto-cupula",
     src: portoCupula,
-    title: "O novo não esperou",
+    title: "Enquanto ninguém olhava",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A cúpula manteve-se. A grua apareceu sem pedir licença." },
@@ -206,7 +206,7 @@ export const photos: Photo[] = [
   {
     id: "porto-azulejos",
     src: portoAzulejos,
-    title: "O canto verde-escuro",
+    title: "O azulejo que não esqueceu",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "Os azulejos guardam a cor mesmo quando os ramos ficam sem folhas." },
@@ -214,7 +214,7 @@ export const photos: Photo[] = [
   {
     id: "porto-rua-calcada",
     src: portoRuaCalcada,
-    title: "Antes de fechar",
+    title: "A hora em que a rua respira",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "A calçada molha-se de luz ao fim do dia. A árvore sabe o que vem a seguir." },
@@ -230,7 +230,7 @@ export const photos: Photo[] = [
   {
     id: "porto-luisi",
     src: portoLuisi,
-    title: "O que a margem vê",
+    title: "Do lado de quem fica",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "O cais não para. A ponte e o convento observam em silêncio." },
@@ -240,7 +240,7 @@ export const photos: Photo[] = [
   {
     id: "river",
     src: river,
-    title: "À altura da corrente",
+    title: "Quando a água ainda é visível",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "O rio é transparente quando se olha de perto." },
@@ -248,7 +248,7 @@ export const photos: Photo[] = [
   {
     id: "sunset-beach",
     src: sunsetBeach,
-    title: "Quem ficou até ao fim",
+    title: "A solidão que não pesa",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "O pôr-do-sol não se partilha bem. Esta pessoa percebeu." },
@@ -264,7 +264,7 @@ export const photos: Photo[] = [
   {
     id: "ribeiro-musgo",
     src: ribeiroMusgo,
-    title: "Muito perto do chão",
+    title: "O que existe só para quem se agacha",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "Há um ribeiro que ninguém vê se não se agachar." },
@@ -272,7 +272,7 @@ export const photos: Photo[] = [
   {
     id: "fio-agua",
     src: fioAgua,
-    title: "Antes de se perder",
+    title: "Forma antes de cair",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "A água existe por um momento em que ainda é forma." },
@@ -280,7 +280,7 @@ export const photos: Photo[] = [
   {
     id: "water-splash",
     src: waterSplash,
-    title: "A coroa",
+    title: "Geometria da queda",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "Uma fração de segundo com forma de coroa." },
@@ -296,7 +296,7 @@ export const photos: Photo[] = [
   {
     id: "mar-tetrapodos",
     src: marTetrapodos,
-    title: "Os dentes do molhe",
+    title: "A fronteira de betão",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "O betão segura o mar. Ao fundo, a cidade deixa-se ver." },
@@ -306,7 +306,7 @@ export const photos: Photo[] = [
   {
     id: "retrato-cidade",
     src: retratoCidade,
-    title: "Apanhado a olhar",
+    title: "Estava quase a ir embora",
     category: "retratos",
     orientation: "landscape",
     meta: { description: "Estava a ir embora quando olhou para trás." },
@@ -322,7 +322,7 @@ export const photos: Photo[] = [
   {
     id: "retrato-sol",
     src: retratoSol,
-    title: "Em modo de espera",
+    title: "Um pensamento por terminar",
     category: "retratos",
     orientation: "landscape",
     meta: { description: "Os óculos escuros e a mão no queixo. Alguém está a pensar em qualquer coisa." },
@@ -332,7 +332,7 @@ export const photos: Photo[] = [
   {
     id: "gelado-bolacha",
     src: geladoBolacha,
-    title: "Os dois sorriam",
+    title: "O que não precisava de ser escolhido",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "Dois gelados com bolacha de sorriso. Ninguém tinha de escolher." },
@@ -340,7 +340,7 @@ export const photos: Photo[] = [
   {
     id: "risotto-courgette",
     src: risottoCourgette,
-    title: "Amarelo com verde dentro",
+    title: "O que sobrou do verão",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "O arroz cremoso guardou as rodelas de curgete dentro de si." },
@@ -356,7 +356,7 @@ export const photos: Photo[] = [
   {
     id: "waffle-ovo",
     src: waffleOvo,
-    title: "O ovo ganhou",
+    title: "O encontro que ninguém esperava",
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "O ovo estrelado encontrou o waffle e o abacate. Ninguém ficou a perder." },
@@ -382,7 +382,7 @@ export const photos: Photo[] = [
   {
     id: "rua-descida",
     src: ruaDescida,
-    title: "Ainda não chegou ao fim",
+    title: "Descer sem saber onde acaba",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A rua desce e não avisa onde vai acabar." },
@@ -422,7 +422,7 @@ export const photos: Photo[] = [
   {
     id: "cidade-cores",
     src: cidadeCores,
-    title: "Cada um escolheu a sua cor",
+    title: "Nenhuma janela pediu autorização",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "Nenhuma janela combina com a do lado e ainda assim ficou bem." },
@@ -438,7 +438,7 @@ export const photos: Photo[] = [
   {
     id: "exposicao-rua",
     src: exposicaoRua,
-    title: "Uma exposição ao relento",
+    title: "Pausas involuntárias",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "As fotografias ficaram na rua. Os passantes param por um segundo." },
@@ -446,7 +446,7 @@ export const photos: Photo[] = [
   {
     id: "fachada-trepadeira",
     src: fachadaTrepadeira,
-    title: "A fachada que virou jardim",
+    title: "O que cresceu sem convite",
     category: "urbanas",
     orientation: "portrait",
     meta: { description: "A trepadeira não pediu autorização para cobrir tudo." },
@@ -488,7 +488,7 @@ export const photos: Photo[] = [
   {
     id: "monte-outono",
     src: monteOutono,
-    title: "O monte pegou fogo ao outono",
+    title: "O outono que foi longe demais",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "O amarelo e o laranja espalharam-se pelo monte antes do fim do dia." },
@@ -496,7 +496,7 @@ export const photos: Photo[] = [
   {
     id: "areia-onda",
     src: areiaOnda,
-    title: "A linha branca",
+    title: "Escrita de espuma",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "A onda chega, deixa um risco branco de espuma e vai-se embora." },
@@ -504,7 +504,7 @@ export const photos: Photo[] = [
   {
     id: "mondego-figura",
     src: mondegoFigura,
-    title: "De pedra em pedra",
+    title: "Parado no meio de tudo",
     category: "natureza",
     orientation: "landscape",
     meta: { description: "Parou no meio do rio. A cidade ficou para trás, os pássaros à frente." },
@@ -514,7 +514,7 @@ export const photos: Photo[] = [
   {
     id: "porto-douro-barca",
     src: portoDouroBarca,
-    title: "Da água, a cidade",
+    title: "O que se vê do outro lado",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A barca passa. A cidade acumula-se para cima." },
@@ -546,7 +546,7 @@ export const photos: Photo[] = [
   {
     id: "mural-reflexo",
     src: muralReflexo,
-    title: "O mural ao contrário",
+    title: "O reflexo que não pediu permissão",
     category: "urbanas",
     orientation: "landscape",
     meta: { description: "A chuva deixou uma poça. O mural duplicou-se sem avisar." },
