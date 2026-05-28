@@ -30,6 +30,22 @@ import barcoDouro from "@/assets/barco-douro.jpg";
 import portoRibeira from "@/assets/porto-ribeira.jpg";
 import portoLuisi from "@/assets/porto-luisi.jpg";
 import marTetrapodos from "@/assets/mar-tetrapodos.jpg";
+import ruaDescida from "@/assets/rua-descida.jpg";
+import monteOutono from "@/assets/monte-outono.jpg";
+import janelaAntiga from "@/assets/janela-antiga.jpg";
+import candeeiroRua from "@/assets/candeeiro-rua.jpg";
+import areiaOnda from "@/assets/areia-onda.jpg";
+import cidadeNevoa from "@/assets/cidade-nevoa.png";
+import telhadosNevoa from "@/assets/telhados-nevoa.jpg";
+import cidadeCores from "@/assets/cidade-cores.jpg";
+import pracaFonte from "@/assets/praca-fonte.jpg";
+import exposicaoRua from "@/assets/exposicao-rua.jpg";
+import fachadaTrepadeira from "@/assets/fachada-trepadeira.jpg";
+import coimbraCima from "@/assets/coimbra-cima.jpg";
+import mondegoFigura from "@/assets/mondego-figura.jpg";
+import edificioClassico from "@/assets/edificio-classico.jpg";
+import portoRibeiraPanorama from "@/assets/porto-ribeira-panorama.jpg";
+import metroPorto from "@/assets/metro-porto.jpg";
 
 export type CategorySlug = "urbanas" | "natureza" | "retratos" | "iguarias";
 
@@ -386,6 +402,154 @@ export const photos: Photo[] = [
     category: "iguarias",
     orientation: "landscape",
     meta: { description: "Dois cafés numa mesa redonda é uma promessa de conversa." },
+  },
+
+  // Novas urbanas
+  {
+    id: "rua-descida",
+    src: ruaDescida,
+    title: "Rua em descida",
+    year: "2020",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "As ruas em descida levam sempre a algum sítio melhor." },
+  },
+  {
+    id: "janela-antiga",
+    src: janelaAntiga,
+    title: "Passagem suspensa",
+    year: "2023",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { description: "Entre paredes, uma janela que ainda guarda o que viu." },
+  },
+  {
+    id: "candeeiro-rua",
+    src: candeeiroRua,
+    title: "Candeeiro de ferro",
+    year: "2023",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Há ornamentos que resistem ao tempo por pura teimosia." },
+  },
+  {
+    id: "cidade-nevoa",
+    src: cidadeNevoa,
+    title: "Névoa da madrugada",
+    year: "2023",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "A cidade acorda devagar, ainda envolta em nuvens." },
+  },
+  {
+    id: "telhados-nevoa",
+    src: telhadosNevoa,
+    title: "Telhados e névoa",
+    year: "2023",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "A névoa faz da cidade uma coisa à parte do mundo." },
+  },
+  {
+    id: "cidade-cores",
+    src: cidadeCores,
+    title: "Casas coloridas",
+    year: "2023",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Portugal pinta as suas casas como quem quer ser lembrado." },
+  },
+  {
+    id: "praca-fonte",
+    src: pracaFonte,
+    title: "Praça e fontes",
+    year: "2024",
+    category: "urbanas",
+    orientation: "square",
+    meta: { description: "A praça pertence a quem a atravessa devagar." },
+  },
+  {
+    id: "exposicao-rua",
+    src: exposicaoRua,
+    title: "Corredor de luz",
+    year: "2024",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { description: "A arte ao ar livre transforma a cidade num museu sem paredes." },
+  },
+  {
+    id: "fachada-trepadeira",
+    src: fachadaTrepadeira,
+    title: "Fachada viva",
+    year: "2024",
+    category: "urbanas",
+    orientation: "portrait",
+    meta: { description: "A trepadeira não pede licença — simplesmente fica." },
+  },
+  {
+    id: "coimbra-cima",
+    src: coimbraCima,
+    title: "Coimbra ao sol",
+    year: "2024",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Vista de cima, a cidade é um puzzle que faz sentido." },
+  },
+  {
+    id: "edificio-classico",
+    src: edificioClassico,
+    title: "Edifício clássico",
+    year: "2024",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Há edifícios que existem para lembrar o que a cidade já foi." },
+  },
+  {
+    id: "porto-ribeira-panorama",
+    src: portoRibeiraPanorama,
+    title: "Gaia vista do Porto",
+    year: "2024",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "O Douro divide, mas também une as duas margens." },
+  },
+  {
+    id: "metro-porto",
+    src: metroPorto,
+    title: "Metro do Porto",
+    year: "2024",
+    category: "urbanas",
+    orientation: "square",
+    meta: { description: "A cidade em movimento tem a sua própria cadência." },
+  },
+
+  // Novas natureza
+  {
+    id: "monte-outono",
+    src: monteOutono,
+    title: "Monte de outono",
+    year: "2023",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "O outono pinta a montanha antes de a deixar nua." },
+  },
+  {
+    id: "areia-onda",
+    src: areiaOnda,
+    title: "Limite da onda",
+    year: "2023",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "A água avança, recua, e a areia fica como estava." },
+  },
+  {
+    id: "mondego-figura",
+    src: mondegoFigura,
+    title: "Figura no Mondego",
+    year: "2024",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "Estar à beira do rio é já uma forma de regressar." },
   },
 ];
 
