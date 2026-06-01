@@ -12,6 +12,14 @@ import river from "@/assets/river.jpg";
 import villageAlley from "@/assets/village-alley.jpg";
 import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
 import waterSplash from "@/assets/water-splash.jpg";
+import arcoCoimbra from "@/assets/arco-coimbra.jpg";
+import retratoSol from "@/assets/retrato-sol.jpg";
+import ribeiroMusgo from "@/assets/ribeiro-musgo.jpg";
+import risottoCourgette from "@/assets/risotto-courgette.jpg";
+import portoRibeira from "@/assets/porto-ribeira.jpg";
+import farolPeniche from "@/assets/farol-peniche.jpg";
+import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
+import cafeMatcha from "@/assets/cafe-matcha.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,13 +54,28 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 }
 
 const filmFrames = [
-  { src: portoStreet,    n: "01A", title: "Quando ainda havia luz" },
-  { src: sunsetBeach,    n: "02A", title: "A solidão que não pesa" },
-  { src: villageAlley,   n: "03A", title: "Uma tarde sem sobressaltos" },
-  { src: river,          n: "04A", title: "Quando a água ainda é visível" },
-  { src: coimbraSkyline, n: "05A", title: "O horizonte que não se fecha" },
-  { src: waterSplash,    n: "06A", title: "Geometria da queda" },
+  { src: arcoCoimbra,       n: "01A", title: "A cidade vista de dentro",      cat: "Urbanas"   },
+  { src: retratoSol,        n: "02A", title: "Luz que não pede licença",       cat: "Retratos"  },
+  { src: ribeiroMusgo,      n: "03A", title: "O que existe só para quem se agacha", cat: "Natureza"  },
+  { src: risottoCourgette,  n: "04A", title: "O que sobrou do verão",          cat: "Iguarias"  },
+  { src: portoRibeira,      n: "05A", title: "Ribeira às seis da tarde",       cat: "Urbanas"   },
+  { src: farolPeniche,      n: "06A", title: "A beira do mundo habitável",     cat: "Natureza"  },
+  { src: retratoEsplanada,  n: "07A", title: "Uma tarde sem sobressaltos",     cat: "Retratos"  },
+  { src: cafeMatcha,        n: "08A", title: "Verde antes do ruído começar",   cat: "Iguarias"  },
 ];
+
+function SprocketColumn() {
+  return (
+    <div className="flex flex-col justify-around py-3 px-2 shrink-0">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <div
+          key={i}
+          className="w-3 h-4 rounded-[2px] bg-black border border-white/8"
+        />
+      ))}
+    </div>
+  );
+}
 
 function FilmLightbox({ index, onClose, onPrev, onNext }: {
   index: number;
@@ -82,64 +105,109 @@ function FilmLightbox({ index, onClose, onPrev, onNext }: {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+      transition={{ duration: 0.45 }}
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/98 backdrop-blur-sm px-4"
       onClick={onClose}
     >
-      {/* Frame counter top */}
-      <div className="absolute top-6 inset-x-0 flex items-center justify-between px-8 pointer-events-none">
-        <span className="font-mono-label text-white/30 text-[10px] uppercase tracking-[0.4em]">
-          {frame.n} · {index + 1}/{filmFrames.length}
+      {/* Top bar */}
+      <div className="w-full max-w-4xl flex items-center justify-between mb-4 px-1">
+        <span className="font-mono-label text-white/25 text-[9px] uppercase tracking-[0.45em]">
+          Rosmaninho · {frame.cat}
         </span>
         <button
           onClick={onClose}
-          className="pointer-events-auto font-mono-label text-white/40 hover:text-white text-[10px] uppercase tracking-[0.4em] transition-colors"
+          className="font-mono-label text-white/30 hover:text-white text-[9px] uppercase tracking-[0.4em] transition-colors"
         >
-          Fechar ✕
+          ESC · Fechar
         </button>
       </div>
 
-      {/* Image */}
+      {/* Film negative frame */}
       <motion.div
         key={index}
-        initial={{ opacity: 0, scale: 0.94 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative max-w-4xl w-full mx-8"
+        initial={{ opacity: 0, y: 18, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.97 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        className="w-full max-w-4xl bg-[#0a0a09] relative"
+        style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 32px 80px rgba(0,0,0,0.9)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Film border */}
-        <div className="border border-white/10 p-1 bg-[#0e0e0d]">
-          <img
-            src={frame.src}
-            alt={frame.title}
-            className="w-full max-h-[75vh] object-contain"
-          />
+        {/* Top acetate strip */}
+        <div className="flex items-center bg-[#111110] border-b border-white/5 px-0 py-1.5">
+          <div className="flex gap-[10px] px-3 w-full overflow-hidden">
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-4 h-3 rounded-[2px] bg-black border border-white/8" />
+            ))}
+          </div>
         </div>
 
-        {/* Caption */}
-        <div className="flex items-end justify-between mt-4 px-1">
-          <div>
-            <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.35em] mb-1">{frame.n}</p>
-            <p className="font-display text-cream text-xl md:text-2xl leading-tight">{frame.title}</p>
+        {/* Middle: sprockets + image */}
+        <div className="flex items-stretch bg-[#0e0e0d]">
+          {/* Left sprocket rail */}
+          <div className="bg-[#111110] border-r border-white/5">
+            <SprocketColumn />
           </div>
-          <div className="flex gap-6">
-            <button
-              onClick={onPrev}
-              className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors"
-            >
-              ← Anterior
-            </button>
-            <button
-              onClick={onNext}
-              className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors"
-            >
-              Seguinte →
-            </button>
+
+          {/* Image area */}
+          <div className="flex-1 p-3 md:p-4">
+            <div className="relative overflow-hidden" style={{ maxHeight: "62vh" }}>
+              <img
+                src={frame.src}
+                alt={frame.title}
+                className="w-full h-full object-contain"
+                style={{ maxHeight: "62vh", display: "block" }}
+              />
+              {/* Very subtle vignette */}
+              <div className="absolute inset-0 pointer-events-none"
+                style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,0.4)" }} />
+            </div>
+          </div>
+
+          {/* Right sprocket rail */}
+          <div className="bg-[#111110] border-l border-white/5">
+            <SprocketColumn />
+          </div>
+        </div>
+
+        {/* Bottom acetate strip — frame number + data */}
+        <div className="flex items-center justify-between bg-[#111110] border-t border-white/5 px-4 py-2">
+          <div className="flex items-center gap-4">
+            <span className="font-mono-label text-copper/50 text-[9px] tracking-[0.4em]">{frame.n}</span>
+            <span className="font-mono-label text-white/15 text-[9px]">·</span>
+            <span className="font-mono-label text-white/20 text-[9px] uppercase tracking-[0.3em]">35mm · ISO 400</span>
+          </div>
+          <div className="flex gap-[10px] overflow-hidden">
+            {Array.from({ length: 15 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-4 h-3 rounded-[2px] bg-black border border-white/8" />
+            ))}
           </div>
         </div>
       </motion.div>
+
+      {/* Caption + navigation */}
+      <div className="w-full max-w-4xl flex items-end justify-between mt-5 px-1">
+        <div>
+          <p className="font-display text-cream text-lg md:text-2xl leading-tight">{frame.title}</p>
+          <p className="font-mono-label text-white/25 text-[9px] uppercase tracking-[0.35em] mt-1">
+            {index + 1} / {filmFrames.length}
+          </p>
+        </div>
+        <div className="flex items-center gap-8">
+          <button
+            onClick={onPrev}
+            className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors duration-300"
+          >
+            ← Anterior
+          </button>
+          <button
+            onClick={onNext}
+            className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors duration-300"
+          >
+            Seguinte →
+          </button>
+        </div>
+      </div>
     </motion.div>
   );
 }
