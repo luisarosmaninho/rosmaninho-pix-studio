@@ -35,10 +35,14 @@ const sizeConfig: Record<NotaSize, {
   fragment: { padding: "p-5 md:p-7",    textSize: "text-sm md:text-base",  baseOpacity: 0.22 },
 };
 
-/* ── Coffee ring SVG ── */
+/*
+ * Coffee ring — SVG com dois anéis concêntricos como os que ficam das chávenas.
+ * Cor: castanho café quente, visível no fundo creme do site.
+ * top/left/right/bottom sempre em px (não %) para funcionar em secções com height auto.
+ */
 function CoffeeRing({
   size = 90,
-  opacity = 0.10,
+  opacity = 0.18,
   rotate = 0,
   style,
 }: {
@@ -48,9 +52,9 @@ function CoffeeRing({
   style?: React.CSSProperties;
 }) {
   const cx = size / 2;
-  const r1 = cx - 1.5;          /* outer ring */
-  const r2 = r1 * 0.80;         /* inner ring — creates the double-ring stain effect */
-  const r3 = r1 * 0.92;         /* faint mid-ring for depth */
+  const r1 = cx - 1.5;
+  const r2 = r1 * 0.80;
+  const r3 = r1 * 0.92;
 
   return (
     <svg
@@ -59,89 +63,16 @@ function CoffeeRing({
       viewBox={`0 0 ${size} ${size}`}
       className="absolute pointer-events-none select-none"
       aria-hidden="true"
-      style={{
-        opacity,
-        transform: `rotate(${rotate}deg)`,
-        ...style,
-      }}
+      style={{ opacity, transform: `rotate(${rotate}deg)`, ...style }}
     >
-      {/* outer edge — hard ring left by the cup */}
-      <circle
-        cx={cx} cy={cx} r={r1}
-        fill="none"
-        stroke="#7C4520"
-        strokeWidth="1.8"
-      />
-      {/* faint mid halo */}
-      <circle
-        cx={cx} cy={cx} r={r3}
-        fill="none"
-        stroke="#7C4520"
-        strokeWidth="0.5"
-        strokeOpacity="0.4"
-      />
-      {/* inner ring — where the liquid pooled */}
-      <circle
-        cx={cx} cy={cx} r={r2}
-        fill="none"
-        stroke="#7C4520"
-        strokeWidth="1.1"
-        strokeOpacity="0.65"
-        strokeDasharray={`${r2 * 5.5} ${r2 * 0.6}`}
-      />
+      {/* anel exterior — a borda dura que a chávena deixa */}
+      <circle cx={cx} cy={cx} r={r1} fill="none" stroke="#6B3A18" strokeWidth="1.8" />
+      {/* halo intermédio muito subtil */}
+      <circle cx={cx} cy={cx} r={r3} fill="none" stroke="#6B3A18" strokeWidth="0.5" strokeOpacity="0.45" />
+      {/* anel interior — onde o líquido secou, com quebras para ser orgânico */}
+      <circle cx={cx} cy={cx} r={r2} fill="none" stroke="#6B3A18" strokeWidth="1.1" strokeOpacity="0.6"
+        strokeDasharray={`${r2 * 5.2} ${r2 * 0.8}`} />
     </svg>
-  );
-}
-
-/* ── Scattered stains layer for a section ── */
-function HeaderStains() {
-  return (
-    <>
-      {/* top-right, large faint */}
-      <CoffeeRing size={138} opacity={0.07} rotate={12}
-        style={{ top: "18%", right: "3%"}} />
-      {/* small, near kicker text — like a quick coffee put down */}
-      <CoffeeRing size={52} opacity={0.12} rotate={-8}
-        style={{ top: "38%", right: "22%" }} />
-      {/* medium, left margin */}
-      <CoffeeRing size={80} opacity={0.065} rotate={5}
-        style={{ bottom: "8%", left: "1%" }} />
-    </>
-  );
-}
-
-function GridStains() {
-  return (
-    <>
-      {/* mid-left, overlapping a card gap */}
-      <CoffeeRing size={104} opacity={0.075} rotate={-14}
-        style={{ top: "12%", left: "-1%" }} />
-      {/* right column, upper area */}
-      <CoffeeRing size={66} opacity={0.10} rotate={20}
-        style={{ top: "28%", right: "1%" }} />
-      {/* large ghost ring, centre-right */}
-      <CoffeeRing size={160} opacity={0.04} rotate={3}
-        style={{ top: "44%", right: "8%" }} />
-      {/* bottom-left corner — two rings close together */}
-      <CoffeeRing size={58} opacity={0.09} rotate={-5}
-        style={{ bottom: "18%", left: "4%" }} />
-      <CoffeeRing size={46} opacity={0.07} rotate={30}
-        style={{ bottom: "22%", left: "7%" }} />
-      {/* bottom-right */}
-      <CoffeeRing size={88} opacity={0.06} rotate={-18}
-        style={{ bottom: "6%", right: "2%" }} />
-    </>
-  );
-}
-
-function ClosingStains() {
-  return (
-    <>
-      <CoffeeRing size={96} opacity={0.07} rotate={8}
-        style={{ top: "20%", right: "5%" }} />
-      <CoffeeRing size={50} opacity={0.10} rotate={-22}
-        style={{ bottom: "15%", left: "8%" }} />
-    </>
   );
 }
 
@@ -183,9 +114,18 @@ function NotasPage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      {/* ── Header ── */}
-      <section className="relative px-6 md:px-12 pt-32 md:pt-44 pb-20 max-w-6xl mx-auto overflow-hidden">
-        <HeaderStains />
+      {/* ── Header — com manchas de café ── */}
+      <section className="relative px-6 md:px-12 pt-32 md:pt-44 pb-20 max-w-6xl mx-auto">
+
+        {/* mancha grande esbatida — canto superior direito */}
+        <CoffeeRing size={130} opacity={0.12} rotate={12}
+          style={{ top: 48, right: 24 }} />
+        {/* mancha pequena — como se tivessem pousado a chávena depressa */}
+        <CoffeeRing size={54} opacity={0.22} rotate={-8}
+          style={{ top: 180, right: "28%" }} />
+        {/* mancha média — bordo esquerdo, mais em baixo */}
+        <CoffeeRing size={78} opacity={0.10} rotate={5}
+          style={{ bottom: 40, left: -16 }} />
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -235,9 +175,26 @@ function NotasPage() {
 
       <div className="hairline mx-6 md:mx-12" />
 
-      {/* ── Notas masonry ── */}
-      <section className="relative px-6 md:px-12 py-20 max-w-6xl mx-auto overflow-hidden">
-        <GridStains />
+      {/* ── Notas masonry — com manchas de café espalhadas ── */}
+      <section className="relative px-6 md:px-12 py-20 max-w-6xl mx-auto">
+
+        {/* bordo esquerdo superior */}
+        <CoffeeRing size={106} opacity={0.13} rotate={-14}
+          style={{ top: 60, left: -20 }} />
+        {/* coluna direita, alto */}
+        <CoffeeRing size={66} opacity={0.19} rotate={20}
+          style={{ top: 220, right: 8 }} />
+        {/* centro, anel fantasma muito grande */}
+        <CoffeeRing size={158} opacity={0.055} rotate={3}
+          style={{ top: 480, right: "6%" }} />
+        {/* dois anéis sobrepostos — como duas pousadas seguidas */}
+        <CoffeeRing size={60} opacity={0.16} rotate={-5}
+          style={{ top: 900, left: 28 }} />
+        <CoffeeRing size={46} opacity={0.12} rotate={30}
+          style={{ top: 930, left: 58 }} />
+        {/* bordo direito, mais abaixo */}
+        <CoffeeRing size={86} opacity={0.11} rotate={-18}
+          style={{ top: 1200, right: 10 }} />
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -260,15 +217,20 @@ function NotasPage() {
         </AnimatePresence>
       </section>
 
-      {/* ── Closing ── */}
+      {/* ── Closing — com manchas discretas ── */}
       <motion.section
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="relative px-6 md:px-12 py-40 text-center max-w-2xl mx-auto overflow-hidden"
+        className="relative px-6 md:px-12 py-40 text-center max-w-2xl mx-auto"
       >
-        <ClosingStains />
+        {/* mancha canto superior direito */}
+        <CoffeeRing size={94} opacity={0.11} rotate={8}
+          style={{ top: 40, right: 0 }} />
+        {/* mancha pequena inferior esquerdo */}
+        <CoffeeRing size={50} opacity={0.17} rotate={-22}
+          style={{ bottom: 60, left: 20 }} />
 
         <div className="relative z-10">
           <p className="font-italic-serif text-4xl text-copper mb-8">—</p>

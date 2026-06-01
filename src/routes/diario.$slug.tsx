@@ -71,7 +71,10 @@ function Fade({ children, delay = 0, className = "" }: { children: React.ReactNo
 function EntryPage() {
   const { slug } = Route.useParams();
   const entry = getJournalEntry(slug)!;
-  const others = journal.filter((e) => e.slug !== slug).slice(0, 2);
+  const sorted = [...journal].sort((a, b) => b.date.localeCompare(a.date));
+  const currentIdx = sorted.findIndex((e) => e.slug === slug);
+  const olderEntry = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
+  const newerEntry = currentIdx > 0 ? sorted[currentIdx - 1] : null;
 
   return (
     <div className="bg-background text-foreground">
@@ -90,7 +93,7 @@ function EntryPage() {
               to="/diario"
               className="font-mono-label text-foreground/35 hover:text-copper transition-colors inline-block mb-14"
             >
-              ← Diário
+              ← Caderno de Matcha
             </Link>
 
             <h1 className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.95] tracking-tight max-w-4xl">
@@ -163,43 +166,43 @@ function EntryPage() {
 
       </article>
 
-      {/* ── Continuar a ler ── */}
-      {others.length > 0 && (
-        <section className="px-6 md:px-12 py-28 border-t border-foreground/8 max-w-6xl mx-auto">
-          <p className="font-mono-label text-foreground/30 mb-16">continuar a ler</p>
-          <div className="grid md:grid-cols-2 gap-16">
-            {others.map((e, i) => (
+      {/* ── Navegação prev/next ── */}
+      {(olderEntry || newerEntry) && (
+        <nav className="border-t border-foreground/8">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {olderEntry ? (
               <Link
-                key={e.slug}
                 to="/diario/$slug"
-                params={{ slug: e.slug }}
-                className="group block"
+                params={{ slug: olderEntry.slug }}
+                className="group block px-6 md:px-12 py-14 border-b md:border-b-0 md:border-r border-foreground/8 hover:bg-foreground/[0.018] transition-colors"
               >
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <div className="overflow-hidden mb-6 aspect-[16/10]">
-                    <img
-                      src={e.photoSrc}
-                      alt={e.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="font-display text-2xl md:text-3xl leading-tight group-hover:text-copper transition-colors duration-500">
-                    {e.title}
+                <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                  <p className="font-mono-label text-foreground/30 mb-5 text-[10px] uppercase tracking-[0.38em]">← entrada anterior</p>
+                  <h3 className="font-display text-2xl md:text-3xl leading-tight group-hover:text-copper transition-colors duration-500 max-w-sm">
+                    {olderEntry.title}
                   </h3>
-                  <p className="mt-3 text-foreground/55 text-sm leading-relaxed line-clamp-2">
-                    {e.excerpt}
-                  </p>
+                  <p className="mt-3 text-foreground/45 text-sm leading-relaxed line-clamp-2 max-w-sm">{olderEntry.excerpt}</p>
                 </motion.div>
               </Link>
-            ))}
+            ) : <div className="hidden md:block" />}
+
+            {newerEntry ? (
+              <Link
+                to="/diario/$slug"
+                params={{ slug: newerEntry.slug }}
+                className="group block px-6 md:px-12 py-14 md:text-right hover:bg-foreground/[0.018] transition-colors"
+              >
+                <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} transition={{ delay: 0.1 }}>
+                  <p className="font-mono-label text-foreground/30 mb-5 text-[10px] uppercase tracking-[0.38em]">entrada seguinte →</p>
+                  <h3 className="font-display text-2xl md:text-3xl leading-tight group-hover:text-copper transition-colors duration-500 max-w-sm md:ml-auto">
+                    {newerEntry.title}
+                  </h3>
+                  <p className="mt-3 text-foreground/45 text-sm leading-relaxed line-clamp-2 max-w-sm md:ml-auto">{newerEntry.excerpt}</p>
+                </motion.div>
+              </Link>
+            ) : <div className="hidden md:block" />}
           </div>
-        </section>
+        </nav>
       )}
 
       <SiteFooter />

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photos, categories, type CategorySlug, type Photo } from "@/lib/photos";
@@ -46,6 +46,7 @@ function PortfolioPage() {
 
   const lightboxIndex = lightbox ? visible.indexOf(lightbox) : -1;
 
+  const touchStartX = useRef<number | null>(null);
   const closeLightbox = useCallback(() => setLightbox(null), []);
 
   const goPrev = useCallback(() => {
@@ -120,6 +121,13 @@ function PortfolioPage() {
         <div
           onClick={closeLightbox}
           className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-6 cursor-zoom-out"
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null) return;
+            const diff = touchStartX.current - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 48) { diff > 0 ? goNext() : goPrev(); }
+            touchStartX.current = null;
+          }}
         >
           <button
             onClick={closeLightbox}

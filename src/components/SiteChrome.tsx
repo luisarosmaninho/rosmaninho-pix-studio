@@ -4,6 +4,34 @@ import { motion, AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
 import logo from "@/assets/logo-rosmaninho.png";
 
+/* ---------------- Back to top ---------------- */
+export function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 500);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 6 }}
+          transition={{ duration: 0.35 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-8 right-8 z-50 flex flex-col items-center gap-2 group hidden md:flex"
+          aria-label="Voltar ao topo"
+        >
+          <span className="block w-px h-10 bg-foreground/20 group-hover:bg-copper transition-colors duration-300" />
+          <span className="font-mono-label text-[9px] uppercase tracking-[0.4em] text-foreground/30 group-hover:text-copper transition-colors duration-300">topo</span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ---------------- Film grain overlay ---------------- */
 export function GrainOverlay() {
   return <div className="grain-overlay" aria-hidden="true" />;
@@ -119,6 +147,7 @@ const navLinks = [
   { to: "/portfolio", label: "Séries" },
   { to: "/diario", label: "Diário" },
   { to: "/notas", label: "Notas" },
+  { to: "/impressoes", label: "Impressões" },
   { to: "/contacto", label: "Diálogo" },
 ] as const;
 
@@ -242,6 +271,7 @@ export function SiteFooter() {
             <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
             <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
             <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Notas de Campo</Link>
+            <Link to="/impressoes" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Impressões em Papel</Link>
             <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
           </div>
 

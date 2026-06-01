@@ -48,12 +48,23 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://rosmaninhofotografia.pt/impressoes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://rosmaninhofotografia.pt/contacto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Entradas do diário -->
+  <!-- Entradas do diário (Caderno de Matcha) -->
+  <url>
+    <loc>https://rosmaninhofotografia.pt/diario/o-cafe-antes-de-tudo</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://rosmaninhofotografia.pt/diario/figura-no-mondego</loc>
     <lastmod>2026-04-12</lastmod>
