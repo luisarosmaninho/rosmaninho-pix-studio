@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { photos, categories, photosByCategory } from "@/lib/photos";
@@ -20,6 +20,7 @@ import portoRibeira from "@/assets/porto-ribeira.jpg";
 import farolPeniche from "@/assets/farol-peniche.jpg";
 import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
 import cafeMatcha from "@/assets/cafe-matcha.jpg";
+import mondegoFigura from "@/assets/mondego-figura.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -50,6 +51,111 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
     >
       {children}
     </motion.section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Sala de revelação — torch effect
+   ───────────────────────────────────────────── */
+function DarkroomReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: -999, y: -999 });
+  const [active, setActive] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const radius = 200;
+
+  function updatePos(x: number, y: number) {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setPos({ x: x - rect.left, y: y - rect.top });
+  }
+
+  function handleMouseMove(e: React.MouseEvent) { updatePos(e.clientX, e.clientY); }
+  function handleTouchMove(e: React.TouchEvent) {
+    e.preventDefault();
+    const t = e.touches[0];
+    updatePos(t.clientX, t.clientY);
+  }
+
+  useEffect(() => {
+    if (active) {
+      const timer = setTimeout(() => setRevealed(true), 2400);
+      return () => clearTimeout(timer);
+    }
+  }, [active]);
+
+  const mask = active
+    ? `radial-gradient(circle ${radius}px at ${pos.x}px ${pos.y}px, transparent 0%, transparent 38%, rgba(0,0,0,0.55) 62%, rgba(0,0,0,0.97) 100%)`
+    : "rgba(0,0,0,0.97)";
+
+  return (
+    <section className="relative w-full overflow-hidden select-none" style={{ height: "85vh", minHeight: 480 }}>
+      {/* Photo layer */}
+      <img
+        src={mondegoFigura}
+        alt="Sala de revelação"
+        className="absolute inset-0 w-full h-full object-cover"
+        draggable={false}
+      />
+      {/* Safelight tint — amber warm, visible only through the torch */}
+      <div className="absolute inset-0 bg-[#3a1800]/40 mix-blend-multiply pointer-events-none" />
+
+      {/* Dark overlay with torch hole */}
+      <div
+        ref={ref}
+        className="absolute inset-0 transition-[background] duration-75"
+        style={{ background: mask, cursor: active ? "none" : "default" }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setActive(true)}
+        onMouseLeave={() => { setActive(false); setPos({ x: -999, y: -999 }); }}
+        onTouchMove={handleTouchMove}
+        onTouchStart={(e) => { setActive(true); const t = e.touches[0]; updatePos(t.clientX, t.clientY); }}
+        onTouchEnd={() => { setActive(false); setPos({ x: -999, y: -999 }); }}
+      />
+
+      {/* Custom torch cursor dot */}
+      {active && (
+        <div
+          className="absolute pointer-events-none z-10 mix-blend-screen"
+          style={{
+            left: pos.x,
+            top: pos.y,
+            transform: "translate(-50%, -50%)",
+            width: radius * 2,
+            height: radius * 2,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,210,140,0.08) 0%, transparent 70%)",
+          }}
+        />
+      )}
+
+      {/* Hint text — fades once active */}
+      <div
+        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 transition-opacity duration-1000"
+        style={{ opacity: active ? 0 : 1 }}
+      >
+        <p className="font-mono-label text-white/20 text-[10px] uppercase tracking-[0.55em] mb-4">
+          § — Sala de revelação
+        </p>
+        <p className="font-display text-cream/30 text-2xl md:text-3xl">
+          Entra no escuro.
+        </p>
+        <p className="font-mono-label text-white/15 text-[9px] uppercase tracking-[0.4em] mt-4">
+          move o cursor para revelar
+        </p>
+      </div>
+
+      {/* Caption revealed after exploring */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 10 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="absolute bottom-8 left-8 md:left-12 pointer-events-none z-20"
+      >
+        <p className="font-mono-label text-copper/70 text-[9px] uppercase tracking-[0.4em] mb-1">Mondego · Coimbra</p>
+        <p className="font-display text-cream/80 text-xl md:text-2xl">Uma figura, um rio, uma hora.</p>
+      </motion.div>
+    </section>
   );
 }
 
@@ -507,6 +613,9 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ============ SALA DE REVELAÇÃO ============ */}
+      <DarkroomReveal />
 
       {/* ============ DIÁRIO — última entrada em destaque ============ */}
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
