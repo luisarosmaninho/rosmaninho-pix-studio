@@ -527,37 +527,7 @@ function HomePage() {
             })}
           </ul>
 
-          {/* Masonry preview */}
-          <div className="masonry">
-            {[
-              { src: portoStreet,    h: "h-[520px]", cat: "Urbanas",   title: "Quando ainda havia luz" },
-              { src: sunsetBeach,    h: "h-[360px]", cat: "Natureza",  title: "A solidão que não pesa" },
-              { src: villageAlley,   h: "h-[440px]", cat: "Retratos",  title: "Uma tarde sem sobressaltos" },
-              { src: river,          h: "h-[380px]", cat: "Natureza",  title: "Quando a água ainda é visível" },
-              { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas",   title: "O horizonte que não se fecha" },
-              { src: waterSplash,    h: "h-[420px]", cat: "Natureza",  title: "Geometria da queda" },
-            ].map((p, i) => (
-              <motion.figure
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 1, delay: (i % 3) * 0.12, ease: "easeOut" }}
-                className="hover-zoom warm-tone relative group"
-              >
-                <div className={`${p.h} w-full relative overflow-hidden`}>
-                  <img src={p.src} alt={p.title} className="absolute inset-0 h-full w-full object-cover" />
-                </div>
-                <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                  <p className="font-mono-label text-copper">[ {p.cat} ]</p>
-                  <p className="font-display text-2xl text-cream mt-1">{p.title}</p>
-                </figcaption>
-              </motion.figure>
-            ))}
-          </div>
-
-          <div className="mt-16 flex items-center justify-between">
-            <Whisper text="vão crescendo à medida que ando" delay={1.2} style="italic" />
+          <div className="mt-10 flex justify-end">
             <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Ver o arquivo completo →
             </Link>
