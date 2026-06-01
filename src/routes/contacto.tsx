@@ -12,6 +12,7 @@ export const Route = createFileRoute("/contacto")({
       { title: "Diálogo — Rosmaninho Fotografia" },
       { name: "description", content: "Uma conversa aberta. Escreve sobre uma imagem, um lugar ou uma ideia." },
     ],
+    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/contacto" }],
   }),
   component: ContactoPage,
 });

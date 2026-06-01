@@ -17,6 +17,7 @@ export const Route = createFileRoute("/portfolio/")({
       { property: "og:title", content: "Portfólio — Rosmaninho" },
       { property: "og:description", content: "Urbanas, natureza, retratos e iguarias." },
     ],
+    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/portfolio" }],
   }),
   component: PortfolioPage,
 });
@@ -107,7 +108,7 @@ function PortfolioPage() {
             onClick={() => setLightbox(p)}
             className="group break-inside-avoid cursor-pointer relative hover-zoom"
           >
-            <img src={p.src} alt={p.title} className="w-full h-auto block" />
+            <img src={p.src} alt={p.title} loading={i < 6 ? "eager" : "lazy"} className="w-full h-auto block" />
             <figcaption className="absolute inset-x-0 bottom-0 p-5 text-cream bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <p className="font-display text-2xl">{p.title}</p>
             </figcaption>

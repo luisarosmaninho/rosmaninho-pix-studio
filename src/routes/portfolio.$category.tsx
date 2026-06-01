@@ -5,6 +5,8 @@ import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { categories, getCategory, photosByCategory, type CategorySlug, type Photo } from "@/lib/photos";
 import { getPhotoConfig } from "@/lib/photo-config-fns";
 
+const BASE_URL = "https://rosmaninhofotografia.pt";
+
 export const Route = createFileRoute("/portfolio/$category")({
   parseParams: (params) => ({ category: params.category as CategorySlug }),
   beforeLoad: ({ params }) => {
@@ -21,27 +23,47 @@ export const Route = createFileRoute("/portfolio/$category")({
         { title: `${cat?.title ?? "Colecção"} — Rosmaninho Fotografia` },
         { name: "description", content: cat?.description ?? "" },
       ],
+      links: [
+        { rel: "canonical", href: `${BASE_URL}/portfolio/${params.category}` },
+      ],
     };
   },
   component: CategoryPage,
-  notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="font-mono-label">Colecção não encontrada</p>
-    </div>
-  ),
+  notFoundComponent: NotFoundPage,
 });
+
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteNav variant="solid" />
+      <div className="flex items-center justify-center min-h-screen px-6">
+        <div>
+          <p className="font-mono-label text-copper mb-6">Colecção não encontrada</p>
+          <p className="font-display text-3xl md:text-5xl mb-10 leading-[1.1]">
+            Esta série<br />
+            <span className="font-italic-serif text-copper">não existe aqui</span>.
+          </p>
+          <Link to="/portfolio" className="text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
+            Ver o arquivo →
+          </Link>
+        </div>
+      </div>
+      <SiteFooter />
+    </div>
+  );
+}
 
 /* ---- Hover-reveal photo card ---- */
 function RevealPhoto({
   photo,
   onClick,
   className = "",
-  imgClass = "",
+  loading = "lazy",
 }: {
   photo: Photo;
   onClick: () => void;
   className?: string;
-  imgClass?: string;
+  loading?: "lazy" | "eager";
 }) {
   const [revealed, setRevealed] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,7 +86,8 @@ function RevealPhoto({
       <img
         src={photo.src}
         alt={photo.title}
-        className={`w-full h-full object-cover block transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04] ${imgClass}`}
+        loading={loading}
+        className="w-full h-full object-cover block transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]"
       />
 
       {/* Standard caption on hover */}
@@ -102,6 +125,7 @@ function Lightbox({
   onNext: () => void;
 }) {
   const photo = photos[index];
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -112,6 +136,16 @@ function Lightbox({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose, onPrev, onNext]);
 
+  /* Touch swipe */
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) { dx < 0 ? onNext() : onPrev(); }
+    touchStartX.current = null;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -120,17 +154,17 @@ function Lightbox({
       transition={{ duration: 0.4 }}
       className="fixed inset-0 z-[200] bg-black flex flex-col"
       onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Top bar */}
       <div
         className="flex items-center justify-between px-8 py-6 shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-6">
-          <span className="font-mono-label text-cream/40">
-            {String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
-          </span>
-        </div>
+        <span className="font-mono-label text-cream/40">
+          {String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
+        </span>
         <button
           onClick={onClose}
           className="font-mono-label text-cream/60 hover:text-cream transition-colors tracking-[0.28em] uppercase text-[10px]"
@@ -157,7 +191,6 @@ function Lightbox({
           />
         </AnimatePresence>
 
-        {/* Prev / Next */}
         {index > 0 && (
           <button
             onClick={onPrev}
@@ -241,6 +274,10 @@ function CategoryPage() {
   const prevPhoto = () => setLightboxIndex((i) => (i != null && i > 0 ? i - 1 : i));
   const nextPhoto = () => setLightboxIndex((i) => (i != null && i < pics.length - 1 ? i + 1 : i));
 
+  /* Editorial sequence uses first 6 photos; overflow shows the rest */
+  const editorialPics = pics.slice(0, 6);
+  const overflowPics = pics.slice(6);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
@@ -308,11 +345,11 @@ function CategoryPage() {
         </div>
       </section>
 
-      {/* ── Editorial photo sequence ── */}
+      {/* ── Editorial photo sequence (first 6) ── */}
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Photo 1 — Large opener */}
-        {pics[0] && (
+        {editorialPics[0] && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -321,21 +358,22 @@ function CategoryPage() {
             className="mt-20"
           >
             <RevealPhoto
-              photo={pics[0]}
+              photo={editorialPics[0]}
               onClick={() => openLightbox(0)}
               className="w-full aspect-[16/9] md:aspect-[21/9]"
+              loading="eager"
             />
-            <MetaStrip photo={pics[0]} index={0} />
+            <MetaStrip photo={editorialPics[0]} index={0} />
           </motion.div>
         )}
 
         {/* Photos 2 + 3 — Two column */}
-        {pics.length >= 3 && (
+        {editorialPics.length >= 3 && (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
             {[1, 2].map((i) =>
-              pics[i] ? (
+              editorialPics[i] ? (
                 <motion.div
-                  key={pics[i].src}
+                  key={editorialPics[i].src}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.15 }}
@@ -343,66 +381,18 @@ function CategoryPage() {
                   className="bg-background"
                 >
                   <RevealPhoto
-                    photo={pics[i]}
+                    photo={editorialPics[i]}
                     onClick={() => openLightbox(i)}
                     className="w-full aspect-[4/3]"
                   />
-                  <MetaStrip photo={pics[i]} index={i} />
-                </motion.div>
-              ) : null
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Quote interstitial */}
-      <QuoteBlock text={cat.quote} source={cat.quoteSource} />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/* Photo 4 — Single large */}
-        {pics[3] && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 1.3, ease: "easeOut" }}
-            className="mb-6"
-          >
-            <RevealPhoto
-              photo={pics[3]}
-              onClick={() => openLightbox(3)}
-              className="w-full aspect-[16/9]"
-            />
-            <MetaStrip photo={pics[3]} index={3} />
-          </motion.div>
-        )}
-
-        {/* Photos 5 + 6 — Asymmetric: tall left, short right */}
-        {pics.length >= 5 && (
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-px bg-border mb-20">
-            {[4, 5].map((i) =>
-              pics[i] ? (
-                <motion.div
-                  key={pics[i].src}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 1.1, delay: i === 4 ? 0 : 0.2, ease: "easeOut" }}
-                  className="bg-background"
-                >
-                  <RevealPhoto
-                    photo={pics[i]}
-                    onClick={() => openLightbox(i)}
-                    className={`w-full ${i === 4 ? "aspect-[4/5]" : "aspect-[4/5]"}`}
-                  />
-                  <MetaStrip photo={pics[i]} index={i} />
+                  <MetaStrip photo={editorialPics[i]} index={i} />
                 </motion.div>
               ) : null
             )}
           </div>
         )}
 
-        {/* Overflow photos (retratos: only 2) shown as wide pair */}
+        {/* Special case: only 2 photos total */}
         {pics.length === 2 && (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-px bg-border mb-20">
             {pics.map((p, i) => (
@@ -418,11 +408,92 @@ function CategoryPage() {
                   photo={p}
                   onClick={() => openLightbox(i)}
                   className="w-full aspect-[3/4]"
+                  loading={i === 0 ? "eager" : "lazy"}
                 />
                 <MetaStrip photo={p} index={i} />
               </motion.div>
             ))}
           </div>
+        )}
+      </div>
+
+      {/* Quote interstitial */}
+      <QuoteBlock text={cat.quote} source={cat.quoteSource} />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        {/* Photo 4 — Single large */}
+        {editorialPics[3] && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1.3, ease: "easeOut" }}
+            className="mb-6"
+          >
+            <RevealPhoto
+              photo={editorialPics[3]}
+              onClick={() => openLightbox(3)}
+              className="w-full aspect-[16/9]"
+            />
+            <MetaStrip photo={editorialPics[3]} index={3} />
+          </motion.div>
+        )}
+
+        {/* Photos 5 + 6 — Asymmetric: tall portrait left, landscape right */}
+        {editorialPics.length >= 5 && (
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-border">
+            {[4, 5].map((i) =>
+              editorialPics[i] ? (
+                <motion.div
+                  key={editorialPics[i].src}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 1.1, delay: i === 4 ? 0 : 0.2, ease: "easeOut" }}
+                  className="bg-background"
+                >
+                  <RevealPhoto
+                    photo={editorialPics[i]}
+                    onClick={() => openLightbox(i)}
+                    className={`w-full ${i === 4 ? "aspect-[4/5]" : "aspect-[3/2]"}`}
+                  />
+                  <MetaStrip photo={editorialPics[i]} index={i} />
+                </motion.div>
+              ) : null
+            )}
+          </div>
+        )}
+
+        {/* ── Overflow photos (7+) — full archive grid ── */}
+        {overflowPics.length > 0 && (
+          <>
+            <div className="mt-16 mb-8 flex items-center gap-6">
+              <div className="h-px flex-1 bg-foreground/10" />
+              <p className="font-mono-label text-foreground/30 text-[10px] uppercase tracking-[0.35em]">
+                arquivo completo · {cat.title.toLowerCase()}
+              </p>
+              <div className="h-px flex-1 bg-foreground/10" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-border mb-20">
+              {overflowPics.map((p, i) => (
+                <motion.div
+                  key={p.src}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.08 }}
+                  transition={{ duration: 0.9, delay: (i % 3) * 0.07, ease: "easeOut" }}
+                  className="bg-background"
+                >
+                  <RevealPhoto
+                    photo={p}
+                    onClick={() => openLightbox(6 + i)}
+                    className="w-full aspect-[4/3]"
+                  />
+                  <MetaStrip photo={p} index={6 + i} />
+                </motion.div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
@@ -434,7 +505,9 @@ function CategoryPage() {
         transition={{ duration: 1.4 }}
         className="text-center py-20 border-t border-border"
       >
-        <p className="font-mono-label text-foreground/25 uppercase tracking-[0.4em]">fim do arquivo · {cat.title.toLowerCase()}</p>
+        <p className="font-mono-label text-foreground/25 uppercase tracking-[0.4em]">
+          fim do arquivo · {cat.title.toLowerCase()} · {pics.length} fotografias
+        </p>
       </motion.div>
 
       {/* ── Continuar a ver ── */}
@@ -454,6 +527,7 @@ function CategoryPage() {
                   <img
                     src={cover.src}
                     alt={c.title}
+                    loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-[1.06]"
                   />
                 )}

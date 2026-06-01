@@ -272,7 +272,6 @@ function AdminPage() {
                     <span className={`font-mono text-[9px] uppercase tracking-[0.2em] px-1.5 py-0.5 ${categoryColour[photo.category]} text-white/70`}>
                       {categoryLabel[photo.category]}
                     </span>
-                    <span className="font-mono text-[10px] text-white/25">{photo.year}</span>
                   </div>
                 </div>
 

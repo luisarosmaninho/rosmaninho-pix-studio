@@ -15,6 +15,7 @@ export const Route = createFileRoute("/sobre")({
       { title: "Autora — Luísa Rosmaninho" },
       { name: "description", content: "Sou a Luísa, ando muito a pé. Vivo em Coimbra, tenho sempre uma câmara comigo." },
     ],
+    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/sobre" }],
   }),
   component: SobrePage,
 });

@@ -17,15 +17,36 @@ export const Route = createFileRoute("/diario/$slug")({
         { name: "description", content: e?.excerpt ?? "" },
         { property: "og:image", content: e?.photoSrc ?? "" },
       ],
+      links: [{ rel: "canonical", href: `https://rosmaninhofotografia.pt/diario/${params.slug}` }],
     };
   },
   component: EntryPage,
-  notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="font-mono-label">Entrada não encontrada</p>
-    </div>
-  ),
+  notFoundComponent: DiarioNotFound,
 });
+
+function DiarioNotFound() {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteNav variant="solid" />
+      <div className="flex items-center justify-center min-h-screen px-6">
+        <div>
+          <p className="font-mono-label text-copper mb-6">Entrada não encontrada</p>
+          <p className="font-display text-3xl md:text-5xl mb-10 leading-[1.1]">
+            Esta página<br />
+            <span className="font-italic-serif text-copper">não existe no caderno</span>.
+          </p>
+          <Link
+            to="/diario"
+            className="text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors"
+          >
+            Voltar ao diário →
+          </Link>
+        </div>
+      </div>
+      <SiteFooter />
+    </div>
+  );
+}
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },

@@ -8,9 +8,10 @@ import { journal } from "@/lib/journal";
 export const Route = createFileRoute("/diario/")({
   head: () => ({
     meta: [
-      { title: "Diário — Rosmaninho Fotografia" },
-      { name: "description", content: "Caderno em aberto. Ensaios curtos sobre fotografias e sobre os lugares onde aconteceram." },
+      { title: "Caderno de Matcha — Rosmaninho Fotografia" },
+      { name: "description", content: "Escrevo aqui quando há uma pausa longa o suficiente — com uma chávena à frente. Notas sobre fotografias que fiz e sobre o que estava a sentir quando as fiz." },
     ],
+    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/diario" }],
   }),
   component: JournalIndex,
 });
@@ -35,19 +36,19 @@ function JournalIndex() {
           animate="show"
           className="max-w-5xl"
         >
-          <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">diário</p>
+          <p className="font-mono-label text-copper/70 mb-4 tracking-[0.38em] uppercase text-[10px]">caderno de matcha</p>
           <h1 className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.92] tracking-tight">
             Caderno<br />
-            <span className="font-italic-serif text-copper">em aberto</span>.
+            <span className="font-italic-serif text-copper">de Matcha</span>.
           </h1>
           <motion.p
             variants={fadeUp}
             initial="hidden"
             animate="show"
             transition={{ delay: 0.3 }}
-            className="mt-10 max-w-md text-foreground/55 leading-relaxed body-text"
+            className="mt-10 max-w-lg text-foreground/55 leading-relaxed body-text"
           >
-            Ensaios curtos sobre fotografias e sobre os lugares onde aconteceram. Não há pressa.
+            Escrevo aqui quando há uma pausa longa o suficiente para isso — com uma chávena à frente, normalmente. São notas sobre fotografias que fiz e sobre o que estava a pensar enquanto as fiz. Não há ordem, não há urgência.
           </motion.p>
         </motion.div>
 
@@ -55,16 +56,11 @@ function JournalIndex() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.4, delay: 0.6 }}
-          className="mt-16 grid grid-cols-2 gap-6 border-t border-foreground/15 pt-8 max-w-sm"
+          className="mt-16 border-t border-foreground/15 pt-8 max-w-sm"
         >
-          <div>
-            <p className="font-display text-4xl text-copper">{sorted.length}</p>
-            <p className="font-mono-label mt-1">Entradas</p>
-          </div>
-          <div>
-            <p className="font-display text-4xl text-copper">04</p>
-            <p className="font-mono-label mt-1">Séries</p>
-          </div>
+          <p className="font-display text-5xl text-copper">{sorted.length}</p>
+          <p className="font-mono-label mt-1">entradas escritas até hoje</p>
+          <p className="font-italic-serif text-foreground/35 mt-2 text-sm">ao café, ao matcha, e às vezes a seco.</p>
         </motion.div>
       </section>
 
@@ -102,7 +98,7 @@ function JournalIndex() {
                   {entry.excerpt}
                 </p>
                 <span className="font-mono-label mt-8 inline-block text-foreground/35 group-hover:text-copper transition-colors duration-500">
-                  ler entrada →
+                  ler →
                 </span>
               </div>
 
@@ -112,6 +108,7 @@ function JournalIndex() {
                   <img
                     src={entry.photoSrc}
                     alt=""
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -131,10 +128,10 @@ function JournalIndex() {
       >
         <p className="font-italic-serif text-4xl text-copper mb-8">—</p>
         <p className="font-display text-2xl md:text-3xl leading-relaxed text-foreground/65">
-          Um arquivo que vai crescendo devagar,<br />
-          <span className="font-italic-serif text-copper">à medida que ando</span>.
+          Vai crescendo à medida que ando —<br />
+          <span className="font-italic-serif text-copper">e à medida que paro</span>.
         </p>
-        <Whisper text="Coimbra · diário aberto · L.R." delay={1.5} className="mt-10 justify-center" />
+        <Whisper text="Coimbra · caderno de matcha · L.R." delay={1.5} className="mt-10 justify-center" />
       </motion.section>
 
       <SiteFooter />

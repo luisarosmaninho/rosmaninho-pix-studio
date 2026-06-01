@@ -17,8 +17,23 @@ import cafeMatcha from "@/assets/cafe-matcha.jpg";
 import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
 import ribeiroMusgo from "@/assets/ribeiro-musgo.jpg";
 import barcoDouro from "@/assets/barco-douro.jpg";
+import ovosMexidos from "@/assets/ovos-mexidos.jpg";
 
 export const journal: JournalEntry[] = [
+  {
+    slug: "o-cafe-antes-de-tudo",
+    date: "2026-05-20",
+    title: "Antes da câmara, qualquer coisa quente",
+    excerpt: "Há um ritual que precede qualquer fotografia: sentar, pedir qualquer coisa quente — café, matcha, o que houver — e ficar quieta o tempo suficiente para perceber o que está a acontecer à volta.",
+    body: [
+      "Não começo a fotografar assim que chego. Há sempre uma pausa antes. A câmara fica dentro do saco — às vezes durante vinte minutos, às vezes mais. Peço um espresso se for cedo, um matcha se a manhã pedir mais calma. Sento-me sem tirar o casaco e fico a olhar.",
+      "É nessa pausa que as coisas se organizam. A luz encontra o sítio dela. As pessoas instalam-se nas mesas como se fossem sempre ter estado ali. A conversa da mesa ao lado ganha textura. O balcão, que à entrada parecia um cenário, começa a parecer um lugar. Só quando isso acontece é que pego na câmara.",
+      "Não sei se é superstição ou método. Provavelmente é as duas coisas ao mesmo tempo, que é a descrição exacta da maior parte do que faço. O que sei é que as fotografias de que mais gosto foram sempre feitas depois de uma pausa longa e de qualquer coisa quente a meio do caminho.",
+    ],
+    photoSrc: ovosMexidos,
+    photoTitle: "Mesa de manhã, café de letras",
+    relatedCategory: "iguarias",
+  },
   {
     slug: "figura-no-mondego",
     date: "2026-04-12",
@@ -30,21 +45,21 @@ export const journal: JournalEntry[] = [
       "Depois guardei a câmara e fiquei a olhar também. Durante uns minutos, fomos os dois a fazer o mesmo — estar no rio sem razão nenhuma. Às vezes é isso que a fotografia me ensina: que há valor enorme no que não se explica.",
     ],
     photoSrc: mondegoFigura,
-    photoTitle: "Figura no Mondego ao amanhecer",
-    relatedCategory: "natureza",
+    photoTitle: "Figura no Mondego, abril",
+    relatedCategory: "urbanas",
   },
   {
     slug: "telhados-com-nevoa",
     date: "2026-02-03",
-    title: "A cidade que desapareceu a seguir",
-    excerpt: "Coimbra estava coberta de névoa quando acordei. Subi ao ponto mais alto que consegui encontrar e percebi que a cidade tinha desaparecido.",
+    title: "A cidade que desaparece de cima para baixo",
+    excerpt: "A névoa entrou pela madrugada e ficou. De manhã, Coimbra tinha só a metade de baixo — a outra metade tinha ido algures, sem aviso.",
     body: [
-      "É estranho fotografar algo que não se vê. Os telhados emergiam da névoa como ilhas de uma paisagem submersa — vermelhos, laranja queimado, o ponteiro de uma torre aqui e ali. Tudo o que ficava abaixo estava apagado.",
-      "Há uma quietude particular neste tipo de manhã. A cidade está acordada lá em baixo — o barulho dos autocarros, os passos apressados, o cheiro do café — mas daqui de cima não chega nada disso. Só silêncio branco.",
-      "Fiz várias fotografias mas esta foi a única que ficou. As outras tentavam mostrar demasiado. Esta aceita que há coisas que a névoa tem o direito de guardar para si.",
+      "Acordei cedo porque a luz era diferente — mais branca, mais quieta, com uma qualidade de silêncio que não é habitual nesta rua. Fui à janela e a cidade tinha encolhido. Os telhados estavam lá, mas o que estava por cima dos telhados tinha desaparecido.",
+      "Peguei na câmara e subi. Há um miradouro perto de casa que normalmente não tem graça nenhuma — dá para estacionamentos e para o topo de prédios que nunca foram bonitos. Mas com a névoa, tudo aquilo ficou misterioso. A feiura tem o seu charme quando está meio escondida.",
+      "Fiz estas fotografias em silêncio, sem falar com ninguém, sem ouvir música. Era esse o contrato — a névoa pede quietude em troca de se deixar fotografar. Cumpri.",
     ],
     photoSrc: telhadosNevoa,
-    photoTitle: "Telhados na névoa, Coimbra",
+    photoTitle: "Telhados de Coimbra na névoa, fevereiro",
     relatedCategory: "urbanas",
   },
   {
@@ -53,9 +68,9 @@ export const journal: JournalEntry[] = [
     title: "Um verde que não há no campo",
     excerpt: "Nunca tinha visto um verde assim numa chávena. Fiquei a olhar para ele mais tempo do que seria razoável antes de o beber.",
     body: [
-      "Pedi o matcha por capricho. Não sou particularmente fã, mas a cor — aquele verde opaco, quase pó, com a espuma fina à superfície — era demasiado boa para ignorar. Pus a chávena perto da janela onde batia uma luz de novembro, pálida e lateral.",
-      "Há uma categoria de beleza que existe só em coisas quotidianas apanhadas no sítio certo. Uma tosta mal dobrada, um café com a colher ainda dentro, o reflexo de uma janela num prato. Não são imagens de que toda a gente fala, mas são as que eu procuro.",
-      "Bebi o matcha. Era amargo. A fotografia ficou melhor do que a bebida.",
+      "Pedi o matcha. É raro haver uma manhã em que não haja um — em alguma versão: latte, iced, ou simplesmente batido à moda antiga numa chávena pequena. Aquele era espesso e verde-escuro, com a espuma ainda fresca. Pus-o perto da janela onde batia uma luz de novembro, pálida e lateral, e fiquei a olhá-lo antes de fazer fosse o que fosse.",
+      "Há uma categoria de beleza que existe só em coisas quotidianas apanhadas no sítio certo. Uma tosta mal dobrada, um café com a colher ainda dentro, o reflexo de uma janela num prato. Não são imagens de que toda a gente fala, mas são as que eu procuro — as que existem só durante trinta segundos e que ninguém se dá ao trabalho de registar.",
+      "Bebi o matcha devagar. Era bom — como quase sempre é quando a chávena está quente e há luz a entrar de lado. A fotografia também ficou.",
     ],
     photoSrc: cafeMatcha,
     photoTitle: "Matcha com espuma, novembro",

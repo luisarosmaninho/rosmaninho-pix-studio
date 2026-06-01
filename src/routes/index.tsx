@@ -20,6 +20,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Rosmaninho Fotografia" },
       { property: "og:description", content: "Arquivo lento de imagens — urbanas, natureza, retratos e iguarias." },
     ],
+    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/" }],
   }),
   component: HomePage,
 });
