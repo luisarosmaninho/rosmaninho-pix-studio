@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { photos, categories, photosByCategory } from "@/lib/photos";
@@ -44,7 +45,113 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
+const filmFrames = [
+  { src: portoStreet,    n: "01A", title: "Quando ainda havia luz" },
+  { src: sunsetBeach,    n: "02A", title: "A solidão que não pesa" },
+  { src: villageAlley,   n: "03A", title: "Uma tarde sem sobressaltos" },
+  { src: river,          n: "04A", title: "Quando a água ainda é visível" },
+  { src: coimbraSkyline, n: "05A", title: "O horizonte que não se fecha" },
+  { src: waterSplash,    n: "06A", title: "Geometria da queda" },
+];
+
+function FilmLightbox({ index, onClose, onPrev, onNext }: {
+  index: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const frame = filmFrames[index];
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrev();
+      if (e.key === "ArrowRight") onNext();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose, onPrev, onNext]);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      {/* Frame counter top */}
+      <div className="absolute top-6 inset-x-0 flex items-center justify-between px-8 pointer-events-none">
+        <span className="font-mono-label text-white/30 text-[10px] uppercase tracking-[0.4em]">
+          {frame.n} · {index + 1}/{filmFrames.length}
+        </span>
+        <button
+          onClick={onClose}
+          className="pointer-events-auto font-mono-label text-white/40 hover:text-white text-[10px] uppercase tracking-[0.4em] transition-colors"
+        >
+          Fechar ✕
+        </button>
+      </div>
+
+      {/* Image */}
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative max-w-4xl w-full mx-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Film border */}
+        <div className="border border-white/10 p-1 bg-[#0e0e0d]">
+          <img
+            src={frame.src}
+            alt={frame.title}
+            className="w-full max-h-[75vh] object-contain"
+          />
+        </div>
+
+        {/* Caption */}
+        <div className="flex items-end justify-between mt-4 px-1">
+          <div>
+            <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.35em] mb-1">{frame.n}</p>
+            <p className="font-display text-cream text-xl md:text-2xl leading-tight">{frame.title}</p>
+          </div>
+          <div className="flex gap-6">
+            <button
+              onClick={onPrev}
+              className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors"
+            >
+              ← Anterior
+            </button>
+            <button
+              onClick={onNext}
+              className="font-mono-label text-white/30 hover:text-copper text-[10px] uppercase tracking-[0.3em] transition-colors"
+            >
+              Seguinte →
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function HomePage() {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  function openLightbox(i: number) { setLightboxIndex(i); }
+  function closeLightbox() { setLightboxIndex(null); }
+  function prevFrame() { setLightboxIndex((i) => i === null ? null : (i - 1 + filmFrames.length) % filmFrames.length); }
+  function nextFrame() { setLightboxIndex((i) => i === null ? null : (i + 1) % filmFrames.length); }
+
   // Selecção masonry — alturas variadas para ritmo
   const masonry = [
     { src: portoStreet, h: "h-[520px]", cat: "Urbanas", title: "Quando ainda havia luz" },
@@ -324,17 +431,13 @@ function HomePage() {
             className="flex gap-2 px-3 overflow-x-auto scrollbar-none pt-9 pb-9"
             style={{ scrollbarWidth: "none" }}
           >
-            {[
-              { src: portoStreet,    n: "01A", title: "Quando ainda havia luz" },
-              { src: sunsetBeach,    n: "02A", title: "A solidão que não pesa" },
-              { src: villageAlley,   n: "03A", title: "Uma tarde sem sobressaltos" },
-              { src: river,          n: "04A", title: "Quando a água ainda é visível" },
-              { src: coimbraSkyline, n: "05A", title: "O horizonte que não se fecha" },
-              { src: waterSplash,    n: "06A", title: "Geometria da queda" },
-              { src: portoStreet,    n: "07A", title: "Quando ainda havia luz" },
-              { src: sunsetBeach,    n: "08A", title: "A solidão que não pesa" },
-            ].map((frame, i) => (
-              <div key={i} className="shrink-0 group relative" style={{ width: 220 }}>
+            {filmFrames.map((frame, i) => (
+              <button
+                key={i}
+                onClick={() => openLightbox(i)}
+                className="shrink-0 group relative text-left cursor-pointer"
+                style={{ width: 220 }}
+              >
                 <div className="relative overflow-hidden" style={{ height: 300 }}>
                   <img
                     src={frame.src}
@@ -345,12 +448,13 @@ function HomePage() {
                   <p className="absolute bottom-3 inset-x-3 font-display text-cream text-sm leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     {frame.title}
                   </p>
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/0 group-hover:ring-copper/40 transition-all duration-500" />
                 </div>
                 <div className="flex items-center justify-between mt-2 px-1">
-                  <span className="font-mono-label text-white/20 text-[9px] tracking-[0.3em]">{frame.n}</span>
-                  <span className="font-mono-label text-copper/40 text-[9px]">▲</span>
+                  <span className="font-mono-label text-white/20 text-[9px] tracking-[0.3em] group-hover:text-copper/50 transition-colors">{frame.n}</span>
+                  <span className="font-mono-label text-white/15 text-[9px] group-hover:text-copper/40 transition-colors">↗</span>
                 </div>
-              </div>
+              </button>
             ))}
           </motion.div>
 
@@ -423,6 +527,17 @@ function HomePage() {
       </Section>
 
       <SiteFooter />
+
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <FilmLightbox
+            index={lightboxIndex}
+            onClose={closeLightbox}
+            onPrev={prevFrame}
+            onNext={nextFrame}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
