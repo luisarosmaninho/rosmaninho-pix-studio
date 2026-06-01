@@ -514,8 +514,7 @@ function HomePage() {
                     <div className="col-span-12 md:col-span-4 text-foreground/65 text-sm leading-relaxed">
                       {c.description}
                     </div>
-                    <div className="col-span-12 md:col-span-2 flex items-center justify-between md:justify-end gap-6">
-                      <span className="font-mono-label">{count} img</span>
+                    <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-6">
                       {cover && (
                         <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
                           <img src={cover.src} alt="" className="w-full h-full object-cover" />
