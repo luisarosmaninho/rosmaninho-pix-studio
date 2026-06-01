@@ -57,8 +57,23 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 /* ─────────────────────────────────────────────
    Sala de revelação — torch effect
    ───────────────────────────────────────────── */
+const darkroomPool: { src: string; caption: string; location: string }[] = [
+  { src: mondegoFigura,   caption: "Uma figura, um rio, uma hora.",        location: "Mondego · Coimbra" },
+  { src: portoRibeira,    caption: "A ribeira antes do barulho.",           location: "Ribeira · Porto" },
+  { src: farolPeniche,    caption: "O fim da terra e o começo do vento.",   location: "Farol · Peniche" },
+  { src: arcoCoimbra,     caption: "Coimbra dobra-se sobre si mesma.",      location: "Arco · Coimbra" },
+  { src: retratoSol,      caption: "Luz que não pede licença.",             location: "Retrato · exterior" },
+  { src: ribeiroMusgo,    caption: "A água não espera por nós.",            location: "Ribeiro · interior" },
+  { src: retratoEsplanada,caption: "Um momento que não soube que era um.", location: "Esplanada · verão" },
+  { src: coimbraSkyline,  caption: "O horizonte que não se fecha.",         location: "Coimbra · panorama" },
+];
+
 function DarkroomReveal() {
   const ref = useRef<HTMLDivElement>(null);
+  const [photo, setPhoto] = useState(darkroomPool[0]);
+  useEffect(() => {
+    setPhoto(darkroomPool[Math.floor(Math.random() * darkroomPool.length)]);
+  }, []);
   const [pos, setPos] = useState({ x: -999, y: -999 });
   const [active, setActive] = useState(false);
   const [revealed, setRevealed] = useState(false);
@@ -92,7 +107,7 @@ function DarkroomReveal() {
     <section className="relative w-full overflow-hidden select-none" style={{ height: "85vh", minHeight: 480 }}>
       {/* Photo layer */}
       <img
-        src={mondegoFigura}
+        src={photo.src}
         alt="Sala de revelação"
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
@@ -152,8 +167,8 @@ function DarkroomReveal() {
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute bottom-8 left-8 md:left-12 pointer-events-none z-20"
       >
-        <p className="font-mono-label text-copper/70 text-[9px] uppercase tracking-[0.4em] mb-1">Mondego · Coimbra</p>
-        <p className="font-display text-cream/80 text-xl md:text-2xl">Uma figura, um rio, uma hora.</p>
+        <p className="font-mono-label text-copper/70 text-[9px] uppercase tracking-[0.4em] mb-1">{photo.location}</p>
+        <p className="font-display text-cream/80 text-xl md:text-2xl">{photo.caption}</p>
       </motion.div>
     </section>
   );
@@ -461,8 +476,8 @@ function HomePage() {
         </div>
       </Section>
 
-      {/* ============ SÉRIES — cards 2×2 ============ */}
-      <Section className="px-6 md:px-12 pt-28 md:pt-40 pb-0">
+      {/* ============ SÉRIES — masonry editorial ============ */}
+      <Section className="px-6 md:px-12 py-28 md:py-40">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
             <div>
@@ -476,59 +491,74 @@ function HomePage() {
             </p>
           </div>
 
-          {/* 2×2 image cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/12">
+          {/* Categories list */}
+          <ul className="border-t border-foreground/15 mb-20">
             {categories.map((c, i) => {
               const cover = photosByCategory(c.slug)[0];
               const count = photosByCategory(c.slug).length;
               return (
-                <motion.div
-                  key={c.slug}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 1.1, delay: i * 0.09, ease: "easeOut" }}
-                >
+                <li key={c.slug} className="border-b border-foreground/15">
                   <Link
                     to="/portfolio/$category"
                     params={{ category: c.slug }}
-                    className="group relative block overflow-hidden"
-                    style={{ aspectRatio: "4/3" }}
+                    className="group grid grid-cols-12 gap-6 py-8 md:py-10 items-center"
                   >
-                    {cover && (
-                      <img
-                        src={cover.src}
-                        alt={c.title}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.05]"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/15 transition-opacity duration-700 group-hover:from-black/75" />
-
-                    <p className="absolute top-6 left-6 font-mono-label text-white/30 text-[10px] tracking-[0.45em]">0{i + 1}</p>
-
-                    <div className="absolute bottom-0 inset-x-0 p-7 md:p-9">
-                      <h3 className="font-display text-4xl md:text-5xl lg:text-6xl text-cream leading-none group-hover:text-copper transition-colors duration-500">
+                    <div className="col-span-2 md:col-span-1">
+                      <p className="font-mono-label text-copper">0{i + 1}</p>
+                    </div>
+                    <div className="col-span-10 md:col-span-5">
+                      <h3 className="font-display text-4xl md:text-6xl group-hover:text-copper transition-colors duration-500 leading-none">
                         {c.title}
                       </h3>
-                      <p className="mt-3 text-cream/50 text-sm leading-relaxed max-w-xs translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-                        {c.description}
-                      </p>
-                      <div className="mt-5 flex items-center justify-between">
-                        <span className="font-mono-label text-white/25 text-[10px] tracking-[0.3em]">{count} imagens</span>
-                        <span className="font-mono-label text-copper/0 group-hover:text-copper text-[10px] tracking-[0.3em] transition-colors duration-500">
-                          Ver série →
-                        </span>
-                      </div>
                     </div>
-
-                    <div className="absolute inset-0 ring-1 ring-inset ring-copper/0 group-hover:ring-copper/25 transition-all duration-700" />
+                    <div className="col-span-12 md:col-span-4 text-foreground/65 text-sm leading-relaxed">
+                      {c.description}
+                    </div>
+                    <div className="col-span-12 md:col-span-2 flex items-center justify-between md:justify-end gap-6">
+                      <span className="font-mono-label">{count} img</span>
+                      {cover && (
+                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
+                          <img src={cover.src} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
                   </Link>
-                </motion.div>
+                </li>
               );
             })}
+          </ul>
+
+          {/* Masonry preview */}
+          <div className="masonry">
+            {[
+              { src: portoStreet,    h: "h-[520px]", cat: "Urbanas",   title: "Quando ainda havia luz" },
+              { src: sunsetBeach,    h: "h-[360px]", cat: "Natureza",  title: "A solidão que não pesa" },
+              { src: villageAlley,   h: "h-[440px]", cat: "Retratos",  title: "Uma tarde sem sobressaltos" },
+              { src: river,          h: "h-[380px]", cat: "Natureza",  title: "Quando a água ainda é visível" },
+              { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas",   title: "O horizonte que não se fecha" },
+              { src: waterSplash,    h: "h-[420px]", cat: "Natureza",  title: "Geometria da queda" },
+            ].map((p, i) => (
+              <motion.figure
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 1, delay: (i % 3) * 0.12, ease: "easeOut" }}
+                className="hover-zoom warm-tone relative group"
+              >
+                <div className={`${p.h} w-full relative overflow-hidden`}>
+                  <img src={p.src} alt={p.title} className="absolute inset-0 h-full w-full object-cover" />
+                </div>
+                <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <p className="font-mono-label text-copper">[ {p.cat} ]</p>
+                  <p className="font-display text-2xl text-cream mt-1">{p.title}</p>
+                </figcaption>
+              </motion.figure>
+            ))}
           </div>
 
-          <div className="mt-8 mb-0 flex justify-end">
+          <div className="mt-16 flex items-center justify-between">
+            <Whisper text="vão crescendo à medida que ando" delay={1.2} style="italic" />
             <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Ver o arquivo completo →
             </Link>
