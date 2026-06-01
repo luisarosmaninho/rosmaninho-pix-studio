@@ -43,8 +43,22 @@ function PortfolioPage() {
   const [filter, setFilter] = useState<CategorySlug | "all">("all");
   const [lightbox, setLightbox] = useState<Photo | null>(null);
   const visible = filter === "all" ? allPhotos : allPhotos.filter((p) => p.category === filter);
-
   const lightboxIndex = lightbox ? visible.indexOf(lightbox) : -1;
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const [pos, setPos] = useState({ x: -999, y: -999 });
+  const [active, setActive] = useState(false);
+  const radius = 260;
+
+  function updatePos(clientX: number, clientY: number) {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    setPos({ x: clientX - rect.left, y: clientY - rect.top });
+  }
+
+  const mask = active
+    ? `radial-gradient(circle ${radius}px at ${pos.x}px ${pos.y}px, transparent 0%, transparent 32%, rgba(0,0,0,0.60) 65%, rgba(0,0,0,0.97) 100%)`
+    : "rgba(0,0,0,0.97)";
 
   const touchStartX = useRef<number | null>(null);
   const closeLightbox = useCallback(() => setLightbox(null), []);
@@ -72,6 +86,7 @@ function PortfolioPage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
+      {/* ── Header + filters ── */}
       <section className="px-6 md:px-12 pt-32 md:pt-44 pb-12 max-w-7xl mx-auto">
         <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">arquivo</p>
         <h1 className="font-display text-5xl md:text-7xl leading-tight">Portfólio.</h1>
@@ -98,25 +113,64 @@ function PortfolioPage() {
         </div>
       </section>
 
-      <section className="px-6 md:px-12 pb-24 max-w-7xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6 [&>*]:mb-6">
-        {visible.map((p, i) => (
-          <motion.figure
-            key={p.src}
-            layout
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: (i % 6) * 0.08, ease: "easeOut" }}
-            onClick={() => setLightbox(p)}
-            className="group break-inside-avoid cursor-pointer relative hover-zoom"
-          >
-            <img src={p.src} alt={p.title} loading={i < 6 ? "eager" : "lazy"} className="w-full h-auto block" />
-            <figcaption className="absolute inset-x-0 bottom-0 p-5 text-cream bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <p className="font-display text-2xl">{p.title}</p>
-            </figcaption>
-          </motion.figure>
-        ))}
+      {/* ── Sala de revelação ── */}
+      <section
+        ref={sectionRef}
+        className="relative bg-[#0e0e0d]"
+        onMouseMove={(e) => updatePos(e.clientX, e.clientY)}
+        onMouseEnter={() => setActive(true)}
+        onMouseLeave={() => { setActive(false); setPos({ x: -999, y: -999 }); }}
+        onTouchMove={(e) => { const t = e.touches[0]; updatePos(t.clientX, t.clientY); setActive(true); }}
+        onTouchEnd={() => setActive(false)}
+      >
+        {/* Hint — desaparece ao activar */}
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 transition-opacity duration-700"
+          style={{ opacity: active ? 0 : 1 }}
+        >
+          <p className="font-mono-label text-white/20 text-[10px] uppercase tracking-[0.5em] text-center px-6">
+            move o cursor para revelar · clica para ver
+          </p>
+        </div>
+
+        {/* Grelha de fotos */}
+        <div className="px-6 md:px-12 pt-10 pb-24 max-w-7xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6 [&>*]:mb-6">
+          {visible.map((p, i) => (
+            <motion.figure
+              key={p.id}
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: (i % 6) * 0.05 }}
+              onClick={() => setLightbox(p)}
+              className="break-inside-avoid cursor-pointer group relative"
+            >
+              <img
+                src={p.src}
+                alt={p.title}
+                loading={i < 6 ? "eager" : "lazy"}
+                className="w-full h-auto block"
+              />
+              <figcaption className="pt-3 pb-1">
+                <p className="font-display text-cream/80 text-lg leading-tight">{p.title}</p>
+                <p className="font-italic-serif text-cream/35 text-sm italic mt-1 leading-relaxed">
+                  {p.meta.description}
+                </p>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
+
+        {/* Overlay escura com tocha — pointer-events: none para cliques passarem */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none transition-[background] duration-[55ms]"
+          style={{ background: mask }}
+        />
       </section>
 
+      <SiteFooter />
+
+      {/* ── Lightbox ── */}
       {lightbox && (
         <div
           onClick={closeLightbox}
@@ -131,48 +185,49 @@ function PortfolioPage() {
         >
           <button
             onClick={closeLightbox}
-            className="absolute top-6 right-6 text-cream text-xs uppercase tracking-[0.28em] z-10"
+            className="absolute top-6 right-6 font-mono-label text-cream/50 hover:text-cream text-[10px] uppercase tracking-[0.32em] transition-colors z-10"
           >
-            Fechar ✕
+            ESC · Fechar
           </button>
 
           {lightboxIndex > 0 && (
             <button
               onClick={(e) => { e.stopPropagation(); goPrev(); }}
-              className="absolute left-4 md:left-8 text-cream/60 hover:text-cream text-2xl transition-colors z-10 select-none px-3 py-6"
-              aria-label="Anterior"
+              className="absolute left-4 md:left-8 font-mono-label text-cream/40 hover:text-cream transition-colors text-[10px] uppercase tracking-[0.28em] z-10 px-3 py-6"
             >
-              ←
+              ← Anterior
             </button>
           )}
-
           {lightboxIndex < visible.length - 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); goNext(); }}
-              className="absolute right-4 md:right-8 text-cream/60 hover:text-cream text-2xl transition-colors z-10 select-none px-3 py-6"
-              aria-label="Seguinte"
+              className="absolute right-4 md:right-8 font-mono-label text-cream/40 hover:text-cream transition-colors text-[10px] uppercase tracking-[0.28em] z-10 px-3 py-6"
             >
-              →
+              Seguinte →
             </button>
           )}
 
-          <figure className="max-w-6xl max-h-full" onClick={(e) => e.stopPropagation()}>
-            <img src={lightbox.src} alt={lightbox.title} className="max-h-[85vh] w-auto mx-auto object-contain" />
-            <figcaption className="text-cream text-center mt-6">
-              <p className="font-display text-3xl">{lightbox.title}</p>
+          <figure className="max-w-5xl max-h-full" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={lightbox.src}
+              alt={lightbox.title}
+              className="max-h-[78vh] w-auto mx-auto object-contain"
+            />
+            <figcaption className="text-center mt-7">
+              <p className="font-display text-cream text-3xl">{lightbox.title}</p>
               {lightbox.meta?.description && (
-                <p className="font-italic-serif text-cream/50 mt-2 text-sm italic">"{lightbox.meta.description}"</p>
+                <p className="font-italic-serif text-cream/45 mt-3 text-sm italic max-w-xl mx-auto leading-relaxed">
+                  "{lightbox.meta.description}"
+                </p>
               )}
             </figcaption>
           </figure>
 
-          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono-label text-cream/30 text-[10px] tracking-[0.2em]">
+          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono-label text-cream/25 text-[10px] tracking-[0.28em]">
             {lightboxIndex + 1} / {visible.length}
           </p>
         </div>
       )}
-
-      <SiteFooter />
     </div>
   );
 }
