@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { photos, categories, photosByCategory } from "@/lib/photos";
+import type { Photo, CategorySlug } from "@/lib/photos";
 import { journal } from "@/lib/journal";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
@@ -58,14 +59,14 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
    Sala de revelação — torch effect
    ───────────────────────────────────────────── */
 const darkroomPool: { src: string; caption: string; location: string }[] = [
-  { src: mondegoFigura,   caption: "Uma figura, um rio, uma hora.",        location: "Mondego · Coimbra" },
-  { src: portoRibeira,    caption: "A ribeira antes do barulho.",           location: "Ribeira · Porto" },
-  { src: farolPeniche,    caption: "O fim da terra e o começo do vento.",   location: "Farol · Peniche" },
-  { src: arcoCoimbra,     caption: "Coimbra dobra-se sobre si mesma.",      location: "Arco · Coimbra" },
-  { src: retratoSol,      caption: "Luz que não pede licença.",             location: "Retrato · exterior" },
-  { src: ribeiroMusgo,    caption: "A água não espera por nós.",            location: "Ribeiro · interior" },
-  { src: retratoEsplanada,caption: "Um momento que não soube que era um.", location: "Esplanada · verão" },
-  { src: coimbraSkyline,  caption: "O horizonte que não se fecha.",         location: "Coimbra · panorama" },
+  { src: mondegoFigura,    caption: "Parado no meio de tudo",                    location: "Mondego · Coimbra"    },
+  { src: portoRibeira,     caption: "Antes do vento",                            location: "Ribeira · Porto"      },
+  { src: farolPeniche,     caption: "Sentinela",                                 location: "Farol · Peniche"      },
+  { src: arcoCoimbra,      caption: "O frio da pedra antiga",                    location: "Arco · Coimbra"       },
+  { src: retratoSol,       caption: "Um pensamento por terminar",                location: "Retrato · exterior"   },
+  { src: ribeiroMusgo,     caption: "O que existe só para quem se agacha",       location: "Ribeiro · interior"   },
+  { src: retratoEsplanada, caption: "Alguém que não contava o tempo",            location: "Esplanada · verão"    },
+  { src: coimbraSkyline,   caption: "O horizonte que não se fecha",              location: "Coimbra · panorama"   },
 ];
 
 function DarkroomReveal() {
@@ -174,15 +175,217 @@ function DarkroomReveal() {
   );
 }
 
+/* ─────────────────────────────────────────────
+   Séries — tira de câmara escura
+   ───────────────────────────────────────────── */
+type SeriesFrame = { photo: Photo; catTitle: string; catSlug: CategorySlug };
+
+function SeriesStripLightbox({ frame, onClose }: { frame: SeriesFrame; onClose: () => void }) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+      className="fixed inset-0 z-[300] flex items-center justify-center bg-black/97 backdrop-blur-sm px-5 py-8"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.97 }}
+        transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+        className="max-w-3xl w-full"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-5">
+          <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.45em]">
+            {frame.catTitle}
+          </p>
+          <button
+            onClick={onClose}
+            className="font-mono-label text-white/30 hover:text-white text-[9px] uppercase tracking-[0.4em] transition-colors"
+          >
+            ESC · Fechar
+          </button>
+        </div>
+
+        <div className="relative bg-black aspect-[3/2] overflow-hidden">
+          <img
+            src={frame.photo.src}
+            alt={frame.photo.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="mt-6 flex flex-col md:flex-row md:items-start md:justify-between gap-5">
+          <div>
+            <h3 className="font-display text-cream text-2xl md:text-3xl leading-tight">
+              {frame.photo.title}
+            </h3>
+            <p className="mt-3 text-cream/55 text-sm leading-relaxed max-w-md">
+              {frame.photo.meta.description}
+            </p>
+          </div>
+          <Link
+            to="/portfolio/$category"
+            params={{ category: frame.catSlug }}
+            onClick={onClose}
+            className="shrink-0 self-end md:self-start text-[10px] uppercase tracking-[0.35em] border-b border-cream/30 pb-1 text-cream/50 hover:text-copper hover:border-copper transition-colors whitespace-nowrap"
+          >
+            Ver série completa →
+          </Link>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function SeriesRevealStrip() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const scrollLeftRef = useRef(0);
+  const [pos, setPos] = useState({ x: -999, y: -999 });
+  const [active, setActive] = useState(false);
+  const [selected, setSelected] = useState<SeriesFrame | null>(null);
+  const radius = 210;
+
+  const frames: SeriesFrame[] = categories.flatMap((cat) =>
+    photosByCategory(cat.slug).slice(0, 2).map((photo) => ({
+      photo,
+      catTitle: cat.title,
+      catSlug: cat.slug,
+    }))
+  );
+
+  const FRAME_W = 220;
+  const GAP = 8;
+  const PAD_L = 12;
+  const RAIL_H = 32;
+  const FRAME_H = 160;
+
+  function updatePos(clientX: number, clientY: number) {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setPos({ x: clientX - rect.left + scrollLeftRef.current, y: clientY - rect.top });
+  }
+
+  function handleClick(e: React.MouseEvent) {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const cx = e.clientX - rect.left + scrollLeftRef.current;
+    const cy = e.clientY - rect.top;
+    if (cy < RAIL_H || cy > RAIL_H + FRAME_H) return;
+    const idx = Math.floor((cx - PAD_L) / (FRAME_W + GAP));
+    if (idx >= 0 && idx < frames.length) setSelected(frames[idx]);
+  }
+
+  const mask = active
+    ? `radial-gradient(circle ${radius}px at ${pos.x}px ${pos.y}px, transparent 0%, transparent 32%, rgba(0,0,0,0.62) 64%, rgba(0,0,0,0.97) 100%)`
+    : "rgba(0,0,0,0.97)";
+
+  return (
+    <>
+      <motion.div
+        ref={containerRef}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative bg-[#0e0e0d] mt-8"
+      >
+        {/* Top rail */}
+        <div className="h-8 bg-[#0e0e0d] flex items-center pointer-events-none">
+          <div className="flex gap-[18px] px-3 overflow-hidden">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-5 h-4 rounded-[3px] border border-white/10 bg-[#1a1a18]" />
+            ))}
+          </div>
+        </div>
+
+        {/* Photos strip */}
+        <div
+          ref={stripRef}
+          onScroll={() => { scrollLeftRef.current = stripRef.current?.scrollLeft ?? 0; }}
+          className="flex gap-2 px-3 py-2 overflow-x-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {frames.map((frame) => (
+            <div
+              key={frame.photo.id}
+              className="shrink-0 relative overflow-hidden"
+              style={{ width: FRAME_W, height: FRAME_H }}
+            >
+              <img
+                src={frame.photo.src}
+                alt={frame.photo.title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom rail */}
+        <div className="h-8 bg-[#0e0e0d] flex items-center pointer-events-none">
+          <div className="flex gap-[18px] px-3 overflow-hidden">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-5 h-4 rounded-[3px] border border-white/10 bg-[#1a1a18]" />
+            ))}
+          </div>
+        </div>
+
+        {/* Dark overlay with torch */}
+        <div
+          className="absolute inset-0 z-10 transition-[background] duration-[60ms] cursor-none"
+          style={{ background: mask }}
+          onMouseMove={(e) => updatePos(e.clientX, e.clientY)}
+          onMouseEnter={() => setActive(true)}
+          onMouseLeave={() => { setActive(false); setPos({ x: -999, y: -999 }); }}
+          onTouchMove={(e) => { const t = e.touches[0]; updatePos(t.clientX, t.clientY); }}
+          onTouchStart={(e) => { setActive(true); const t = e.touches[0]; updatePos(t.clientX, t.clientY); }}
+          onTouchEnd={() => setActive(false)}
+          onClick={handleClick}
+        />
+
+        {/* Hint */}
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 transition-opacity duration-700"
+          style={{ opacity: active ? 0 : 1 }}
+        >
+          <p className="font-mono-label text-white/18 text-[9px] uppercase tracking-[0.5em]">
+            move o cursor para revelar · clica para saber mais
+          </p>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {selected && (
+          <SeriesStripLightbox frame={selected} onClose={() => setSelected(null)} />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 const filmFrames = [
-  { src: arcoCoimbra,       n: "01A", title: "A cidade vista de dentro",      cat: "Urbanas"   },
-  { src: retratoSol,        n: "02A", title: "Luz que não pede licença",       cat: "Retratos"  },
-  { src: ribeiroMusgo,      n: "03A", title: "O que existe só para quem se agacha", cat: "Natureza"  },
-  { src: risottoCourgette,  n: "04A", title: "O que sobrou do verão",          cat: "Iguarias"  },
-  { src: portoRibeira,      n: "05A", title: "Ribeira às seis da tarde",       cat: "Urbanas"   },
-  { src: farolPeniche,      n: "06A", title: "A beira do mundo habitável",     cat: "Natureza"  },
-  { src: retratoEsplanada,  n: "07A", title: "Uma tarde sem sobressaltos",     cat: "Retratos"  },
-  { src: cafeMatcha,        n: "08A", title: "Verde antes do ruído começar",   cat: "Iguarias"  },
+  { src: arcoCoimbra,       n: "01A", title: "O frio da pedra antiga",              cat: "Urbanas"   },
+  { src: retratoSol,        n: "02A", title: "Um pensamento por terminar",           cat: "Retratos"  },
+  { src: ribeiroMusgo,      n: "03A", title: "O que existe só para quem se agacha",  cat: "Natureza"  },
+  { src: risottoCourgette,  n: "04A", title: "O que sobrou do verão",                cat: "Iguarias"  },
+  { src: portoRibeira,      n: "05A", title: "Antes do vento",                       cat: "Urbanas"   },
+  { src: farolPeniche,      n: "06A", title: "Sentinela",                            cat: "Urbanas"   },
+  { src: retratoEsplanada,  n: "07A", title: "Alguém que não contava o tempo",       cat: "Retratos"  },
+  { src: cafeMatcha,        n: "08A", title: "Não havia escolha errada",             cat: "Iguarias"  },
 ];
 
 function SprocketColumn() {
@@ -527,13 +730,11 @@ function HomePage() {
             })}
           </ul>
 
-          <div className="mt-10 flex justify-end">
-            <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
-              Ver o arquivo completo →
-            </Link>
-          </div>
         </div>
       </Section>
+
+      {/* ─── Séries: tira de câmara escura ─── */}
+      <SeriesRevealStrip />
 
       {/* ============ CONTACTOS — film strip ============ */}
       <section className="mt-20 md:mt-28 py-20 md:py-28 bg-[#0e0e0d] overflow-hidden">
