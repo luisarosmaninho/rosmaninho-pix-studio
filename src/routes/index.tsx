@@ -220,16 +220,6 @@ function HomePage() {
   function prevFrame() { setLightboxIndex((i) => i === null ? null : (i - 1 + filmFrames.length) % filmFrames.length); }
   function nextFrame() { setLightboxIndex((i) => i === null ? null : (i + 1) % filmFrames.length); }
 
-  // Selecção masonry — alturas variadas para ritmo
-  const masonry = [
-    { src: portoStreet, h: "h-[520px]", cat: "Urbanas", title: "Quando ainda havia luz" },
-    { src: sunsetBeach, h: "h-[360px]", cat: "Natureza", title: "A solidão que não pesa" },
-    { src: villageAlley, h: "h-[440px]", cat: "Retratos", title: "Uma tarde sem sobressaltos" },
-    { src: river, h: "h-[380px]", cat: "Natureza", title: "Quando a água ainda é visível" },
-    { src: coimbraSkyline, h: "h-[300px]", cat: "Urbanas", title: "O horizonte que não se fecha" },
-    { src: waterSplash, h: "h-[420px]", cat: "Natureza", title: "Geometria da queda" },
-  ];
-
   const latestEntry = journal[0];
 
   return (
@@ -365,8 +355,8 @@ function HomePage() {
         </div>
       </Section>
 
-      {/* ============ SÉRIES — masonry editorial ============ */}
-      <Section className="px-6 md:px-12 py-28 md:py-40">
+      {/* ============ SÉRIES — cards 2×2 ============ */}
+      <Section className="px-6 md:px-12 pt-28 md:pt-40 pb-0">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
             <div>
@@ -380,67 +370,59 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Categories list */}
-          <ul className="border-t border-foreground/15 mb-20">
+          {/* 2×2 image cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/12">
             {categories.map((c, i) => {
               const cover = photosByCategory(c.slug)[0];
               const count = photosByCategory(c.slug).length;
               return (
-                <li key={c.slug} className="border-b border-foreground/15">
+                <motion.div
+                  key={c.slug}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 1.1, delay: i * 0.09, ease: "easeOut" }}
+                >
                   <Link
                     to="/portfolio/$category"
                     params={{ category: c.slug }}
-                    className="group grid grid-cols-12 gap-6 py-8 md:py-10 items-center"
+                    className="group relative block overflow-hidden"
+                    style={{ aspectRatio: "4/3" }}
                   >
-                    <div className="col-span-2 md:col-span-1">
-                      <p className="font-mono-label text-copper">0{i + 1}</p>
-                    </div>
-                    <div className="col-span-10 md:col-span-5">
-                      <h3 className="font-display text-4xl md:text-6xl group-hover:text-copper transition-colors duration-500 leading-none">
+                    {cover && (
+                      <img
+                        src={cover.src}
+                        alt={c.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.05]"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/15 transition-opacity duration-700 group-hover:from-black/75" />
+
+                    <p className="absolute top-6 left-6 font-mono-label text-white/30 text-[10px] tracking-[0.45em]">0{i + 1}</p>
+
+                    <div className="absolute bottom-0 inset-x-0 p-7 md:p-9">
+                      <h3 className="font-display text-4xl md:text-5xl lg:text-6xl text-cream leading-none group-hover:text-copper transition-colors duration-500">
                         {c.title}
                       </h3>
+                      <p className="mt-3 text-cream/50 text-sm leading-relaxed max-w-xs translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                        {c.description}
+                      </p>
+                      <div className="mt-5 flex items-center justify-between">
+                        <span className="font-mono-label text-white/25 text-[10px] tracking-[0.3em]">{count} imagens</span>
+                        <span className="font-mono-label text-copper/0 group-hover:text-copper text-[10px] tracking-[0.3em] transition-colors duration-500">
+                          Ver série →
+                        </span>
+                      </div>
                     </div>
-                    <div className="col-span-12 md:col-span-4 text-foreground/65 text-sm leading-relaxed">
-                      {c.description}
-                    </div>
-                    <div className="col-span-12 md:col-span-2 flex items-center justify-between md:justify-end gap-6">
-                      <span className="font-mono-label">{count} img</span>
-                      {cover && (
-                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
-                          <img src={cover.src} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
+
+                    <div className="absolute inset-0 ring-1 ring-inset ring-copper/0 group-hover:ring-copper/25 transition-all duration-700" />
                   </Link>
-                </li>
+                </motion.div>
               );
             })}
-          </ul>
-
-          {/* Masonry preview */}
-          <div className="masonry">
-            {masonry.map((p, i) => (
-              <motion.figure
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 1, delay: (i % 3) * 0.12, ease: "easeOut" }}
-                className="hover-zoom warm-tone relative group"
-              >
-                <div className={`${p.h} w-full relative overflow-hidden`}>
-                  <img src={p.src} alt={p.title} className="absolute inset-0 h-full w-full object-cover" />
-                </div>
-                <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                  <p className="font-mono-label text-copper">[ {p.cat} ]</p>
-                  <p className="font-display text-2xl text-cream mt-1">{p.title}</p>
-                </figcaption>
-              </motion.figure>
-            ))}
           </div>
 
-          <div className="mt-16 flex items-center justify-between">
-            <Whisper text="vão crescendo à medida que ando" delay={1.2} style="italic" />
+          <div className="mt-8 mb-0 flex justify-end">
             <Link to="/portfolio" className="inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
               Ver o arquivo completo →
             </Link>
@@ -448,19 +430,8 @@ function HomePage() {
         </div>
       </Section>
 
-      {/* ============ MARQUEE ============ */}
-      <section className="overflow-hidden py-14 border-y border-foreground/10 bg-cream">
-        <div className="marquee flex whitespace-nowrap font-display text-[80px] md:text-[140px] text-copper/60 leading-none">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="mx-10">
-              Urbanas <span className="font-italic-serif text-foreground/40">·</span> Natureza <span className="font-italic-serif text-foreground/40">·</span> Retratos <span className="font-italic-serif text-foreground/40">·</span> Iguarias <span className="font-italic-serif text-foreground/40">·</span>
-            </span>
-          ))}
-        </div>
-      </section>
-
       {/* ============ CONTACTOS — film strip ============ */}
-      <section className="py-20 md:py-28 bg-[#0e0e0d] overflow-hidden">
+      <section className="mt-20 md:mt-28 py-20 md:py-28 bg-[#0e0e0d] overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
