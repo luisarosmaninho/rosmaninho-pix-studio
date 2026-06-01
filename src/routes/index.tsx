@@ -284,6 +284,87 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ============ CONTACTOS — film strip ============ */}
+      <section className="py-20 md:py-28 bg-[#0e0e0d] overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="px-6 md:px-12 mb-10 flex items-end justify-between max-w-7xl mx-auto"
+        >
+          <div>
+            <p className="font-mono-label text-copper/70 mb-3 uppercase tracking-[0.38em]">§ — Contactos</p>
+            <h2 className="font-display text-3xl md:text-5xl text-cream leading-[0.98]">
+              O arquivo em<br />
+              <span className="font-italic-serif text-copper">tira de filme</span>.
+            </h2>
+          </div>
+          <p className="hidden md:block font-mono-label text-cream/25 text-[10px] uppercase tracking-[0.3em] max-w-[180px] text-right leading-relaxed">
+            cada frame,<br />uma decisão
+          </p>
+        </motion.div>
+
+        {/* Sprocket rail top */}
+        <div className="relative w-full">
+          <div className="absolute top-0 left-0 right-0 h-8 bg-[#0e0e0d] flex items-center z-10">
+            <div className="flex gap-[18px] px-3 w-full">
+              {Array.from({ length: 40 }).map((_, i) => (
+                <div key={i} className="shrink-0 w-5 h-4 rounded-[3px] border border-white/10 bg-[#1a1a18]" />
+              ))}
+            </div>
+          </div>
+
+          {/* Strip */}
+          <motion.div
+            initial={{ x: 60, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
+            className="flex gap-2 px-3 overflow-x-auto scrollbar-none pt-9 pb-9"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {[
+              { src: portoStreet,    n: "01A", title: "Quando ainda havia luz" },
+              { src: sunsetBeach,    n: "02A", title: "A solidão que não pesa" },
+              { src: villageAlley,   n: "03A", title: "Uma tarde sem sobressaltos" },
+              { src: river,          n: "04A", title: "Quando a água ainda é visível" },
+              { src: coimbraSkyline, n: "05A", title: "O horizonte que não se fecha" },
+              { src: waterSplash,    n: "06A", title: "Geometria da queda" },
+              { src: portoStreet,    n: "07A", title: "Quando ainda havia luz" },
+              { src: sunsetBeach,    n: "08A", title: "A solidão que não pesa" },
+            ].map((frame, i) => (
+              <div key={i} className="shrink-0 group relative" style={{ width: 220 }}>
+                <div className="relative overflow-hidden" style={{ height: 300 }}>
+                  <img
+                    src={frame.src}
+                    alt={frame.title}
+                    className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <p className="absolute bottom-3 inset-x-3 font-display text-cream text-sm leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {frame.title}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-2 px-1">
+                  <span className="font-mono-label text-white/20 text-[9px] tracking-[0.3em]">{frame.n}</span>
+                  <span className="font-mono-label text-copper/40 text-[9px]">▲</span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Sprocket rail bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#0e0e0d] flex items-center z-10">
+            <div className="flex gap-[18px] px-3 w-full">
+              {Array.from({ length: 40 }).map((_, i) => (
+                <div key={i} className="shrink-0 w-5 h-4 rounded-[3px] border border-white/10 bg-[#1a1a18]" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ DIÁRIO — última entrada em destaque ============ */}
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">

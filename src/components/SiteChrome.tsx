@@ -147,7 +147,6 @@ const navLinks = [
   { to: "/portfolio", label: "Séries" },
   { to: "/diario", label: "Diário" },
   { to: "/notas", label: "Notas" },
-  { to: "/impressoes", label: "Impressões" },
   { to: "/contacto", label: "Diálogo" },
 ] as const;
 
@@ -271,7 +270,6 @@ export function SiteFooter() {
             <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
             <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
             <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Notas de Campo</Link>
-            <Link to="/impressoes" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Impressões em Papel</Link>
             <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
           </div>
 

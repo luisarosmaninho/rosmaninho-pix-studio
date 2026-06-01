@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as NotasRouteImport } from './routes/notas'
-import { Route as ImpressoesRouteImport } from './routes/impressoes'
 import { Route as DiarioRouteImport } from './routes/diario'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -35,11 +34,6 @@ const PortfolioRoute = PortfolioRouteImport.update({
 const NotasRoute = NotasRouteImport.update({
   id: '/notas',
   path: '/notas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImpressoesRoute = ImpressoesRouteImport.update({
-  id: '/impressoes',
-  path: '/impressoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiarioRoute = DiarioRouteImport.update({
@@ -88,7 +82,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRouteWithChildren
-  '/impressoes': typeof ImpressoesRoute
   '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
@@ -101,7 +94,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contacto': typeof ContactoRoute
-  '/impressoes': typeof ImpressoesRoute
   '/notas': typeof NotasRoute
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
@@ -115,7 +107,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRouteWithChildren
-  '/impressoes': typeof ImpressoesRoute
   '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/sobre': typeof SobreRoute
@@ -131,7 +122,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contacto'
     | '/diario'
-    | '/impressoes'
     | '/notas'
     | '/portfolio'
     | '/sobre'
@@ -144,7 +134,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/contacto'
-    | '/impressoes'
     | '/notas'
     | '/sobre'
     | '/diario/$slug'
@@ -157,7 +146,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contacto'
     | '/diario'
-    | '/impressoes'
     | '/notas'
     | '/portfolio'
     | '/sobre'
@@ -172,7 +160,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactoRoute: typeof ContactoRoute
   DiarioRoute: typeof DiarioRouteWithChildren
-  ImpressoesRoute: typeof ImpressoesRoute
   NotasRoute: typeof NotasRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   SobreRoute: typeof SobreRoute
@@ -199,13 +186,6 @@ declare module '@tanstack/react-router' {
       path: '/notas'
       fullPath: '/notas'
       preLoaderRoute: typeof NotasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/impressoes': {
-      id: '/impressoes'
-      path: '/impressoes'
-      fullPath: '/impressoes'
-      preLoaderRoute: typeof ImpressoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diario': {
@@ -299,7 +279,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ContactoRoute: ContactoRoute,
   DiarioRoute: DiarioRouteWithChildren,
-  ImpressoesRoute: ImpressoesRoute,
   NotasRoute: NotasRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   SobreRoute: SobreRoute,
