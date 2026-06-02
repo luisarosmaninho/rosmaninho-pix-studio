@@ -369,11 +369,11 @@ function SobrePage() {
             { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
             { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
             { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
-            { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Já fui uma vez. Preciso de voltar." },
-            { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras." },
-            { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for, vai parecer um regresso a algum lugar que não sei que conhecia." },
-            { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Ainda não fui. Já tenho saudades de alguma coisa." },
-            { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Um lugar que peço para visitar quando a câmara precisar de luz diferente." },
+            { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
+            { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
+            { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
+            { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
+            { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
           ].map((lugar, i) => (
             <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
               <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
