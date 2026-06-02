@@ -41,15 +41,17 @@ function JournalIndex() {
             Caderno<br />
             <span className="font-italic-serif text-copper">de Matcha</span>.
           </h1>
-          <motion.p
+          <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="show"
             transition={{ delay: 0.3 }}
-            className="mt-10 max-w-lg text-foreground/55 leading-relaxed body-text"
+            className="mt-10 max-w-2xl space-y-5 text-foreground/55 leading-relaxed body-text"
           >
-            Escrevo aqui quando há uma pausa longa o suficiente para isso — com uma chávena à frente, normalmente. São notas sobre fotografias que fiz e sobre o que estava a pensar enquanto as fiz. Não há ordem, não há urgência.
-          </motion.p>
+            <p>Nem tudo fica dentro de uma fotografia. Algumas coisas acabam escritas aqui. Este é um espaço onde guardo observações, memórias, pensamentos e pequenos momentos que fui encontrando pelo caminho. Muitas destas notas nasceram enquanto fotografava; outras surgiram mais tarde, quando tive tempo para olhar para as imagens com mais calma e perceber o que realmente me ficou daquele dia.</p>
+            <p>Escrevo sobre lugares, luz, cidades, caminhadas, pessoas e sobre os detalhes que muitas vezes passam despercebidos. Às vezes começo por uma fotografia e acabo numa memória. Outras vezes acontece o contrário. Não procuro contar grandes histórias nem encontrar conclusões. Gosto mais de guardar fragmentos: uma rua silenciosa, um céu carregado, uma conversa esquecida, uma janela iluminada ao fim da tarde.</p>
+            <p>Normalmente escrevo com uma chávena de café ou matcha por perto e sem grande pressa de chegar ao fim. Talvez por isso este caderno não tenha uma ordem definida. É apenas um arquivo pessoal de coisas que vi, senti ou pensei e que, por alguma razão, achei que valia a pena guardar.</p>
+          </motion.div>
         </motion.div>
 
         <motion.div
