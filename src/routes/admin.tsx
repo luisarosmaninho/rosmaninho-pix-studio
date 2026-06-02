@@ -2,12 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { photos, categories, type Photo, type CategorySlug } from "@/lib/photos";
 import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/photo-config-fns";
+import { getNesteMomento, saveNesteMomento } from "@/lib/momento-fns";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const config = await getPhotoConfig();
-    return { config };
+    const [config, momento] = await Promise.all([getPhotoConfig(), getNesteMomento()]);
+    return { config, momento };
   },
   component: AdminPage,
 });
@@ -33,10 +34,17 @@ function applyInitialOrder(allPhotos: Photo[], config: { order: string[]; hidden
 }
 
 function AdminPage() {
-  const { config } = Route.useLoaderData();
+  const { config, momento } = Route.useLoaderData();
 
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [momentoALer, setMomentoALer] = useState(momento.aLer);
+  const [momentoAEscutar, setMomentoAEscutar] = useState(momento.aEscutar);
+  const [momentoAFotografar, setMomentoAFotografar] = useState(momento.aFotografar);
+  const [momentoAPensarEm, setMomentoAPensarEm] = useState(momento.aPensarEm);
+  const [momentoSaving, setMomentoSaving] = useState(false);
+  const [momentoSavedOk, setMomentoSavedOk] = useState(false);
+  const [momentoError, setMomentoError] = useState("");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
   const [list, setList] = useState<AdminPhoto[]>(() => applyInitialOrder(photos, config));
@@ -321,6 +329,69 @@ function AdminPage() {
           <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.3em] text-center">
             As alterações só ficam activas depois de guardar
           </p>
+        </div>
+
+        {/* ── Neste momento ── */}
+        <div className="mt-16 pt-10 border-t border-white/8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-white/30">Sobre · Homepage</p>
+              <h2 className="text-white text-xl font-light mt-0.5">Neste momento</h2>
+            </div>
+            <div className="flex items-center gap-4">
+              {momentoSavedOk && (
+                <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-emerald-400">Guardado ✓</span>
+              )}
+              {momentoError && (
+                <span className="font-mono text-[10px] text-red-400">{momentoError}</span>
+              )}
+              <button
+                onClick={async () => {
+                  setMomentoSaving(true);
+                  setMomentoError("");
+                  setMomentoSavedOk(false);
+                  try {
+                    await saveNesteMomento({
+                      data: {
+                        password,
+                        aLer: momentoALer,
+                        aEscutar: momentoAEscutar,
+                        aFotografar: momentoAFotografar,
+                        aPensarEm: momentoAPensarEm,
+                      },
+                    });
+                    setMomentoSavedOk(true);
+                  } catch (err: unknown) {
+                    setMomentoError(err instanceof Error ? err.message : "Erro ao guardar.");
+                  } finally {
+                    setMomentoSaving(false);
+                  }
+                }}
+                disabled={momentoSaving}
+                className="bg-white text-black text-[11px] uppercase tracking-[0.28em] px-5 py-2 hover:bg-white/90 transition-colors disabled:opacity-50"
+              >
+                {momentoSaving ? "A guardar…" : "Guardar"}
+              </button>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: "A ler", value: momentoALer, onChange: setMomentoALer },
+              { label: "À escuta", value: momentoAEscutar, onChange: setMomentoAEscutar },
+              { label: "A fotografar", value: momentoAFotografar, onChange: setMomentoAFotografar },
+              { label: "A pensar em", value: momentoAPensarEm, onChange: setMomentoAPensarEm },
+            ].map((field) => (
+              <div key={field.label} className="bg-white/4 p-4">
+                <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30 mb-2">{field.label}</p>
+                <textarea
+                  value={field.value}
+                  onChange={(e) => { field.onChange(e.target.value); setMomentoSavedOk(false); }}
+                  rows={3}
+                  className="w-full bg-transparent text-white text-sm outline-none resize-none placeholder:text-white/20 leading-relaxed"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

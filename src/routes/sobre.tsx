@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
+import { getNesteMomento } from "@/lib/momento-fns";
 import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
 import farolPeniche from "@/assets/farol-peniche.jpg";
 import barcoDouro from "@/assets/barco-douro.jpg";
@@ -17,6 +18,10 @@ export const Route = createFileRoute("/sobre")({
     ],
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/sobre" }],
   }),
+  loader: async () => {
+    const momento = await getNesteMomento();
+    return { momento };
+  },
   component: SobrePage,
 });
 
@@ -41,6 +46,7 @@ function Fade({ children, delay = 0, className = "" }: { children: React.ReactNo
 }
 
 function SobrePage() {
+  const { momento } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
@@ -409,10 +415,10 @@ function SobrePage() {
         <p className="font-mono-label text-copper mb-10">§ 10 — Neste momento</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10 max-w-2xl">
           {[
-            { label: "a ler", nota: "um romance que comecei numa tarde de março e que ainda não terminei — e não tenho pressa." },
-            { label: "à escuta", nota: "muito silêncio, ultimamente. quando não é silêncio, é música que já não me lembro de quando comecei a ouvir." },
-            { label: "a fotografar", nota: "os telhados ao entardecer. sempre os telhados — como se houvesse sempre mais um ângulo que ainda não vi." },
-            { label: "a pensar em", nota: "Bruges. e numa caminhada de novembro que ainda não aconteceu mas que já tem rota definida na cabeça." },
+            { label: "a ler", nota: momento.aLer },
+            { label: "à escuta", nota: momento.aEscutar },
+            { label: "a fotografar", nota: momento.aFotografar },
+            { label: "a pensar em", nota: momento.aPensarEm },
           ].map((item) => (
             <div key={item.label} className="bg-background px-8 py-8">
               <p className="font-mono-label text-copper/50 text-[9px] tracking-[0.4em] uppercase mb-4">{item.label}</p>

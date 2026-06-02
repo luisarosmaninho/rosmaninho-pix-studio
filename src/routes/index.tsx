@@ -32,6 +32,11 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/" }],
   }),
+  loader: async () => {
+    const { getNesteMomento } = await import("@/lib/momento-fns");
+    const momento = await getNesteMomento();
+    return { momento };
+  },
   component: HomePage,
 });
 
@@ -335,6 +340,7 @@ function FilmLightbox({ index, onClose, onPrev, onNext }: {
 }
 
 function HomePage() {
+  const { momento } = Route.useLoaderData();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   function openLightbox(i: number) { setLightboxIndex(i); }
@@ -644,6 +650,26 @@ function HomePage() {
                 Todas as entradas
               </Link>
             </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ============ NESTE MOMENTO ============ */}
+      <Section className="px-6 md:px-12 py-16 md:py-20 bg-background border-t border-foreground/8">
+        <div className="max-w-5xl mx-auto">
+          <p className="font-mono-label text-copper/60 mb-8 text-[9px] tracking-[0.45em] uppercase">neste momento</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-foreground/10">
+            {[
+              { label: "a ler", nota: momento.aLer },
+              { label: "à escuta", nota: momento.aEscutar },
+              { label: "a fotografar", nota: momento.aFotografar },
+              { label: "a pensar em", nota: momento.aPensarEm },
+            ].map((item) => (
+              <div key={item.label} className="bg-background px-6 py-6">
+                <p className="font-mono-label text-copper/40 text-[9px] tracking-[0.38em] uppercase mb-3">{item.label}</p>
+                <p className="text-foreground/50 text-sm leading-relaxed">{item.nota}</p>
+              </div>
+            ))}
           </div>
         </div>
       </Section>
