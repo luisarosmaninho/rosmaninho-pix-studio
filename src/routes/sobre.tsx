@@ -266,6 +266,126 @@ function SobrePage() {
         </div>
       </Fade>
 
+      {/* ── Pequenas Constâncias ── */}
+      <section className="px-6 md:px-12 py-28 max-w-6xl mx-auto">
+        <Fade>
+          <p className="font-mono-label text-copper mb-10">§ 07 — Pequenas constâncias</p>
+          <p className="font-display text-4xl md:text-5xl leading-[1.05] mb-4 max-w-2xl">
+            Coisas que ficam<br /><span className="font-italic-serif text-copper">sempre iguais.</span>
+          </p>
+          <p className="text-foreground/40 max-w-md mb-16 body-text leading-relaxed">
+            Fragmentos de um caderno pessoal. Não são hobbies. São constâncias.
+          </p>
+        </Fade>
+        <div className="grid grid-cols-1 md:grid-cols-2 border-t border-foreground/10">
+          {[
+            {
+              titulo: "A câmara",
+              texto: "A câmara não é um instrumento de captura. É uma desculpa para demorar mais tempo num sítio sem que ninguém pergunte o porquê. Isso vale muito mais do que qualquer fotografia.",
+            },
+            {
+              titulo: "Coimbra de manhã",
+              texto: "Coimbra tem ruas que só existem de manhã cedo. Depois disso, a luz muda, as pessoas chegam, e aquela versão específica da cidade desaparece. Só volta no dia seguinte — se houver paciência para ir lá.",
+            },
+            {
+              titulo: "Livros",
+              texto: "Há livros para começos de viagem, livros para regresso a casa, e livros para as tardes em que não acontece nada de especial. Não os confundo. Cada um sabe onde pertence.",
+            },
+            {
+              titulo: "Música",
+              texto: "Alguns músicos têm a capacidade de fazer com que o quotidiano pareça mais lento do que é. Preciso disso mais vezes do que admito. Não gosto de os nomear — perdem qualquer coisa quando se faz isso.",
+            },
+            {
+              titulo: "Cafés",
+              texto: "Não vou a cafés para trabalhar. Vou para observar. O trabalho é apenas um pretexto para ficar sentada tempo suficiente até que alguma coisa interessante aconteça.",
+            },
+            {
+              titulo: "Matcha e escrita",
+              texto: "O matcha tem um sabor que obriga a parar. Não consigo bebê-lo depressa. Talvez seja essa a razão pela qual o encomendo sempre que preciso de escrever algo que ainda não sei como começa.",
+            },
+            {
+              titulo: "Cidades sonhadas",
+              texto: "Há cidades que já visitei nas fotografias de outras pessoas: Bergen, Bruges, Verona. Já conheço algumas ruas. Ainda não fui. Mas quando for, vai parecer um regresso.",
+            },
+            {
+              titulo: "Luz de novembro",
+              texto: "Existe uma forma específica de luz às dezasseis horas de novembro que não acontece em mais nenhum mês. Já tentei descrever várias vezes. Não consigo. Por isso fotografo.",
+            },
+          ].map((item, i) => (
+            <Fade
+              key={item.titulo}
+              delay={i * 0.05}
+              className={`border-b border-foreground/10 py-10 ${i % 2 === 0 ? "md:pr-16 md:border-r md:border-foreground/10" : "md:pl-16"}`}
+            >
+              <p className="font-mono-label text-copper/60 mb-4 text-[9px] tracking-[0.38em] uppercase">{item.titulo}</p>
+              <p className="text-foreground/65 leading-relaxed font-italic-serif text-lg">{item.texto}</p>
+            </Fade>
+          ))}
+        </div>
+      </section>
+
+      <div className="hairline mx-6 md:mx-12" />
+
+      {/* ── Ritmos ── */}
+      <section className="bg-foreground text-cream px-6 md:px-12 py-28 md:py-36">
+        <div className="max-w-6xl mx-auto">
+          <Fade>
+            <p className="font-mono-label text-copper mb-10">§ 08 — Ritmos</p>
+            <p className="font-display text-4xl md:text-5xl text-cream leading-[1.05] mb-16 max-w-xl">
+              O que uso<br /><span className="font-italic-serif text-copper">consoante o dia</span>.
+            </p>
+          </Fade>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-cream/8 max-w-4xl">
+            {[
+              { quando: "Quando preciso de começar:", recurso: "café." },
+              { quando: "Quando preciso de abrandar:", recurso: "matcha." },
+              { quando: "Quando preciso de desaparecer um pouco:", recurso: "livros." },
+              { quando: "Quando preciso de compreender:", recurso: "caminhar." },
+              { quando: "Quando preciso de guardar:", recurso: "fotografar." },
+              { quando: "Quando não preciso de nada:", recurso: "silêncio." },
+            ].map((r, i) => (
+              <Fade key={r.recurso} delay={i * 0.07} className="bg-foreground px-8 py-10">
+                <p className="font-mono-label text-cream/35 text-[9px] leading-relaxed mb-5 tracking-[0.2em]">{r.quando}</p>
+                <p className="font-display text-3xl text-copper">{r.recurso}</p>
+              </Fade>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Cartografia Pessoal ── */}
+      <section className="px-6 md:px-12 py-28 max-w-6xl mx-auto">
+        <Fade>
+          <p className="font-mono-label text-copper mb-10">§ 09 — Cartografia pessoal</p>
+          <p className="font-display text-4xl md:text-5xl leading-[1.05] mb-4 max-w-2xl">
+            Lugares que habitam<br /><span className="font-italic-serif text-copper">o pensamento.</span>
+          </p>
+          <p className="text-foreground/40 leading-relaxed max-w-md mb-16 body-text">
+            Não destinos. Não listas de viagem. Lugares que ficaram — alguns visitados, outros apenas sonhados.
+          </p>
+        </Fade>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10 max-w-3xl">
+          {[
+            { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
+            { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
+            { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
+            { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Já fui uma vez. Preciso de voltar." },
+            { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras." },
+            { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for, vai parecer um regresso a algum lugar que não sei que conhecia." },
+            { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Ainda não fui. Já tenho saudades de alguma coisa." },
+            { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Um lugar que peço para visitar quando a câmara precisar de luz diferente." },
+          ].map((lugar, i) => (
+            <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
+              <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
+              <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
+            </Fade>
+          ))}
+        </div>
+        <Whisper text="lugares reais · lugares imaginados · todos habitados" delay={1.8} className="mt-14" />
+      </section>
+
+      <div className="hairline mx-6 md:mx-12" />
+
       {/* ── Fecho ── */}
       <motion.section
         variants={fadeUp}

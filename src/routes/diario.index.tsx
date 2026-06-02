@@ -1,9 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper } from "@/components/Whisper";
 import { journal } from "@/lib/journal";
+
+const aberturasPool = [
+  "às vezes escrevo antes de saber o que quero dizer.",
+  "o caderno não tem ordem — assim como os dias.",
+  "algumas notas ficam. outras desaparecem como a espuma do matcha.",
+  "escrevo devagar. leio mais devagar ainda.",
+  "nem todas as entradas têm fotografia. nem todas as fotografias têm entrada.",
+  "começo sempre com uma chávena. raramente termino antes de ela arrefecer.",
+  "há dias em que o silêncio é a única coisa que vale a pena guardar.",
+];
+
+function AberturaDoDia() {
+  const [frase, setFrase] = useState(aberturasPool[0]);
+  useEffect(() => {
+    setFrase(aberturasPool[Math.floor(Math.random() * aberturasPool.length)]);
+  }, []);
+  return (
+    <p className="font-italic-serif text-foreground/30 text-sm mt-6 italic">{frase}</p>
+  );
+}
 
 export const Route = createFileRoute("/diario/")({
   head: () => ({
@@ -51,6 +72,7 @@ function JournalIndex() {
             <p>Nem tudo fica dentro de uma fotografia. Algumas coisas acabam escritas aqui. Este é um espaço onde guardo observações, memórias, pensamentos e pequenos momentos que fui encontrando pelo caminho. Muitas destas notas nasceram enquanto fotografava; outras surgiram mais tarde, quando tive tempo para olhar para as imagens com mais calma e perceber o que realmente me ficou daquele dia.</p>
             <p>Escrevo sobre lugares, luz, cidades, caminhadas, pessoas e sobre os detalhes que muitas vezes passam despercebidos. Às vezes começo por uma fotografia e acabo numa memória. Outras vezes acontece o contrário. Não procuro contar grandes histórias nem encontrar conclusões. Gosto mais de guardar fragmentos: uma rua silenciosa, um céu carregado, uma conversa esquecida, uma janela iluminada ao fim da tarde.</p>
             <p>Normalmente escrevo com uma chávena de café ou matcha por perto e sem grande pressa de chegar ao fim. Talvez por isso este caderno não tenha uma ordem definida. É apenas um arquivo pessoal de coisas que vi, senti ou pensei e que, por alguma razão, achei que valia a pena guardar.</p>
+            <AberturaDoDia />
           </motion.div>
         </motion.div>
 

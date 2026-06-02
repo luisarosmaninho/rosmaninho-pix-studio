@@ -531,6 +531,16 @@ function HomePage() {
         </div>
       </Section>
 
+      {/* ============ FRAGMENTO ============ */}
+      <Section className="px-6 md:px-12 py-24 md:py-32 bg-background">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="font-italic-serif text-2xl md:text-3xl text-foreground/55 leading-[1.6]">
+            "Às vezes passo dez minutos à frente de uma esquina que mais ninguém olhou duas vezes. Não procuro nada em especial. Só espero que a luz mude, que alguém passe, que alguma coisa aconteça."
+          </p>
+          <Whisper text="observação contínua · sem destino fixo" delay={1.6} className="mt-8 justify-center" />
+        </div>
+      </Section>
+
       {/* ============ CONTACTOS — film strip ============ */}
       <section className="mt-20 md:mt-28 py-20 md:py-28 bg-[#0e0e0d] overflow-hidden">
         <motion.div
