@@ -1,10 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { z } from "zod";
 import { sendContactEmail } from "@/lib/contact-fn";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
+
+const notasPool = [
+  "Respondo melhor à tarde. De manhã o silêncio ainda não acabou.",
+  "Leio cada mensagem duas vezes antes de responder.",
+  "As melhores conversas começaram com muito pouco.",
+  "Não tenho respostas automáticas. Tenho pausas.",
+  "Prefiro uma mensagem longa a uma curta — mas aceito as duas.",
+];
+
+function NotaPessoal() {
+  const [nota, setNota] = useState(notasPool[0]);
+  useEffect(() => {
+    setNota(notasPool[Math.floor(Math.random() * notasPool.length)]);
+  }, []);
+  return (
+    <p className="font-italic-serif text-foreground/30 text-sm mt-8 italic border-l border-copper/20 pl-4">
+      {nota}
+    </p>
+  );
+}
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -79,6 +99,7 @@ function ContactoPage() {
             <p className="mt-4 text-foreground/65 leading-relaxed max-w-sm">
               Respondo quando o tempo deixar, com calma.
             </p>
+            <NotaPessoal />
           </motion.div>
 
           {/* Formulário ou confirmação */}

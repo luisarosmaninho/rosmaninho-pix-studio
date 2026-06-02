@@ -220,6 +220,11 @@ function PortfolioPage() {
                   "{lightbox.meta.description}"
                 </p>
               )}
+              {lightbox.meta?.conditions && (
+                <p className="font-mono-label text-cream/20 mt-4 text-[9px] uppercase tracking-[0.45em]">
+                  {lightbox.meta.conditions}
+                </p>
+              )}
             </figcaption>
           </figure>
 

@@ -404,6 +404,24 @@ function SobrePage() {
         <Whisper text="lugares reais · lugares imaginados · todos habitados" delay={1.8} className="mt-14" />
       </section>
 
+      {/* ── Neste momento ── */}
+      <Fade className="px-6 md:px-12 py-28 max-w-6xl mx-auto">
+        <p className="font-mono-label text-copper mb-10">§ 10 — Neste momento</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10 max-w-2xl">
+          {[
+            { label: "a ler", nota: "um romance que comecei numa tarde de março e que ainda não terminei — e não tenho pressa." },
+            { label: "à escuta", nota: "muito silêncio, ultimamente. quando não é silêncio, é música que já não me lembro de quando comecei a ouvir." },
+            { label: "a fotografar", nota: "os telhados ao entardecer. sempre os telhados — como se houvesse sempre mais um ângulo que ainda não vi." },
+            { label: "a pensar em", nota: "Bruges. e numa caminhada de novembro que ainda não aconteceu mas que já tem rota definida na cabeça." },
+          ].map((item) => (
+            <div key={item.label} className="bg-background px-8 py-8">
+              <p className="font-mono-label text-copper/50 text-[9px] tracking-[0.4em] uppercase mb-4">{item.label}</p>
+              <p className="text-foreground/60 text-sm leading-relaxed">{item.nota}</p>
+            </div>
+          ))}
+        </div>
+      </Fade>
+
       <div className="hairline mx-6 md:mx-12" />
 
       {/* ── Fecho ── */}
