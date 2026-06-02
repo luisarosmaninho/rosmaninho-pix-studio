@@ -364,22 +364,42 @@ function SobrePage() {
             Não destinos. Não listas de viagem. Lugares que ficaram — alguns visitados, outros apenas sonhados.
           </p>
         </Fade>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10 max-w-3xl">
-          {[
-            { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
-            { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
-            { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
-            { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
-            { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
-            { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
-            { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
-            { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
-          ].map((lugar, i) => (
-            <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
-              <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
-              <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
-            </Fade>
-          ))}
+        <div className="max-w-3xl space-y-12">
+          {/* Visitadas */}
+          <Fade>
+            <p className="font-mono-label text-foreground/30 text-[9px] tracking-[0.45em] uppercase mb-4">visitadas</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10">
+              {[
+                { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
+                { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
+                { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
+              ].map((lugar, i) => (
+                <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
+                  <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
+                  <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
+                </Fade>
+              ))}
+            </div>
+          </Fade>
+
+          {/* Sonhadas */}
+          <Fade delay={0.15}>
+            <p className="font-mono-label text-copper/50 text-[9px] tracking-[0.45em] uppercase mb-4">sonhadas</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10">
+              {[
+                { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
+                { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
+                { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
+                { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
+                { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
+              ].map((lugar, i) => (
+                <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
+                  <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
+                  <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
+                </Fade>
+              ))}
+            </div>
+          </Fade>
         </div>
         <Whisper text="lugares reais · lugares imaginados · todos habitados" delay={1.8} className="mt-14" />
       </section>
