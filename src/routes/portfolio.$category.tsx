@@ -253,125 +253,33 @@ function MetaStrip({ photo: _photo, index }: { photo: Photo; index: number }) {
   );
 }
 
-/* ── Editorial text interstitial ── */
-function EditorialPause({ text }: { text: string }) {
+/* ── Photo grid cell ── */
+function PhotoCell({
+  photo,
+  index,
+  onOpen,
+  delay,
+}: {
+  photo: Photo;
+  index: number;
+  onOpen: (i: number) => void;
+  delay: number;
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 1.3, ease: "easeOut" }}
-      className="py-20 md:py-28 px-6 max-w-2xl"
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 1, delay, ease: "easeOut" }}
     >
-      <div className="w-8 h-px bg-copper mb-8" />
-      <p className="font-display text-2xl md:text-3xl leading-[1.35] text-foreground/70">
-        {text}
-      </p>
+      <RevealPhoto
+        photo={photo}
+        onClick={() => onOpen(index)}
+        className="w-full aspect-[4/3]"
+      />
+      <MetaStrip photo={photo} index={index} />
     </motion.div>
   );
-}
-
-/*
-  Editorial sequence engine
-  Cycles through 5 layout patterns indefinitely:
-    0 — full-width wide (21:9)
-    1 — two-column equal (4:3 each)
-    2 — single centred (offset left, 16:9)
-    3 — asymmetric pair (3fr + 2fr, portrait + landscape)
-    4 — single full-bleed (16:9)
-*/
-function EditorialBlock({
-  photos,
-  startIndex,
-  pattern,
-  onOpen,
-}: {
-  photos: Photo[];
-  startIndex: number;
-  pattern: number;
-  onOpen: (i: number) => void;
-}) {
-  const p = pattern % 5;
-
-  const fade = (delay = 0) => ({
-    initial: { opacity: 0, y: 32 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, amount: 0.1 },
-    transition: { duration: 1.2, delay, ease: "easeOut" as const },
-  });
-
-  if (p === 0) {
-    const ph = photos[startIndex];
-    if (!ph) return null;
-    return (
-      <motion.div {...fade()} className="mb-1">
-        <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[21/9]" />
-        <MetaStrip photo={ph} index={startIndex} />
-      </motion.div>
-    );
-  }
-
-  if (p === 1) {
-    const a = photos[startIndex];
-    const b = photos[startIndex + 1];
-    if (!a) return null;
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border mb-1">
-        {[a, b].filter(Boolean).map((ph, i) => (
-          <motion.div key={ph.src} {...fade(i * 0.15)} className="bg-background">
-            <RevealPhoto photo={ph} onClick={() => onOpen(startIndex + i)} className="w-full aspect-[4/3]" />
-            <MetaStrip photo={ph} index={startIndex + i} />
-          </motion.div>
-        ))}
-      </div>
-    );
-  }
-
-  if (p === 2) {
-    const ph = photos[startIndex];
-    if (!ph) return null;
-    return (
-      <motion.div {...fade()} className="mb-1 md:pr-[20%]">
-        <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[16/9]" />
-        <MetaStrip photo={ph} index={startIndex} />
-      </motion.div>
-    );
-  }
-
-  if (p === 3) {
-    const a = photos[startIndex];
-    const b = photos[startIndex + 1];
-    if (!a) return null;
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-border mb-1">
-        {[a, b].filter(Boolean).map((ph, i) => (
-          <motion.div key={ph.src} {...fade(i * 0.2)} className="bg-background">
-            <RevealPhoto
-              photo={ph}
-              onClick={() => onOpen(startIndex + i)}
-              className={`w-full ${i === 0 ? "aspect-[4/5]" : "aspect-[3/2]"}`}
-            />
-            <MetaStrip photo={ph} index={startIndex + i} />
-          </motion.div>
-        ))}
-      </div>
-    );
-  }
-
-  // p === 4: full-bleed, slightly inset right
-  const ph = photos[startIndex];
-  if (!ph) return null;
-  return (
-    <motion.div {...fade()} className="mb-1 md:pl-[15%]">
-      <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[16/9]" />
-      <MetaStrip photo={ph} index={startIndex} />
-    </motion.div>
-  );
-}
-
-/* How many photos does each pattern consume */
-function patternConsumes(p: number): number {
-  return [1, 2, 1, 2, 1][p % 5];
 }
 
 /* ── Main page ── */
@@ -388,20 +296,8 @@ function CategoryPage() {
   const prevPhoto = () => setLightboxIndex((i) => (i != null && i > 0 ? i - 1 : i));
   const nextPhoto = () => setLightboxIndex((i) => (i != null && i < pics.length - 1 ? i + 1 : i));
 
-  /* Build editorial blocks for the whole sequence */
-  const blocks: { startIndex: number; pattern: number }[] = [];
-  let cursor = 0;
-  let patternIdx = 0;
-  while (cursor < pics.length) {
-    blocks.push({ startIndex: cursor, pattern: patternIdx });
-    cursor += patternConsumes(patternIdx);
-    patternIdx++;
-  }
-
-  /* Quote appears roughly in the middle */
-  const quoteAfterBlock = Math.floor(blocks.length / 2);
-  /* Second interstitial from intro body (paragraph 1) appears after 1/4 of blocks */
-  const pauseAfterBlock = Math.floor(blocks.length / 4);
+  /* Quote appears after roughly half the photos */
+  const quoteAfterIndex = Math.floor(pics.length / 2);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -484,28 +380,36 @@ function CategoryPage() {
         </div>
       </section>
 
-      {/* ── Editorial photo sequence — all photos, no grid ── */}
+      {/* ── Photo grid ── */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-20">
-        {blocks.map((block, bi) => (
-          <div key={`block-${bi}`}>
-            <EditorialBlock
-              photos={pics}
-              startIndex={block.startIndex}
-              pattern={block.pattern}
+        {/* First half */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+          {pics.slice(0, quoteAfterIndex).map((photo, i) => (
+            <PhotoCell
+              key={photo.src}
+              photo={photo}
+              index={i}
               onOpen={openLightbox}
+              delay={Math.min(i % 3, 2) * 0.08}
             />
+          ))}
+        </div>
 
-            {/* Quote interstitial in the middle */}
-            {bi === quoteAfterBlock && (
-              <QuoteBlock text={cat.quote} source={cat.quoteSource} />
-            )}
+        {/* Quote interstitial */}
+        <QuoteBlock text={cat.quote} source={cat.quoteSource} />
 
-            {/* Editorial text pause at 1/4 */}
-            {bi === pauseAfterBlock && cat.introBody[1] && (
-              <EditorialPause text={cat.introBody[1]} />
-            )}
-          </div>
-        ))}
+        {/* Second half */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+          {pics.slice(quoteAfterIndex).map((photo, i) => (
+            <PhotoCell
+              key={photo.src}
+              photo={photo}
+              index={quoteAfterIndex + i}
+              onOpen={openLightbox}
+              delay={Math.min(i % 3, 2) * 0.08}
+            />
+          ))}
+        </div>
       </div>
 
       {/* ── Fim da série ── */}
