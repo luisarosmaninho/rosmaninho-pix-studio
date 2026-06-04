@@ -76,12 +76,32 @@ function SobrePage() {
         >
           <div className="md:col-span-6 space-y-6 text-foreground/68 text-lg leading-relaxed">
             <p>
-              Vivo em Coimbra. Tenho sempre uma câmara comigo. Ando muito a pé — nas ruas antigas da cidade, nas margens do Mondego, em sítios que a maioria passa sem parar.
+              Nem sempre sei explicar quem sou de forma direta.
             </p>
             <p>
-              A fotografia não é o que faço. É como olho para o mundo. Tudo o que vês aqui nasceu de passeios, de esperas, de luz que apareceu no momento certo — ou ligeiramente depois.
+              Talvez porque grande parte daquilo que me define vive nos detalhes: nas ruas que percorro sem destino, nos livros que me fazem ficar acordada mais tempo do que devia, na música que acompanha os meus pensamentos ou nas conversas que continuo a recordar dias depois.
             </p>
-            <Whisper text="o passo de quem prefere chegar mais tarde" delay={1.6} style="italic" className="pt-4" />
+            <p>
+              Gosto de observar antes de falar. De compreender antes de concluir. De chegar um pouco mais tarde, mas chegar com atenção.
+            </p>
+            <p>
+              Entre cafés demorados, chávenas de matcha, caminhadas, fotografias e pequenas notas escritas à margem dos dias, fui construindo uma forma muito própria de olhar para o mundo. Uma forma mais lenta, mais curiosa e mais atenta ao que normalmente passa despercebido.
+            </p>
+            <p>
+              Sempre senti que as melhores histórias raramente estão no centro das coisas. Vivem nas margens. Nos instantes breves. Na luz que dura apenas alguns segundos. Nas pessoas que não fazem barulho para serem lembradas.
+            </p>
+            <p>
+              Foi por isso que comecei a fotografar.
+            </p>
+            <p>
+              Não para colecionar imagens, mas para guardar sensações. Para preservar momentos que, de outra forma, desapareceriam sem deixar rasto. Cada fotografia que faço é uma tentativa de prolongar um encontro entre o olhar e o tempo.
+            </p>
+            <p>
+              Este espaço nasceu dessa forma de estar. Não é apenas um portefólio nem apenas um diário. É um arquivo vivo de momentos, imagens, observações, pensamentos e fragmentos de tempo que, por alguma razão, decidiram ficar.
+            </p>
+            <p>
+              Se houver um fio condutor entre tudo o que encontras aqui, talvez seja este: a crença de que as coisas mais importantes raramente se revelam à primeira vista.
+            </p>
           </div>
           <div className="md:col-span-5 md:col-start-8 flex flex-col gap-4">
             <div className="h-px bg-foreground/15 w-full" />
