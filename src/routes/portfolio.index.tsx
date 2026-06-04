@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
-import { photos, categories, getCategory, type CategorySlug, type Photo } from "@/lib/photos";
+import { photos, type Photo } from "@/lib/photos";
 import { getPhotoConfig } from "@/lib/photo-config-fns";
 
 export const Route = createFileRoute("/portfolio/")({
@@ -12,10 +12,10 @@ export const Route = createFileRoute("/portfolio/")({
   },
   head: () => ({
     meta: [
-      { title: "Portfólio — Rosmaninho Fotografia" },
-      { name: "description", content: "Arquivo fotográfico: urbanas, natureza, retratos e iguarias." },
-      { property: "og:title", content: "Portfólio — Rosmaninho" },
-      { property: "og:description", content: "Urbanas, natureza, retratos e iguarias." },
+      { title: "Arquivo — Rosmaninho Fotografia" },
+      { name: "description", content: "Um arquivo vivo de momentos, imagens e fragmentos de tempo guardados com intenção." },
+      { property: "og:title", content: "Arquivo — Rosmaninho" },
+      { property: "og:description", content: "Fotografias guardadas com intenção." },
     ],
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/portfolio" }],
   }),
@@ -37,34 +37,188 @@ function applyConfig(all: Photo[], config: { hidden: string[]; order: string[] }
   return result;
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" as const } },
+};
+
+/* ─── Layout pattern 0: grande, alinhada à esquerda, legenda em baixo ─── */
+function PatternFull({ photo, num, onOpen }: { photo: Photo; num: string; onOpen: () => void }) {
+  return (
+    <motion.article
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.08 }}
+      className="py-24 md:py-36 border-t border-foreground/8"
+    >
+      <p className="font-mono-label text-foreground/18 text-[10px] tracking-[0.48em] mb-10">{num}</p>
+      <button onClick={onOpen} className="block w-full group text-left focus:outline-none">
+        <div className="overflow-hidden">
+          <img
+            src={photo.src}
+            alt={photo.title}
+            loading="lazy"
+            className="w-full object-cover max-h-[78vh] group-hover:scale-[1.015] transition-transform duration-700 ease-out"
+          />
+        </div>
+      </button>
+      <div className="mt-9 max-w-2xl">
+        <h2 className="font-display text-3xl md:text-4xl leading-[1.05]">{photo.title}</h2>
+        {photo.meta.description && (
+          <p className="font-italic-serif text-foreground/42 mt-5 text-lg leading-relaxed italic">
+            {photo.meta.description}
+          </p>
+        )}
+      </div>
+    </motion.article>
+  );
+}
+
+/* ─── Layout pattern 1: número grande, texto esquerda, foto direita ─── */
+function PatternRight({ photo, num, onOpen }: { photo: Photo; num: string; onOpen: () => void }) {
+  return (
+    <motion.article
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.08 }}
+      className="py-24 md:py-36 border-t border-foreground/8"
+    >
+      <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-start">
+        <div className="md:col-span-3 flex flex-col gap-5 md:pt-16">
+          <p className="font-display text-[5rem] md:text-[7rem] leading-none text-foreground/7 select-none -ml-1">{num}</p>
+          <h2 className="font-display text-2xl md:text-[1.75rem] leading-tight">{photo.title}</h2>
+          {photo.meta.description && (
+            <p className="font-italic-serif text-foreground/42 text-base leading-relaxed italic">
+              {photo.meta.description}
+            </p>
+          )}
+        </div>
+        <div className="md:col-span-9">
+          <button onClick={onOpen} className="block w-full group text-left focus:outline-none">
+            <div className="overflow-hidden">
+              <img
+                src={photo.src}
+                alt={photo.title}
+                loading="lazy"
+                className="w-full object-cover max-h-[72vh] group-hover:scale-[1.015] transition-transform duration-700 ease-out"
+              />
+            </div>
+          </button>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ─── Layout pattern 2: foto esquerda (7 cols), texto direita (4 cols) ─── */
+function PatternSplit({ photo, num, onOpen }: { photo: Photo; num: string; onOpen: () => void }) {
+  return (
+    <motion.article
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.08 }}
+      className="py-24 md:py-36 border-t border-foreground/8"
+    >
+      <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-center">
+        <div className="md:col-span-7">
+          <button onClick={onOpen} className="block w-full group text-left focus:outline-none">
+            <div className="overflow-hidden">
+              <img
+                src={photo.src}
+                alt={photo.title}
+                loading="lazy"
+                className="w-full object-cover max-h-[68vh] group-hover:scale-[1.015] transition-transform duration-700 ease-out"
+              />
+            </div>
+          </button>
+        </div>
+        <div className="md:col-span-4 md:col-start-9 flex flex-col gap-5">
+          <p className="font-mono-label text-foreground/18 text-[10px] tracking-[0.48em]">{num}</p>
+          <h2 className="font-display text-2xl md:text-[1.75rem] leading-tight">{photo.title}</h2>
+          <div className="h-px bg-foreground/10 w-10" />
+          {photo.meta.description && (
+            <p className="font-italic-serif text-foreground/42 text-base leading-relaxed italic">
+              {photo.meta.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ─── Layout pattern 3: foto estreita centrada, texto em baixo centrado ─── */
+function PatternCenter({ photo, num, onOpen }: { photo: Photo; num: string; onOpen: () => void }) {
+  return (
+    <motion.article
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.08 }}
+      className="py-24 md:py-36 border-t border-foreground/8"
+    >
+      <div className="max-w-2xl mx-auto text-center">
+        <p className="font-mono-label text-foreground/18 text-[10px] tracking-[0.48em] mb-10">{num}</p>
+        <button onClick={onOpen} className="block w-full group text-left focus:outline-none">
+          <div className="overflow-hidden">
+            <img
+              src={photo.src}
+              alt={photo.title}
+              loading="lazy"
+              className="w-full object-cover max-h-[65vh] group-hover:scale-[1.015] transition-transform duration-700 ease-out"
+            />
+          </div>
+        </button>
+        <div className="mt-8">
+          <h2 className="font-display text-2xl md:text-3xl leading-tight">{photo.title}</h2>
+          {photo.meta.description && (
+            <p className="font-italic-serif text-foreground/42 mt-4 text-base leading-relaxed italic">
+              {photo.meta.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+function ArchiveEntry({
+  photo,
+  index,
+  onOpen,
+}: {
+  photo: Photo;
+  index: number;
+  onOpen: (p: Photo) => void;
+}) {
+  const num = String(index + 1).padStart(2, "0");
+  const pattern = index % 4;
+
+  const props = { photo, num, onOpen: () => onOpen(photo) };
+
+  if (pattern === 0) return <PatternFull {...props} />;
+  if (pattern === 1) return <PatternRight {...props} />;
+  if (pattern === 2) return <PatternSplit {...props} />;
+  return <PatternCenter {...props} />;
+}
+
 function PortfolioPage() {
   const { config } = Route.useLoaderData();
   const allPhotos = applyConfig(photos, config);
 
-  const [filter, setFilter] = useState<CategorySlug | "all">("all");
-  const [hovered, setHovered] = useState<Photo | null>(null);
   const [lightbox, setLightbox] = useState<Photo | null>(null);
+  const lightboxIndex = lightbox ? allPhotos.indexOf(lightbox) : -1;
 
-  const visible = filter === "all" ? allPhotos : allPhotos.filter((p) => p.category === filter);
-
-  /* Group photos by category for the "all" view */
-  const grouped =
-    filter === "all"
-      ? categories.map((c) => ({
-          cat: c,
-          items: visible.filter((p) => p.category === c.slug),
-        })).filter((g) => g.items.length > 0)
-      : [{ cat: getCategory(filter)!, items: visible }];
-
-  /* Lightbox keyboard nav */
-  const lightboxIndex = lightbox ? visible.indexOf(lightbox) : -1;
   const closeLightbox = useCallback(() => setLightbox(null), []);
   const goPrev = useCallback(() => {
-    if (lightboxIndex > 0) setLightbox(visible[lightboxIndex - 1]);
-  }, [lightboxIndex, visible]);
+    if (lightboxIndex > 0) setLightbox(allPhotos[lightboxIndex - 1]);
+  }, [lightboxIndex, allPhotos]);
   const goNext = useCallback(() => {
-    if (lightboxIndex < visible.length - 1) setLightbox(visible[lightboxIndex + 1]);
-  }, [lightboxIndex, visible]);
+    if (lightboxIndex < allPhotos.length - 1) setLightbox(allPhotos[lightboxIndex + 1]);
+  }, [lightboxIndex, allPhotos]);
 
   useEffect(() => {
     if (!lightbox) return;
@@ -79,153 +233,54 @@ function PortfolioPage() {
 
   const touchStartX = useRef<number | null>(null);
 
-  /* Global photo counter for index numbering */
-  let globalIdx = 0;
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      {/* ── Page header ── */}
-      <header className="px-6 md:px-16 pt-36 pb-16 md:pt-48 md:pb-20 border-b border-border">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-10">
-          <div>
-            <p className="font-italic-serif text-copper text-3xl md:text-4xl mb-3">índice</p>
-            <h1 className="font-display text-[clamp(3.5rem,10vw,8rem)] leading-[0.9]">Portfólio.</h1>
-          </div>
-          <p className="font-mono-label text-foreground/35 text-[11px] uppercase tracking-[0.35em] max-w-xs leading-loose">
-            {allPhotos.length} fotografias<br />
-            {categories.length} séries<br />
-            Luísa Rosmaninho
-          </p>
-        </div>
+      {/* ── Abertura ── */}
+      <header className="px-6 md:px-16 pt-36 pb-20 md:pt-48 md:pb-28 border-b border-foreground/8">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          className="max-w-5xl mx-auto"
+        >
+          <p className="font-mono-label text-copper/70 mb-6 text-[10px] uppercase tracking-[0.45em]">arquivo fotográfico</p>
+          <h1 className="font-display text-[clamp(4rem,12vw,9rem)] leading-[0.9]">
+            Arquivo<span className="font-italic-serif text-copper">.</span>
+          </h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.4, delay: 0.4 }}
+            className="mt-10 font-italic-serif text-foreground/38 text-xl leading-relaxed max-w-lg"
+          >
+            {allPhotos.length} fotografias guardadas com intenção —<br />
+            <span className="text-foreground/24">percorre devagar.</span>
+          </motion.p>
+        </motion.div>
       </header>
 
-      {/* ── Filter strip ── */}
-      <div className="px-6 md:px-16 py-6 border-b border-border sticky top-0 bg-background z-40">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-x-8 gap-y-3">
-          <button
-            onClick={() => setFilter("all")}
-            className={`font-mono-label text-[10px] uppercase tracking-[0.35em] transition-colors ${filter === "all" ? "text-foreground" : "text-foreground/30 hover:text-foreground/70"}`}
-          >
-            Tudo ({allPhotos.length})
-          </button>
-          {categories.map((c) => {
-            const count = allPhotos.filter((p) => p.category === c.slug).length;
-            return (
-              <button
-                key={c.slug}
-                onClick={() => setFilter(c.slug)}
-                className={`font-mono-label text-[10px] uppercase tracking-[0.35em] transition-colors ${filter === c.slug ? "text-foreground" : "text-foreground/30 hover:text-foreground/70"}`}
-              >
-                {c.title} ({count})
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* ── Fichas de arquivo ── */}
+      <main className="px-6 md:px-16 max-w-5xl mx-auto pb-20">
+        {allPhotos.map((photo, i) => (
+          <ArchiveEntry key={photo.id} photo={photo} index={i} onOpen={setLightbox} />
+        ))}
+      </main>
 
-      {/* ── Main: index list + sticky photo panel ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 flex gap-0 md:gap-16 relative">
-
-        {/* Index list — scrollable */}
-        <div className="flex-1 py-12 min-w-0">
-          {grouped.map(({ cat, items }) => (
-            <div key={cat.slug} className="mb-14">
-              {/* Series header — links to series page */}
-              <div className="flex items-baseline justify-between mb-6 border-b border-border pb-4">
-                <Link
-                  to="/portfolio/$category"
-                  params={{ category: cat.slug }}
-                  className="font-display text-2xl md:text-3xl hover:text-copper transition-colors"
-                >
-                  {cat.title}
-                </Link>
-                <span className="font-mono-label text-foreground/30 text-[10px] uppercase tracking-[0.35em]">
-                  {items.length} fotografias →
-                </span>
-              </div>
-
-              {/* Photo title rows */}
-              <ul>
-                {items.map((photo) => {
-                  const num = ++globalIdx;
-                  return (
-                    <li key={photo.id}>
-                      <button
-                        className="w-full text-left group flex items-baseline gap-5 py-3 border-b border-border/40 hover:border-foreground/20 transition-all"
-                        onMouseEnter={() => setHovered(photo)}
-                        onMouseLeave={() => setHovered(null)}
-                        onClick={() => setLightbox(photo)}
-                      >
-                        <span className="font-mono-label text-foreground/20 text-[10px] w-6 shrink-0 group-hover:text-foreground/40 transition-colors">
-                          {String(num).padStart(2, "0")}
-                        </span>
-                        <span className="font-display text-lg md:text-xl leading-tight group-hover:translate-x-1 transition-transform duration-300">
-                          {photo.title}
-                        </span>
-                        <span className="font-italic-serif text-foreground/25 text-sm italic ml-auto hidden md:block truncate max-w-xs group-hover:text-foreground/50 transition-colors">
-                          {photo.meta.description}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Sticky photo panel — desktop only */}
-        <aside className="hidden md:block w-[38%] shrink-0">
-          <div className="sticky top-[calc(var(--nav-h,4rem)+4rem)] pt-12 pb-12">
-            <AnimatePresence mode="wait">
-              {hovered ? (
-                <motion.div
-                  key={hovered.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="cursor-zoom-in"
-                  onClick={() => setLightbox(hovered)}
-                >
-                  <img
-                    src={hovered.src}
-                    alt={hovered.title}
-                    className="w-full object-cover max-h-[60vh]"
-                    style={{ objectPosition: "center" }}
-                  />
-                  <div className="mt-4 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-display text-xl leading-tight">{hovered.title}</p>
-                      <p className="font-italic-serif text-foreground/40 text-sm italic mt-2 leading-relaxed">
-                        {hovered.meta.description}
-                      </p>
-                    </div>
-                    <span className="font-mono-label text-foreground/20 text-[10px] uppercase tracking-[0.35em] shrink-0 pt-1">
-                      {hovered.category}
-                    </span>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="flex items-center justify-center h-64 border border-dashed border-foreground/10"
-                >
-                  <p className="font-mono-label text-foreground/15 text-[10px] uppercase tracking-[0.4em]">
-                    passe o cursor
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </aside>
-      </div>
+      {/* ── Fecho ── */}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="px-6 md:px-16 py-32 md:py-44 text-center max-w-xl mx-auto"
+      >
+        <p className="font-italic-serif text-foreground/25 text-3xl mb-10">—</p>
+        <p className="font-mono-label text-foreground/18 text-[9px] uppercase tracking-[0.48em]">
+          fim do arquivo · {allPhotos.length} entradas
+        </p>
+      </motion.div>
 
       <SiteFooter />
 
@@ -249,7 +304,7 @@ function PortfolioPage() {
           >
             <div className="flex items-center justify-between px-6 py-5 absolute top-0 inset-x-0">
               <span className="font-mono-label text-cream/30 text-[10px] tracking-[0.35em]">
-                {String(lightboxIndex + 1).padStart(2, "0")} / {String(visible.length).padStart(2, "0")}
+                {String(lightboxIndex + 1).padStart(2, "0")} / {String(allPhotos.length).padStart(2, "0")}
               </span>
               <button
                 onClick={closeLightbox}
@@ -267,7 +322,7 @@ function PortfolioPage() {
                 ← Anterior
               </button>
             )}
-            {lightboxIndex < visible.length - 1 && (
+            {lightboxIndex < allPhotos.length - 1 && (
               <button
                 onClick={(e) => { e.stopPropagation(); goNext(); }}
                 className="absolute right-4 md:right-8 font-mono-label text-cream/30 hover:text-cream transition-colors text-[10px] uppercase tracking-[0.28em] px-3 py-6"
@@ -293,9 +348,11 @@ function PortfolioPage() {
                 />
                 <figcaption className="text-center mt-7">
                   <p className="font-display text-cream text-2xl md:text-3xl">{lightbox.title}</p>
-                  <p className="font-italic-serif text-cream/40 mt-3 text-sm italic max-w-xl mx-auto leading-relaxed">
-                    "{lightbox.meta.description}"
-                  </p>
+                  {lightbox.meta.description && (
+                    <p className="font-italic-serif text-cream/40 mt-3 text-sm italic max-w-xl mx-auto leading-relaxed">
+                      "{lightbox.meta.description}"
+                    </p>
+                  )}
                 </figcaption>
               </motion.figure>
             </AnimatePresence>

@@ -1,0 +1,118 @@
+Quero reformular a página Arquivo/Portefólio para que funcione como um conjunto de fichas de arquivo fotográfico.
+
+IMPORTANTE:
+
+Não quero uma grelha tradicional.
+
+Não quero uma lista simples de categorias.
+
+Não quero cartões modernos com sombras, bordas arredondadas ou aparência de aplicação.
+
+Quero uma estética editorial, minimalista e inspirada em arquivos físicos e cadernos de observação.
+
+────────────────────
+
+CONCEITO
+
+Cada fotografia deve funcionar como uma peça individual do arquivo.
+
+Como se fosse uma ficha retirada de uma gaveta de arquivo fotográfico.
+
+A sensação deve ser:
+
+* curadoria
+* contemplação
+* arquivo vivo
+* coleção pessoal
+* livro fotográfico
+
+────────────────────
+
+ESTRUTURA
+
+Cada fotografia deve apresentar:
+
+* número sequencial discreto
+* título
+* fotografia
+* descrição
+
+Exemplo:
+
+01
+
+Quando Ainda Havia Luz
+
+[FOTOGRAFIA]
+
+Havia luz suficiente para uma última fotografia. Depois os candeeiros fizeram o resto.
+
+────────────────────
+
+LAYOUT
+
+Quero que as fichas apareçam empilhadas verticalmente.
+
+Com bastante espaço entre elas.
+
+As fotografias devem ser o elemento principal.
+
+Os títulos devem ser elegantes.
+
+As descrições devem ser discretas.
+
+O layout deve parecer:
+
+* um arquivo físico
+* um catálogo artístico
+* um livro fotográfico contemporâneo
+
+────────────────────
+
+VARIAÇÃO VISUAL
+
+Para evitar monotonia:
+
+* algumas fotografias podem ser maiores
+* algumas mais pequenas
+* algumas alinhadas à esquerda
+* outras à direita
+* pequenas variações editoriais
+
+Mas sempre mantendo coerência visual.
+
+────────────────────
+
+ANIMAÇÕES
+
+Adicionar:
+
+* fade suave ao scroll
+* transições lentas
+* movimento subtil
+* carregamento elegante
+
+Sem efeitos exagerados.
+
+────────────────────
+
+OBJETIVO
+
+Quero que o visitante tenha a sensação de estar a percorrer um arquivo vivo e pessoal.
+
+Não quero que pareça uma galeria comum.
+
+Não quero que pareça uma rede social.
+
+Não quero que pareça um portefólio comercial.
+
+Quero que pareça um conjunto de fotografias guardadas com intenção, acompanhadas pelos títulos e descrições que lhes dão contexto e significado.
+
+Tudo deve continuar alinhado com a identidade atual do website:
+
+* editorial
+* contemplativa
+* minimalista
+* artística
+* humana
+* silenciosa
