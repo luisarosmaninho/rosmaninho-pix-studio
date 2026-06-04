@@ -237,19 +237,18 @@ function QuoteBlock({ text, source }: { text: string; source: string }) {
 }
 
 /* ── Editorial metadata strip ── */
-function MetaStrip({ photo, index }: { photo: Photo; index: number }) {
+function MetaStrip({ photo: _photo, index }: { photo: Photo; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 0.2 }}
-      className="flex items-center justify-between px-6 md:px-0 py-4"
+      className="px-6 md:px-0 py-3"
     >
-      <span className="font-mono-label text-foreground/30">
+      <span className="font-mono-label text-foreground/25">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <p className="font-italic-serif text-foreground/40 text-sm italic">{photo.meta.description}</p>
     </motion.div>
   );
 }
