@@ -53,7 +53,7 @@ function NotFoundPage() {
   );
 }
 
-/* ---- Hover-reveal photo card ---- */
+/* ── Hover-reveal photo card ── */
 function RevealPhoto({
   photo,
   onClick,
@@ -90,13 +90,11 @@ function RevealPhoto({
         className="w-full h-full object-cover block transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]"
       />
 
-      {/* Standard caption on hover */}
       <div className="absolute inset-x-0 bottom-0 px-6 py-5 bg-gradient-to-t from-black/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <p className="font-display text-xl text-cream">{photo.title}</p>
         <p className="font-italic-serif text-cream/60 mt-1 text-sm italic">{photo.meta.description}</p>
       </div>
 
-      {/* Hidden phrase — revealed after 2.2s of hover */}
       <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-[1200ms]"
         style={{ opacity: revealed ? 1 : 0 }}
@@ -110,7 +108,7 @@ function RevealPhoto({
   );
 }
 
-/* ---- Lightbox ---- */
+/* ── Lightbox ── */
 function Lightbox({
   photos,
   index,
@@ -136,7 +134,6 @@ function Lightbox({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose, onPrev, onNext]);
 
-  /* Touch swipe */
   const touchStartX = useRef<number | null>(null);
   const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -157,7 +154,6 @@ function Lightbox({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Top bar */}
       <div
         className="flex items-center justify-between px-8 py-6 shrink-0"
         onClick={(e) => e.stopPropagation()}
@@ -173,7 +169,6 @@ function Lightbox({
         </button>
       </div>
 
-      {/* Image */}
       <div
         className="flex-1 flex items-center justify-center px-6 pb-4 min-h-0 relative"
         onClick={(e) => e.stopPropagation()}
@@ -209,7 +204,6 @@ function Lightbox({
         )}
       </div>
 
-      {/* Caption */}
       <div
         className="px-8 pb-8 shrink-0 text-center"
         onClick={(e) => e.stopPropagation()}
@@ -223,7 +217,7 @@ function Lightbox({
   );
 }
 
-/* ---- Quote interstitial ---- */
+/* ── Quote interstitial ── */
 function QuoteBlock({ text, source }: { text: string; source: string }) {
   return (
     <motion.section
@@ -242,7 +236,7 @@ function QuoteBlock({ text, source }: { text: string; source: string }) {
   );
 }
 
-/* ---- Editorial metadata strip ---- */
+/* ── Editorial metadata strip ── */
 function MetaStrip({ photo, index }: { photo: Photo; index: number }) {
   return (
     <motion.div
@@ -260,7 +254,128 @@ function MetaStrip({ photo, index }: { photo: Photo; index: number }) {
   );
 }
 
-/* ---- Main page ---- */
+/* ── Editorial text interstitial ── */
+function EditorialPause({ text }: { text: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 1.3, ease: "easeOut" }}
+      className="py-20 md:py-28 px-6 max-w-2xl"
+    >
+      <div className="w-8 h-px bg-copper mb-8" />
+      <p className="font-display text-2xl md:text-3xl leading-[1.35] text-foreground/70">
+        {text}
+      </p>
+    </motion.div>
+  );
+}
+
+/*
+  Editorial sequence engine
+  Cycles through 5 layout patterns indefinitely:
+    0 — full-width wide (21:9)
+    1 — two-column equal (4:3 each)
+    2 — single centred (offset left, 16:9)
+    3 — asymmetric pair (3fr + 2fr, portrait + landscape)
+    4 — single full-bleed (16:9)
+*/
+function EditorialBlock({
+  photos,
+  startIndex,
+  pattern,
+  onOpen,
+}: {
+  photos: Photo[];
+  startIndex: number;
+  pattern: number;
+  onOpen: (i: number) => void;
+}) {
+  const p = pattern % 5;
+
+  const fade = (delay = 0) => ({
+    initial: { opacity: 0, y: 32 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.1 },
+    transition: { duration: 1.2, delay, ease: "easeOut" as const },
+  });
+
+  if (p === 0) {
+    const ph = photos[startIndex];
+    if (!ph) return null;
+    return (
+      <motion.div {...fade()} className="mb-1">
+        <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[21/9]" />
+        <MetaStrip photo={ph} index={startIndex} />
+      </motion.div>
+    );
+  }
+
+  if (p === 1) {
+    const a = photos[startIndex];
+    const b = photos[startIndex + 1];
+    if (!a) return null;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border mb-1">
+        {[a, b].filter(Boolean).map((ph, i) => (
+          <motion.div key={ph.src} {...fade(i * 0.15)} className="bg-background">
+            <RevealPhoto photo={ph} onClick={() => onOpen(startIndex + i)} className="w-full aspect-[4/3]" />
+            <MetaStrip photo={ph} index={startIndex + i} />
+          </motion.div>
+        ))}
+      </div>
+    );
+  }
+
+  if (p === 2) {
+    const ph = photos[startIndex];
+    if (!ph) return null;
+    return (
+      <motion.div {...fade()} className="mb-1 md:pr-[20%]">
+        <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[16/9]" />
+        <MetaStrip photo={ph} index={startIndex} />
+      </motion.div>
+    );
+  }
+
+  if (p === 3) {
+    const a = photos[startIndex];
+    const b = photos[startIndex + 1];
+    if (!a) return null;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-border mb-1">
+        {[a, b].filter(Boolean).map((ph, i) => (
+          <motion.div key={ph.src} {...fade(i * 0.2)} className="bg-background">
+            <RevealPhoto
+              photo={ph}
+              onClick={() => onOpen(startIndex + i)}
+              className={`w-full ${i === 0 ? "aspect-[4/5]" : "aspect-[3/2]"}`}
+            />
+            <MetaStrip photo={ph} index={startIndex + i} />
+          </motion.div>
+        ))}
+      </div>
+    );
+  }
+
+  // p === 4: full-bleed, slightly inset right
+  const ph = photos[startIndex];
+  if (!ph) return null;
+  return (
+    <motion.div {...fade()} className="mb-1 md:pl-[15%]">
+      <RevealPhoto photo={ph} onClick={() => onOpen(startIndex)} className="w-full aspect-[16/9]" />
+      <MetaStrip photo={ph} index={startIndex} />
+    </motion.div>
+  );
+}
+
+/* How many photos does each pattern consume */
+function patternConsumes(p: number): number {
+  return [1, 2, 1, 2, 1][p % 5];
+}
+
+/* ── Main page ── */
 function CategoryPage() {
   const { category } = Route.useParams();
   const { config } = Route.useLoaderData();
@@ -274,21 +389,28 @@ function CategoryPage() {
   const prevPhoto = () => setLightboxIndex((i) => (i != null && i > 0 ? i - 1 : i));
   const nextPhoto = () => setLightboxIndex((i) => (i != null && i < pics.length - 1 ? i + 1 : i));
 
-  /* Editorial sequence uses first 6 photos; overflow shows the rest */
-  const editorialPics = pics.slice(0, 6);
-  const overflowPics = pics.slice(6);
+  /* Build editorial blocks for the whole sequence */
+  const blocks: { startIndex: number; pattern: number }[] = [];
+  let cursor = 0;
+  let patternIdx = 0;
+  while (cursor < pics.length) {
+    blocks.push({ startIndex: cursor, pattern: patternIdx });
+    cursor += patternConsumes(patternIdx);
+    patternIdx++;
+  }
+
+  /* Quote appears roughly in the middle */
+  const quoteAfterBlock = Math.floor(blocks.length / 2);
+  /* Second interstitial from intro body (paragraph 1) appears after 1/4 of blocks */
+  const pauseAfterBlock = Math.floor(blocks.length / 4);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      {/* ── Hero section ── */}
+      {/* ── Hero / Intro ── */}
       <section className="bg-foreground text-cream px-6 md:px-16 pt-36 pb-24 md:pt-48 md:pb-32">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
           <Link
             to="/portfolio"
             className="font-mono-label text-cream/40 hover:text-cream transition-colors text-[10px] uppercase tracking-[0.32em]"
@@ -315,198 +437,88 @@ function CategoryPage() {
             {cat.title}.
           </motion.h1>
 
-          <div className="mt-16 grid md:grid-cols-2 gap-12 md:gap-24 items-end">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="text-cream/60 leading-relaxed text-lg max-w-prose"
-            >
-              {cat.intro}
-            </motion.p>
+          {/* Intro lead + body */}
+          <div className="mt-16 grid md:grid-cols-[1fr_auto] gap-12 md:gap-24 items-start">
+            <div className="space-y-8 max-w-2xl">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.4 }}
+                className="text-cream/80 leading-relaxed text-xl font-display"
+              >
+                {cat.intro}
+              </motion.p>
+              {cat.introBody.map((para, i) => (
+                <motion.p
+                  key={i}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 0.55 + i * 0.12 }}
+                  className="text-cream/50 leading-relaxed text-base"
+                >
+                  {para}
+                </motion.p>
+              ))}
+            </div>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="flex flex-col gap-3"
+              transition={{ duration: 1, delay: 0.65 }}
+              className="flex flex-col gap-3 md:min-w-[220px]"
             >
               <div className="h-px bg-cream/15 w-full" />
-              <div className="flex justify-between font-mono-label text-cream/35">
+              <div className="flex justify-between font-mono-label text-cream/35 gap-8">
                 <span>{pics.length} fotografias</span>
                 <span>arquivo lento</span>
               </div>
-              <div className="flex justify-between font-mono-label text-cream/35">
+              <div className="flex justify-between font-mono-label text-cream/35 gap-8">
                 <span>Luísa Rosmaninho</span>
                 <span>Portugal</span>
               </div>
               <div className="h-px bg-cream/15 w-full" />
+              <p className="font-mono-label text-cream/25 text-[10px] leading-relaxed pt-1">
+                {cat.note}
+              </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── Editorial photo sequence (first 6) ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-
-        {/* Photo 1 — Large opener */}
-        {editorialPics[0] && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 1.3, ease: "easeOut" }}
-            className="mt-20"
-          >
-            <RevealPhoto
-              photo={editorialPics[0]}
-              onClick={() => openLightbox(0)}
-              className="w-full aspect-[16/9] md:aspect-[21/9]"
-              loading="eager"
+      {/* ── Editorial photo sequence — all photos, no grid ── */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-20">
+        {blocks.map((block, bi) => (
+          <div key={`block-${bi}`}>
+            <EditorialBlock
+              photos={pics}
+              startIndex={block.startIndex}
+              pattern={block.pattern}
+              onOpen={openLightbox}
             />
-            <MetaStrip photo={editorialPics[0]} index={0} />
-          </motion.div>
-        )}
 
-        {/* Photos 2 + 3 — Two column */}
-        {editorialPics.length >= 3 && (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
-            {[1, 2].map((i) =>
-              editorialPics[i] ? (
-                <motion.div
-                  key={editorialPics[i].src}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 1.1, delay: i === 1 ? 0 : 0.15, ease: "easeOut" }}
-                  className="bg-background"
-                >
-                  <RevealPhoto
-                    photo={editorialPics[i]}
-                    onClick={() => openLightbox(i)}
-                    className="w-full aspect-[4/3]"
-                  />
-                  <MetaStrip photo={editorialPics[i]} index={i} />
-                </motion.div>
-              ) : null
+            {/* Quote interstitial in the middle */}
+            {bi === quoteAfterBlock && (
+              <QuoteBlock text={cat.quote} source={cat.quoteSource} />
+            )}
+
+            {/* Editorial text pause at 1/4 */}
+            {bi === pauseAfterBlock && cat.introBody[1] && (
+              <EditorialPause text={cat.introBody[1]} />
             )}
           </div>
-        )}
-
-        {/* Special case: only 2 photos total */}
-        {pics.length === 2 && (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-px bg-border mb-20">
-            {pics.map((p, i) => (
-              <motion.div
-                key={p.src}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 1.1, delay: i * 0.15, ease: "easeOut" }}
-                className="bg-background"
-              >
-                <RevealPhoto
-                  photo={p}
-                  onClick={() => openLightbox(i)}
-                  className="w-full aspect-[3/4]"
-                  loading={i === 0 ? "eager" : "lazy"}
-                />
-                <MetaStrip photo={p} index={i} />
-              </motion.div>
-            ))}
-          </div>
-        )}
+        ))}
       </div>
 
-      {/* Quote interstitial */}
-      <QuoteBlock text={cat.quote} source={cat.quoteSource} />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/* Photo 4 — Single large */}
-        {editorialPics[3] && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 1.3, ease: "easeOut" }}
-            className="mb-6"
-          >
-            <RevealPhoto
-              photo={editorialPics[3]}
-              onClick={() => openLightbox(3)}
-              className="w-full aspect-[16/9]"
-            />
-            <MetaStrip photo={editorialPics[3]} index={3} />
-          </motion.div>
-        )}
-
-        {/* Photos 5 + 6 — Asymmetric: tall portrait left, landscape right */}
-        {editorialPics.length >= 5 && (
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-border">
-            {[4, 5].map((i) =>
-              editorialPics[i] ? (
-                <motion.div
-                  key={editorialPics[i].src}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 1.1, delay: i === 4 ? 0 : 0.2, ease: "easeOut" }}
-                  className="bg-background"
-                >
-                  <RevealPhoto
-                    photo={editorialPics[i]}
-                    onClick={() => openLightbox(i)}
-                    className={`w-full ${i === 4 ? "aspect-[4/5]" : "aspect-[3/2]"}`}
-                  />
-                  <MetaStrip photo={editorialPics[i]} index={i} />
-                </motion.div>
-              ) : null
-            )}
-          </div>
-        )}
-
-        {/* ── Overflow photos (7+) — full archive grid ── */}
-        {overflowPics.length > 0 && (
-          <>
-            <div className="mt-16 mb-8 flex items-center gap-6">
-              <div className="h-px flex-1 bg-foreground/10" />
-              <p className="font-mono-label text-foreground/30 text-[10px] uppercase tracking-[0.35em]">
-                arquivo completo · {cat.title.toLowerCase()}
-              </p>
-              <div className="h-px flex-1 bg-foreground/10" />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-border mb-20">
-              {overflowPics.map((p, i) => (
-                <motion.div
-                  key={p.src}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.08 }}
-                  transition={{ duration: 0.9, delay: (i % 3) * 0.07, ease: "easeOut" }}
-                  className="bg-background"
-                >
-                  <RevealPhoto
-                    photo={p}
-                    onClick={() => openLightbox(6 + i)}
-                    className="w-full aspect-[4/3]"
-                  />
-                  <MetaStrip photo={p} index={6 + i} />
-                </motion.div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* ── Archive close note ── */}
+      {/* ── Fim da série ── */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.4 }}
-        className="text-center py-20 border-t border-border"
+        className="text-center py-20 border-t border-border mt-16"
       >
         <p className="font-mono-label text-foreground/25 uppercase tracking-[0.4em]">
-          fim do arquivo · {cat.title.toLowerCase()} · {pics.length} fotografias
+          fim da série · {cat.title.toLowerCase()} · {pics.length} fotografias
         </p>
       </motion.div>
 

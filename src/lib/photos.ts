@@ -61,6 +61,8 @@ export type Category = {
   title: string;
   description: string;
   intro: string;
+  introBody: string[];
+  note: string;
   quote: string;
   quoteSource: string;
 };
@@ -84,7 +86,13 @@ export const categories: Category[] = [
     slug: "urbanas",
     title: "Urbanas",
     description: "Ruas, pontes e telhados — a cidade enquanto matéria viva.",
-    intro: "As cidades falam em camadas. Há a superfície — o movimento, o ruído, o asfalto molhado. E há o que está por baixo: a memória, o tempo acumulado, a luz que teima em aparecer entre prédios. Estas imagens são essa segunda camada.",
+    intro: "As cidades falam em camadas. Há a superfície — o movimento, o ruído, o asfalto molhado. E há o que está por baixo: a memória, o tempo acumulado, a luz que teima em aparecer entre prédios.",
+    introBody: [
+      "Fotografar uma cidade é um acto de paciência. Não se trata de documentar o que existe — isso faz-se com satélites e drones. Trata-se de encontrar o que a cidade revela apenas quando ela acha que ninguém está a ver: a sombra que entra oblíqua numa esquina às três da tarde de inverno, a janela com cortinas que se movem sem vento aparente, o reflexo de uma fachada numa poça que vai secar daqui a dez minutos.",
+      "Portugal tem uma arquitectura do detalhe. Os azulejos, a pedra trabalhada, as grades de ferro, os arcos que nunca se justificam plenamente — são elementos que resistem ao tempo com uma dignidade tranquila. Estas fotografias tentam ser testemunhas dessa resistência.",
+      "Foram tiradas em Porto, Coimbra, Peniche e aldeias sem nome na serra. Em dias de névoa, em tardes demasiado quentes, em manhãs que ainda cheiravam a noite.",
+    ],
+    note: "Série em curso · Portugal · 2022–presente",
     quote: "A cidade é um arquivo de gestos esquecidos.",
     quoteSource: "L.R.",
   },
@@ -93,6 +101,12 @@ export const categories: Category[] = [
     title: "Natureza",
     description: "Água, luz e paisagem — o tempo lento dos lugares.",
     intro: "A natureza não posa. Não espera. Não repete. Estas fotografias são encontros — brevíssimos — com água, luz e tempo, em lugares onde o mundo ainda vai devagar.",
+    introBody: [
+      "Há uma arrogância subtil em apontar uma câmara à natureza. Como se o acto de fotografar pudesse conter o que é, por definição, incontível. A água que cai, a luz que muda de ângulo a cada segundo, o vento que reorganiza as folhas — tudo isto dura menos do que o tempo de obturação.",
+      "O que fica, então? Fica uma aproximação. Um fragmento de um instante que existiu e depois deixou de existir naquela forma exacta. A fotografia de natureza é, no fundo, uma forma de luto suave: guardar o que não vai repetir-se.",
+      "Estas imagens foram feitas em ribeiros de montanha, praias de costa atlântica e vales onde o outono chegou antes de hora. A maioria foi tirada sozinha, sem tripé, com a luz que havia.",
+    ],
+    note: "Série aberta · Norte e Centro de Portugal · 2021–presente",
     quote: "A paisagem não precisa de ser perfeita para ser completa.",
     quoteSource: "caderno de campo",
   },
@@ -101,6 +115,12 @@ export const categories: Category[] = [
     title: "Retratos",
     description: "Rostos, presença e o instante em que alguém se revela.",
     intro: "Um retrato não é apenas um rosto. É uma cumplicidade — breve, às vezes inesperada. Estes retratos são sobre presença: a de quem está, e a do que fica depois de ir.",
+    introBody: [
+      "Não peço para ninguém sorrir. Sorrir é uma performance e as fotografias de performance envelhecem mal — ficam datadas ao fim de uns anos, reduzidas a um registo de como as pessoas achavam que deviam parecer felizes nessa época.",
+      "O que procuro é o momento anterior. A pessoa que ainda não sabe bem o que a câmara vai fazer. O olhar que vai para algum lado que não é a objectiva. A mão no queixo, o desvio de luz, a expressão que não foi ensaiada.",
+      "Cada retrato aqui foi feito com permissão, muitas vezes com conversa antes. Às vezes são amigos, às vezes são estranhos que aceitaram ficar parados um momento. Fico-lhes grata a todos.",
+    ],
+    note: "Série de autor · Portugal · selecção 2023–2025",
     quote: "Fotografar alguém é uma forma de atenção.",
     quoteSource: "L.R.",
   },
@@ -109,6 +129,12 @@ export const categories: Category[] = [
     title: "Iguarias",
     description: "Mesas, texturas e o instante antes do primeiro garfo.",
     intro: "Antes do primeiro garfo, existe uma brevidade extraordinária. Uma mesa posta, uma luz que bate de lado, o vapor de algo acabado de sair do forno. Estas imagens vivem nesses segundos antes.",
+    introBody: [
+      "A fotografia de comida tem má reputação. Associada ao registo banal das redes sociais, à obsessão pelo aspecto à custa do sabor. Não é isso que me interessa. O que me interessa é a composição involuntária: a forma como um cozinheiro arruma um prato sem pensar nisso como arranjo visual, e como essa disposição tem uma lógica própria que uma câmara pode revelar.",
+      "Há também a questão da luz. A luz da manhã numa esplanada, a luz lateral de fim de tarde numa cozinha, a luz difusa de um restaurante antigo — cada uma delas muda completamente o que um simples prato parece ser.",
+      "Estas imagens foram feitas em cafés, restaurantes e cozinhas domésticas. Algumas são encomendas, a maioria são observações espontâneas. Nenhuma foi feita com fome — esse é o segredo.",
+    ],
+    note: "Série de gastronomia · trabalho comercial e pessoal · 2022–presente",
     quote: "A comida é a única arte que desaparece ao ser apreciada.",
     quoteSource: "observação de mesa",
   },
