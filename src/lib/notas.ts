@@ -152,6 +152,90 @@ export const notas: Nota[] = [
     tag: "tempo",
     size: "large",
   },
+  {
+    id: "olhar-janela",
+    text: "Passei uma tarde a olhar pela janela sem fotografar nada. Não foi tempo perdido. Foi pesquisa.",
+    tag: "olhar",
+    size: "small",
+  },
+  {
+    id: "luz-manha-lenta",
+    text: "Há uma luz de manhã que só existe se não tiveres pressa nenhuma. Começa devagar, entra de lado, aquece sem avisar. Já perdi essa luz muitas vezes por ter coisas para fazer.",
+    tag: "luz",
+    size: "medium",
+  },
+  {
+    id: "cidade-gato",
+    text: "Vi um gato preto sentado num estore de cortiço aberto. Não me olhou. Estava completamente concentrado em algo que eu não vi. Não tirei fotografia — teria perturbado o momento.",
+    tag: "cidade",
+    size: "medium",
+  },
+  {
+    id: "silencio-matcha",
+    text: "Com o matcha quente, tudo fica mais lento. Acho que é esse o ponto.",
+    tag: "silêncio",
+    size: "fragment",
+  },
+  {
+    id: "tempo-livros",
+    text: "Tenho uma pilha de livros na mesa-de-cabeceira que cresce mais depressa do que os leio. Às vezes olho para eles antes de dormir e sinto que são um arquivo também — dos sítios que ainda quero ir, das ideias que ainda não tive.",
+    tag: "tempo",
+    size: "medium",
+  },
+  {
+    id: "agua-chuva-janela",
+    text: "A chuva na janela reescreve o que está lá fora. Tudo fica mais impressionista. Às vezes, mais verdadeiro.",
+    tag: "água",
+    size: "small",
+  },
+  {
+    id: "olhar-cansaco",
+    text: "Há dias em que o olho não quer trabalhar. Respeito isso. Não há fotografia nenhuma que valha forçar a atenção.",
+    tag: "olhar",
+    size: "small",
+  },
+  {
+    id: "luz-nuvem",
+    text: "A nuvem que passou na frente do sol foi a melhor coisa que aconteceu naquela tarde.",
+    tag: "luz",
+    size: "fragment",
+  },
+  {
+    id: "cidade-barulho",
+    text: "Aprendi a fotografar com barulho à volta. Não é prática — é necessidade. As cidades não esperam que haja silêncio.",
+    tag: "cidade",
+    size: "small",
+  },
+  {
+    id: "silencio-ler-fotografar",
+    text: "Ler e fotografar exigem o mesmo: atenção ao que não é óbvio, paciência com o que ainda não está claro, e a generosidade de deixar o tempo trabalhar.",
+    tag: "silêncio",
+    size: "large",
+  },
+  {
+    id: "tempo-quatro-da-manha",
+    text: "Acordei às quatro e não consegui dormir. Em vez de lutar, fui escrever. Há uma qualidade de pensamento que só existe naquelas horas — menos policiado, mais honesto.",
+    tag: "tempo",
+    size: "medium",
+  },
+  {
+    id: "agua-rio-duplo",
+    text: "O rio de manhã com névoa não é o mesmo rio de tarde com sol. Tenho fotografias dos dois — e às vezes duvido que seja o mesmo lugar.",
+    tag: "água",
+    size: "medium",
+  },
+  {
+    id: "olhar-textura",
+    text: "A textura de uma parede descascada pode conter mais história do que a fachada inteira. Aprendo isso de novo, sempre.",
+    tag: "olhar",
+    size: "small",
+  },
+  {
+    id: "silencio-caminhar",
+    text: "Caminhei durante três horas sem destino definido. A câmara ficou nas costas quase sempre. O olho foi sozinho, a aprender o terreno.",
+    tag: "silêncio",
+    size: "medium",
+  },
 ];
 
 export function notasByTag(tag: Nota["tag"]) {

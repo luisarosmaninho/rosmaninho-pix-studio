@@ -14,6 +14,13 @@ const aberturasPool = [
   "nem todas as entradas têm fotografia. nem todas as fotografias têm entrada.",
   "começo sempre com uma chávena. raramente termino antes de ela arrefecer.",
   "há dias em que o silêncio é a única coisa que vale a pena guardar.",
+  "um pensamento que não cabe numa fotografia acaba aqui.",
+  "o caderno tem manchas de café. assim deve ser.",
+  "não sei se escrevo para mim ou para quem um dia vier aqui.",
+  "às vezes a entrada mais curta é a que diz mais.",
+  "guardo o que não fotografei também — às vezes é o que fica mais.",
+  "o tempo demora mais quando se escreve devagar.",
+  "alguns dias não têm título. ficam assim.",
 ];
 
 function AberturaDoDia() {
