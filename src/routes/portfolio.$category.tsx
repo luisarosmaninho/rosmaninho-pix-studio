@@ -236,48 +236,61 @@ function QuoteBlock({ text, source }: { text: string; source: string }) {
   );
 }
 
-/* ── Editorial metadata strip ── */
-function MetaStrip({ photo: _photo, index }: { photo: Photo; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 1, delay: 0.2 }}
-      className="px-6 md:px-0 py-3"
-    >
-      <span className="font-mono-label text-foreground/25">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-    </motion.div>
-  );
-}
+/* ── Deterministic tilt + offset tables (SSR-safe, no Math.random) ── */
+const TILTS   = [-3.5, 2.1, -1.8, 4.2, -2.7, 3.1, -4.1, 1.5, -0.9, 3.8, -2.3, 1.2, -3.9, 2.6, -1.1, 4.5];
+const OFFSETS = [0, -14, 8, -6, 16, -10, 4, -16, 10, -4, 14, -8, 6, -12, 2, 10];
 
-/* ── Photo grid cell ── */
-function PhotoCell({
+/* ── Print card — photo as a physical darkroom print ── */
+function PrintCard({
   photo,
   index,
   onOpen,
-  delay,
 }: {
   photo: Photo;
   index: number;
   onOpen: (i: number) => void;
-  delay: number;
 }) {
+  const tilt   = TILTS[index % TILTS.length];
+  const offset = OFFSETS[index % OFFSETS.length];
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 1, delay, ease: "easeOut" }}
+      /*
+        initial={false} → no SSR/client hydration mismatch.
+        The static tilt + offset live in `style` so they render
+        identically on server and client; Framer Motion only
+        takes over for the hover interaction.
+      */
+      initial={false}
+      style={{ rotate: tilt, translateY: offset, zIndex: 1 }}
+      whileHover={{
+        rotate: 0,
+        translateY: offset - 18,
+        scale: 1.07,
+        zIndex: 20,
+        transition: { duration: 0.25, ease: "easeOut" },
+      }}
+      onClick={() => onOpen(index)}
+      className="relative cursor-zoom-in"
     >
-      <RevealPhoto
-        photo={photo}
-        onClick={() => onOpen(index)}
-        className="w-full aspect-[4/3]"
-      />
-      <MetaStrip photo={photo} index={index} />
+      {/* Physical print frame */}
+      <div className="bg-white pt-3 px-3 pb-8 shadow-[0_8px_32px_rgba(0,0,0,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.28)] transition-shadow duration-300">
+        <img
+          src={photo.src}
+          alt={photo.title}
+          loading="lazy"
+          className="w-full aspect-[4/3] object-cover block"
+        />
+        {/* Darkroom stamp */}
+        <div className="absolute bottom-2.5 left-4 flex items-center gap-3">
+          <span className="font-mono text-[8px] text-neutral-400 tracking-[0.28em]">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span className="font-mono text-[8px] text-neutral-300 tracking-[0.18em] truncate max-w-[140px]">
+            {photo.title.toUpperCase()}
+          </span>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -380,35 +393,39 @@ function CategoryPage() {
         </div>
       </section>
 
-      {/* ── Photo grid ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-20">
+      {/* ── Mesa de ampliação — scattered darkroom prints ── */}
+      <div className="bg-[#f0ebe2]">
         {/* First half */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
-          {pics.slice(0, quoteAfterIndex).map((photo, i) => (
-            <PhotoCell
-              key={photo.src}
-              photo={photo}
-              index={i}
-              onOpen={openLightbox}
-              delay={Math.min(i % 3, 2) * 0.08}
-            />
-          ))}
+        <div className="max-w-7xl mx-auto px-10 md:px-20 pt-24 pb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
+            {pics.slice(0, quoteAfterIndex).map((photo, i) => (
+              <PrintCard
+                key={photo.src}
+                photo={photo}
+                index={i}
+                onOpen={openLightbox}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Quote interstitial */}
-        <QuoteBlock text={cat.quote} source={cat.quoteSource} />
+        {/* Quote interstitial — stays on the warm surface */}
+        <div className="max-w-3xl mx-auto">
+          <QuoteBlock text={cat.quote} source={cat.quoteSource} />
+        </div>
 
         {/* Second half */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
-          {pics.slice(quoteAfterIndex).map((photo, i) => (
-            <PhotoCell
-              key={photo.src}
-              photo={photo}
-              index={quoteAfterIndex + i}
-              onOpen={openLightbox}
-              delay={Math.min(i % 3, 2) * 0.08}
-            />
-          ))}
+        <div className="max-w-7xl mx-auto px-10 md:px-20 pt-6 pb-28">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
+            {pics.slice(quoteAfterIndex).map((photo, i) => (
+              <PrintCard
+                key={photo.src}
+                photo={photo}
+                index={quoteAfterIndex + i}
+                onOpen={openLightbox}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
