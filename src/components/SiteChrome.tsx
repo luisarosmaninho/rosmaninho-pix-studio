@@ -144,7 +144,7 @@ export function PageFade({ children }: { children: React.ReactNode }) {
 const navLinks = [
   { to: "/", label: "Início", exact: true },
   { to: "/sobre", label: "Autora" },
-  { to: "/portfolio", label: "Séries" },
+  { to: "/portfolio", label: "Fragmentos" },
   { to: "/diario", label: "Diário" },
   { to: "/notas", label: "Notas" },
   { to: "/contacto", label: "Diálogo" },
@@ -267,7 +267,7 @@ export function SiteFooter() {
             <p className="font-mono-label text-cream/40 mb-3">Navegação</p>
             <Link to="/" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Início</Link>
             <Link to="/sobre" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
-            <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Séries</Link>
+            <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Fragmentos</Link>
             <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
             <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Notas de Campo</Link>
             <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>

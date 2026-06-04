@@ -44,7 +44,7 @@ function NotFoundPage() {
             <span className="font-italic-serif text-copper">não existe aqui</span>.
           </p>
           <Link to="/portfolio" className="text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
-            Ver o arquivo →
+            Ver Fragmentos →
           </Link>
         </div>
       </div>
@@ -415,7 +415,7 @@ function CategoryPage() {
             to="/portfolio"
             className="font-mono-label text-cream/40 hover:text-cream transition-colors text-[10px] uppercase tracking-[0.32em]"
           >
-            ← Arquivo
+            ← Fragmentos
           </Link>
         </motion.div>
 

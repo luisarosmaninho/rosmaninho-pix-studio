@@ -408,7 +408,7 @@ function HomePage() {
               Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/portfolio" className="btn-ghost-light">Ver séries</Link>
+              <Link to="/portfolio" className="btn-ghost-light">Fragmentos</Link>
               <Link to="/diario" className="btn-copper">Ler diário</Link>
             </div>
           </motion.div>
@@ -483,59 +483,89 @@ function HomePage() {
         </div>
       </Section>
 
-      {/* ============ SÉRIES — masonry editorial ============ */}
-      <Section className="px-6 md:px-12 py-28 md:py-40">
+      {/* ============ FRAGMENTOS — editorial series blocks ============ */}
+      <Section className="px-6 md:px-12 pt-28 md:pt-40 pb-0">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
             <div>
-              <p className="font-mono-label text-copper mb-6">§ 03 — Séries</p>
+              <p className="font-mono-label text-copper mb-6">§ 03 — Fragmentos</p>
               <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
                 Quatro maneiras<br /><span className="font-italic-serif text-copper">de olhar</span>.
               </h2>
             </div>
-            <p className="max-w-sm text-foreground/70 text-sm leading-relaxed">
-              Urbanas, Natureza, Retratos, Iguarias. Quatro pastas abertas — nenhuma fechada — que se vão tocando ao longo dos anos.
-            </p>
+            <div className="flex flex-col gap-4 md:items-end">
+              <p className="max-w-sm text-foreground/70 text-sm leading-relaxed">
+                Urbanas, Natureza, Retratos, Iguarias. Quatro pastas abertas — nenhuma fechada.
+              </p>
+              <Link to="/portfolio" className="font-mono-label text-[10px] uppercase tracking-[0.38em] text-foreground/40 hover:text-copper transition-colors duration-300">
+                Ver Fragmentos completo →
+              </Link>
+            </div>
           </div>
+        </div>
+      </Section>
 
-          {/* Categories list */}
-          <ul className="border-t border-foreground/15 mb-20">
-            {categories.map((c, i) => {
-              const cover = photosByCategory(c.slug)[0];
-              const count = photosByCategory(c.slug).length;
-              return (
-                <li key={c.slug} className="border-b border-foreground/15">
+      <section className="pb-0">
+        {categories.map((c, i) => {
+          const isEven = i % 2 === 0;
+          const coverPhoto = photosByCategory(c.slug)[0];
+          return (
+            <motion.div
+              key={c.slug}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+              className="border-t border-foreground/12"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                <Link
+                  to="/portfolio/$category"
+                  params={{ category: c.slug }}
+                  className={`block relative overflow-hidden group ${isEven ? "lg:order-1" : "lg:order-2"}`}
+                >
+                  <div className="aspect-[4/3] lg:aspect-auto lg:h-full relative min-h-[340px]">
+                    {coverPhoto && (
+                      <img
+                        src={coverPhoto.src}
+                        alt={c.title}
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.04]"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/10 transition-colors duration-700" />
+                    <div className="absolute top-5 left-5">
+                      <span className="font-mono-label text-cream/50 text-[9px] uppercase tracking-[0.42em]">
+                        0{i + 1} · {photosByCategory(c.slug).length} fotografias
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                <div
+                  className={`flex flex-col justify-center px-8 md:px-12 lg:px-14 py-14 lg:py-16 ${isEven ? "lg:order-2" : "lg:order-1"}`}
+                >
+                  <h3 className="font-display text-[clamp(3rem,6vw,5rem)] leading-[0.9] tracking-tight">
+                    {c.title}<span className="font-italic-serif text-copper">.</span>
+                  </h3>
+                  <p className="mt-6 text-foreground/55 leading-relaxed text-base font-italic-serif italic max-w-sm">
+                    {c.excerpt}
+                  </p>
                   <Link
                     to="/portfolio/$category"
                     params={{ category: c.slug }}
-                    className="group grid grid-cols-12 gap-6 py-8 md:py-10 items-center"
+                    className="mt-10 self-start inline-flex items-center gap-4 group/link"
                   >
-                    <div className="col-span-2 md:col-span-1">
-                      <p className="font-mono-label text-copper">0{i + 1}</p>
-                    </div>
-                    <div className="col-span-10 md:col-span-5">
-                      <h3 className="font-display text-4xl md:text-6xl group-hover:text-copper transition-colors duration-500 leading-none">
-                        {c.title}
-                      </h3>
-                    </div>
-                    <div className="col-span-12 md:col-span-4 text-foreground/65 text-sm leading-relaxed">
-                      {c.description}
-                    </div>
-                    <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-6">
-                      {cover && (
-                        <div className="hidden md:block w-24 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-2 group-hover:translate-x-0">
-                          <img src={cover.src} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
+                    <span className="font-mono-label text-[10px] uppercase tracking-[0.38em] text-foreground group-hover/link:text-copper transition-colors duration-300">
+                      Abrir colecção
+                    </span>
+                    <span className="block w-7 h-px bg-foreground/40 group-hover/link:bg-copper group-hover/link:w-12 transition-all duration-500" />
                   </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-        </div>
-      </Section>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </section>
 
       {/* ============ FRAGMENTO ============ */}
       <Section className="px-6 md:px-12 py-24 md:py-32 bg-background">
