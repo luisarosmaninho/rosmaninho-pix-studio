@@ -53,6 +53,19 @@ import domLuisDouro from "@/assets/dom-luis-douro.jpg";
 import muralReflexo from "@/assets/mural-reflexo.jpg";
 import edificioModerno from "@/assets/edificio-moderno.png";
 import bancoEntardecer from "@/assets/banco-entardecer.jpg";
+import marPanorama from "@/assets/mar-panorama.jpg";
+import marNuvens from "@/assets/mar-nuvens.jpg";
+import marVasto from "@/assets/mar-vasto.jpg";
+import marCalmo from "@/assets/mar-calmo.jpg";
+import marEdificio from "@/assets/mar-edificio.jpg";
+import fabricaCabo from "@/assets/fabrica-cabo.jpg";
+import praiaLonga from "@/assets/praia-longa.jpg";
+import farolEntrada from "@/assets/farol-entrada.jpg";
+import costaVila from "@/assets/costa-vila.jpg";
+import costaFloresta from "@/assets/costa-floresta.jpg";
+import farolFrente from "@/assets/farol-frente.jpg";
+import hamburquerTabua from "@/assets/hamburguer-tabua.jpg";
+import cocktailFrasco from "@/assets/cocktail-frasco.jpg";
 
 export type CategorySlug = "urbanas" | "natureza" | "retratos" | "iguarias";
 
@@ -593,6 +606,116 @@ export const photos: Photo[] = [
     category: "natureza",
     orientation: "landscape",
     meta: { description: "Ninguém ficou. A pedra ficou quente na mesma." },
+  },
+
+  // Natureza · costa atlântica
+  {
+    id: "mar-panorama",
+    src: marPanorama,
+    title: "O azul que não tinha fim",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "O mar não precisava de limite para ser completo." },
+  },
+  {
+    id: "mar-nuvens",
+    src: marNuvens,
+    title: "A luz que dividiu o mar",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "De um lado, prata. Do outro, esmeralda. As nuvens fizeram isso sem pedir." },
+  },
+  {
+    id: "mar-vasto",
+    src: marVasto,
+    title: "Antes da próxima vaga",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "Há um silêncio entre vagas que ninguém costuma ouvir." },
+  },
+  {
+    id: "mar-calmo",
+    src: marCalmo,
+    title: "O horizonte que recusa limite",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "O mar foi até onde a vista deixou e continuou para lá disso." },
+  },
+  {
+    id: "mar-edificio",
+    src: marEdificio,
+    title: "Entre o que ficou e o que continua",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "O mar não ligou ao que construíram na margem. Continuou a entrar." },
+  },
+  {
+    id: "praia-longa",
+    src: praiaLonga,
+    title: "A linha que não se fecha",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "A praia esticou-se até deixar de ser visível. O mar acompanhou." },
+  },
+  {
+    id: "costa-vila",
+    src: costaVila,
+    title: "Vista de quem chegou de longe",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "Daquela altura, a vila parecia ter crescido devagar, sem plano." },
+  },
+  {
+    id: "costa-floresta",
+    src: costaFloresta,
+    title: "Onde a terra ainda resiste",
+    category: "natureza",
+    orientation: "landscape",
+    meta: { description: "A floresta segurou o terreno até à última linha antes da areia." },
+  },
+
+  // Urbanas · costa
+  {
+    id: "fabrica-cabo",
+    src: fabricaCabo,
+    title: "A fábrica que o mar não engoliu",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Estava ali desde antes de a costa ser turismo. Continua a estar." },
+  },
+  {
+    id: "farol-entrada",
+    src: farolEntrada,
+    title: "O portão que ninguém abre",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "O farol estava fechado. A torre ficou visível na mesma." },
+  },
+  {
+    id: "farol-frente",
+    src: farolFrente,
+    title: "A vigília",
+    category: "urbanas",
+    orientation: "landscape",
+    meta: { description: "Não sabe quando vai ser preciso. Continua de pé à mesma." },
+  },
+
+  // Iguarias
+  {
+    id: "hamburguer-tabua",
+    src: hamburquerTabua,
+    title: "A ordem antes do caos",
+    category: "iguarias",
+    orientation: "landscape",
+    meta: { description: "Estava tudo arrumado na tábua. Durou exactamente até o primeiro levantar o hambúrguer." },
+  },
+  {
+    id: "cocktail-frasco",
+    src: cocktailFrasco,
+    title: "A hortelã não era necessária",
+    category: "iguarias",
+    orientation: "portrait",
+    meta: { description: "Ficou bem na mesma. Às vezes o desnecessário é o que faz sentido." },
   },
 ];
 
