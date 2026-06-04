@@ -122,7 +122,7 @@ export const photos: Photo[] = [
     title: "Quando ainda havia luz",
     category: "urbanas",
     orientation: "portrait",
-    meta: { description: "Havia luz suficiente para uma última fotografia. Depois os candeeiros tomaram conta.", conditions: "entardecer · luz rasante · Porto · inverno" },
+    meta: { description: "Havia luz suficiente para uma última fotografia. Depois os candeeiros tomaram conta.", conditions: "entardecer · luz rasante · inverno" },
   },
   {
     id: "coimbra",
@@ -146,7 +146,7 @@ export const photos: Photo[] = [
     title: "O horizonte que não se fecha",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "Neste dia, o céu era mais cidade do que a cidade.", conditions: "nuvens altas · vento fraco · Coimbra · outono" },
+    meta: { description: "Neste dia, o céu era mais cidade do que a cidade.", conditions: "nuvens altas · vento fraco · outono" },
   },
   {
     id: "porto-douro",
@@ -162,7 +162,7 @@ export const photos: Photo[] = [
     title: "O frio da pedra antiga",
     category: "urbanas",
     orientation: "portrait",
-    meta: { description: "A pedra guarda o frio mesmo no verão. É a sua forma de memória.", conditions: "manhã · pedra molhada · Coimbra · inverno" },
+    meta: { description: "A pedra guarda o frio mesmo no verão. É a sua forma de memória.", conditions: "manhã · pedra molhada · inverno" },
   },
   {
     id: "village-alley",
@@ -186,7 +186,7 @@ export const photos: Photo[] = [
     title: "Sentinela",
     category: "urbanas",
     orientation: "portrait",
-    meta: { description: "Não se sabe o que estava a ver. Mas ficou muito tempo a ver.", conditions: "vento forte · mar agitado · Peniche · maio" },
+    meta: { description: "Não se sabe o que estava a ver. Mas ficou muito tempo a ver.", conditions: "vento forte · mar agitado · maio" },
   },
   {
     id: "arvore-calcada",
@@ -226,7 +226,7 @@ export const photos: Photo[] = [
     title: "Antes do vento",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "Uma varanda sabe mais da rua do que quem passa nela.", conditions: "névoa leve · manhã cedo · Porto · janeiro" },
+    meta: { description: "Uma varanda sabe mais da rua do que quem passa nela.", conditions: "névoa leve · manhã cedo · janeiro" },
   },
   {
     id: "porto-luisi",
@@ -252,7 +252,7 @@ export const photos: Photo[] = [
     title: "A solidão que não pesa",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "Havia alguém. Ficou até ao fim. Não precisava de mais ninguém ali.", conditions: "pôr do sol · vento calmo · Peniche · outubro" },
+    meta: { description: "Havia alguém. Ficou até ao fim. Não precisava de mais ninguém ali.", conditions: "pôr do sol · vento calmo · outubro" },
   },
   {
     id: "queda-agua",
@@ -268,7 +268,7 @@ export const photos: Photo[] = [
     title: "O que existe só para quem se agacha",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "É preciso descer até ao chão para perceber que existe.", conditions: "sombra fechada · humidade · interior · ribeiro" },
+    meta: { description: "É preciso descer até ao chão para perceber que existe.", conditions: "sombra fechada · humidade · ribeiro" },
   },
   {
     id: "fio-agua",
