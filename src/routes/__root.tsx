@@ -9,7 +9,8 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SmoothScroll, CustomCursor, LoadingScreen, GrainOverlay, ScrollProgress, BackToTop } from "@/components/SiteChrome";
+import { SmoothScroll, CustomCursor, LoadingScreen, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener } from "@/components/SiteChrome";
+import { THEME_SCRIPT } from "@/lib/sun";
 
 function NotFoundComponent() {
   return (
@@ -105,8 +106,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt">
-      <head><HeadContent /></head>
+    <html lang="pt" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+        {/* Script síncrono anti-flash: aplica 'dark' antes do primeiro paint */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>{children}<Scripts /></body>
     </html>
   );
@@ -116,6 +121,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <NightMode />
+      <RosemaryListener />
       <LoadingScreen />
       <SmoothScroll />
       <CustomCursor />

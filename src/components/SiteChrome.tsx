@@ -1,8 +1,55 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { isNightInPortugal } from "@/lib/sun";
 import Lenis from "lenis";
 import logo from "@/assets/logo-rosmaninho.png";
+
+/* ── Modo noturno automático (Portugal — nascer/pôr do sol real) ─────────── */
+export function NightMode() {
+  useEffect(() => {
+    function apply() {
+      document.documentElement.classList.toggle("dark", isNightInPortugal());
+    }
+    apply();
+    const id = setInterval(apply, 60_000); // verifica a cada minuto
+    return () => clearInterval(id);
+  }, []);
+  return null;
+}
+
+/* ── Detector da palavra secreta "rosemary" ──────────────────────────────── */
+export function RosemaryListener() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const SECRET = "rosemary";
+    let buffer = "";
+
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable
+      ) {
+        buffer = "";
+        return;
+      }
+      if (e.key.length !== 1) return;
+      buffer = (buffer + e.key.toLowerCase()).slice(-SECRET.length);
+      if (buffer === SECRET) {
+        buffer = "";
+        navigate({ to: "/rosemary" });
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate]);
+
+  return null;
+}
 
 /* ---------------- Back to top ---------------- */
 export function BackToTop() {
@@ -96,7 +143,10 @@ export function LoadingScreen() {
 
   if (done) return null;
   return (
-    <div className="loader-screen fixed inset-0 z-[100] flex flex-col items-center justify-center bg-foreground">
+    <div
+      className="loader-screen fixed inset-0 z-[100] flex flex-col items-center justify-center"
+      style={{ backgroundColor: "oklch(0.14 0.030 38)" }}
+    >
       <motion.img
         src={logo}
         alt="Rosmaninho"

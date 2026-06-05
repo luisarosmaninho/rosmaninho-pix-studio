@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as RosemaryRouteImport } from './routes/rosemary'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as NotasRouteImport } from './routes/notas'
 import { Route as DiarioRouteImport } from './routes/diario'
@@ -24,6 +25,11 @@ import { Route as DiarioSlugRouteImport } from './routes/diario.$slug'
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RosemaryRoute = RosemaryRouteImport.update({
+  id: '/rosemary',
+  path: '/rosemary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortfolioRoute = PortfolioRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/diario': typeof DiarioRouteWithChildren
   '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
+  '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/contacto': typeof ContactoRoute
   '/notas': typeof NotasRoute
+  '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/diario': typeof DiarioRouteWithChildren
   '/notas': typeof NotasRoute
   '/portfolio': typeof PortfolioRouteWithChildren
+  '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/diario'
     | '/notas'
     | '/portfolio'
+    | '/rosemary'
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contacto'
     | '/notas'
+    | '/rosemary'
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/diario'
     | '/notas'
     | '/portfolio'
+    | '/rosemary'
     | '/sobre'
     | '/diario/$slug'
     | '/portfolio/$category'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   DiarioRoute: typeof DiarioRouteWithChildren
   NotasRoute: typeof NotasRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
+  RosemaryRoute: typeof RosemaryRoute
   SobreRoute: typeof SobreRoute
 }
 
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rosemary': {
+      id: '/rosemary'
+      path: '/rosemary'
+      fullPath: '/rosemary'
+      preLoaderRoute: typeof RosemaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portfolio': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiarioRoute: DiarioRouteWithChildren,
   NotasRoute: NotasRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
+  RosemaryRoute: RosemaryRoute,
   SobreRoute: SobreRoute,
 }
 export const routeTree = rootRouteImport
