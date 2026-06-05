@@ -1,0 +1,1 @@
+- [Admin content architecture](admin-content-arch.md) — JSON override files (6 types) + server functions in content-fns.ts power the comprehensive /admin with 7 tabs.

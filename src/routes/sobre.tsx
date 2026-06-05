@@ -4,6 +4,7 @@ import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { getNesteMomento } from "@/lib/momento-fns";
+import { getSobreTexts, getCategories } from "@/lib/content-fns";
 import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
 import farolPeniche from "@/assets/farol-peniche.jpg";
 import barcoDouro from "@/assets/barco-douro.jpg";
@@ -19,8 +20,12 @@ export const Route = createFileRoute("/sobre")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/sobre" }],
   }),
   loader: async () => {
-    const momento = await getNesteMomento();
-    return { momento };
+    const [momento, sobreTexts, categories] = await Promise.all([
+      getNesteMomento(),
+      getSobreTexts(),
+      getCategories(),
+    ]);
+    return { momento, sobreTexts, categories };
   },
   component: SobrePage,
 });
@@ -32,90 +37,47 @@ const fadeUp: Variants = {
 
 function Fade({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
-    <motion.div
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ delay }}
-      className={className}
-    >
+    <motion.div variants={fadeUp} initial="hidden" whileInView="show"
+      viewport={{ once: true, amount: 0.2 }} transition={{ delay }} className={className}>
       {children}
     </motion.div>
   );
 }
 
 function SobrePage() {
-  const { momento } = Route.useLoaderData();
+  const { momento, sobreTexts, categories } = Route.useLoaderData();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
       {/* ── Abertura ── */}
       <section className="px-6 md:px-12 pt-32 md:pt-48 pb-20 max-w-6xl mx-auto">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="max-w-5xl"
-        >
+        <motion.div variants={fadeUp} initial="hidden" animate="show" className="max-w-5xl">
           <p className="font-mono-label text-copper mb-8">Luísa Rosmaninho · Coimbra</p>
           <h1 className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.92] tracking-tight">
-            Prefiro<br />
-            chegar<br />
+            Prefiro<br />chegar<br />
             <span className="font-italic-serif text-copper">mais tarde</span>.
           </h1>
         </motion.div>
 
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          transition={{ delay: 0.35 }}
-          className="mt-20 grid md:grid-cols-12 gap-12 items-start"
-        >
+        <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ delay: 0.35 }}
+          className="mt-20 grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-6 space-y-6 text-foreground/68 text-lg leading-relaxed">
-            <p>
-              Nem sempre sei explicar quem sou de forma direta.
-            </p>
-            <p>
-              Talvez porque grande parte daquilo que me define vive nos detalhes: nas ruas que percorro sem destino, nos livros que me fazem ficar acordada mais tempo do que devia, na música que acompanha os meus pensamentos ou nas conversas que continuo a recordar dias depois.
-            </p>
-            <p>
-              Gosto de observar antes de falar. De compreender antes de concluir. De chegar um pouco mais tarde, mas chegar com atenção.
-            </p>
-            <p>
-              Entre cafés demorados, chávenas de matcha, caminhadas, fotografias e pequenas notas escritas à margem dos dias, fui construindo uma forma muito própria de olhar para o mundo. Uma forma mais lenta, mais curiosa e mais atenta ao que normalmente passa despercebido.
-            </p>
-            <p>
-              Sempre senti que as melhores histórias raramente estão no centro das coisas. Vivem nas margens. Nos instantes breves. Na luz que dura apenas alguns segundos. Nas pessoas que não fazem barulho para serem lembradas.
-            </p>
-            <p>
-              Foi por isso que comecei a fotografar.
-            </p>
-            <p>
-              Não para colecionar imagens, mas para guardar sensações. Para preservar momentos que, de outra forma, desapareceriam sem deixar rasto. Cada fotografia que faço é uma tentativa de prolongar um encontro entre o olhar e o tempo.
-            </p>
-            <p>
-              Este espaço nasceu dessa forma de estar. Não é apenas um portefólio nem apenas um diário. É um arquivo vivo de momentos, imagens, observações, pensamentos e fragmentos de tempo que, por alguma razão, decidiram ficar.
-            </p>
-            <p>
-              Se houver um fio condutor entre tudo o que encontras aqui, talvez seja este: a crença de que as coisas mais importantes raramente se revelam à primeira vista.
-            </p>
+            {sobreTexts.introParagraphs.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
           </div>
           <div className="md:col-span-5 md:col-start-8 flex flex-col gap-4">
             <div className="h-px bg-foreground/15 w-full" />
             <div className="flex justify-between font-mono-label text-foreground/32">
-              <span>Fotografia de autor</span>
-              <span>desde 2020</span>
+              <span>Fotografia de autor</span><span>desde 2020</span>
             </div>
             <div className="flex justify-between font-mono-label text-foreground/32">
-              <span>Coimbra, Portugal</span>
-              <span>40°12'N · 8°25'O</span>
+              <span>Coimbra, Portugal</span><span>40°12'N · 8°25'O</span>
             </div>
             <div className="flex justify-between font-mono-label text-foreground/32">
-              <span>Quatro séries abertas</span>
-              <span>arquivo em aberto</span>
+              <span>Quatro séries abertas</span><span>arquivo em aberto</span>
             </div>
             <div className="h-px bg-foreground/15 w-full" />
             <p className="font-italic-serif text-foreground/35 text-base mt-2">
@@ -129,16 +91,14 @@ function SobrePage() {
       <Fade className="px-6 md:px-12 max-w-6xl mx-auto">
         <div className="hover-zoom relative aspect-[16/9] overflow-hidden">
           <img src={portoRuaCalcada} alt="Rua ao entardecer, Porto" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">
-            Porto · Jan 2026
-          </div>
+          <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">Porto · Jan 2026</div>
         </div>
       </Fade>
 
       {/* ── Frase de abertura ── */}
       <Fade className="px-6 md:px-12 py-28 md:py-36 max-w-3xl mx-auto">
         <p className="font-display italic text-4xl md:text-5xl leading-[1.15] text-foreground/80">
-          "Nunca consegui olhar para a fotografia como apenas tirar fotografias. Para mim, sempre foi muito mais do que isso."
+          "{sobreTexts.introQuote}"
         </p>
         <Whisper text="Coimbra · 2020 —" delay={2} className="mt-8" />
       </Fade>
@@ -157,30 +117,22 @@ function SobrePage() {
         <div className="md:col-span-7 space-y-12">
           <Fade>
             <p className="font-mono-label text-copper mb-6">§ 01 — Guardar</p>
-            <p className="font-display text-3xl md:text-4xl leading-[1.15] mb-8">
-              A minha forma de guardar o que passa demasiado depressa.
-            </p>
-            <p className="text-foreground/68 leading-relaxed">
-              A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa. Gosto de reparar nos detalhes que muitas vezes passam despercebidos: a maneira como a luz entra por uma janela ao final da tarde, um olhar distraído, o silêncio confortável entre duas pessoas — ou aquela sensação impossível de explicar que certos momentos conseguem ter.
-            </p>
+            <p className="font-display text-3xl md:text-4xl leading-[1.15] mb-8">{sobreTexts.secaoGuardarTitulo}</p>
+            <p className="text-foreground/68 leading-relaxed">{sobreTexts.secaoGuardarTexto}</p>
           </Fade>
 
           <Fade delay={0.1}>
             <div className="border-l-2 border-copper/30 pl-8 py-2">
               <p className="font-italic-serif text-2xl md:text-3xl text-foreground/75 leading-relaxed">
-                "Sou uma pessoa bastante emocional e criativa, e acho que isso acaba inevitavelmente por se refletir no meu trabalho."
+                "{sobreTexts.secaoGuardarCitacao}"
               </p>
             </div>
           </Fade>
 
           <Fade delay={0.15}>
             <p className="font-mono-label text-copper mb-4">§ 02 — Verdadeiras</p>
-            <p className="text-foreground/68 leading-relaxed mb-5">
-              Não procuro criar imagens demasiado perfeitas ou forçadas. Procuro criar fotografias que pareçam verdadeiras — naturais, honestamente reais. Quero que as pessoas sintam alguma coisa quando as olham, que consigam voltar àquele momento mesmo muitos anos depois.
-            </p>
-            <p className="text-foreground/68 leading-relaxed">
-              Grande parte daquilo que faço nasce da observação. Gosto de perceber as pessoas, os ambientes, a luz e as emoções antes sequer de pegar na câmara. E talvez seja exactamente isso que mais gosto na fotografia: obriga-me a olhar para o mundo com mais calma, mais atenção e mais sensibilidade.
-            </p>
+            <p className="text-foreground/68 leading-relaxed mb-5">{sobreTexts.secaoVerdadeirasTexto1}</p>
+            <p className="text-foreground/68 leading-relaxed">{sobreTexts.secaoVerdadeirasTexto2}</p>
             <Whisper text="a câmara ensinou-me a olhar antes de disparar" delay={1.5} style="italic" className="mt-8" />
           </Fade>
         </div>
@@ -194,15 +146,10 @@ function SobrePage() {
             <p className="font-display text-4xl md:text-5xl text-cream leading-[1.1]">
               Provavelmente<br />ninguém repara.<br /><span className="font-italic-serif text-copper">Eu reparo.</span>
             </p>
-            <p className="text-cream/65 leading-relaxed">
-              Existe um lado muito pessoal em tudo isto. Sou extremamente perfeccionista com os detalhes, mesmo os mais pequenos. Muitas vezes passo horas a pensar numa composição, numa edição, numa cor, numa sombra ou numa sensação específica que quero transmitir. Provavelmente muita gente nunca irá reparar conscientemente nesses detalhes… mas eu reparo. E para mim, isso faz toda a diferença.
-            </p>
-            <p className="text-cream/65 leading-relaxed">
-              Ao mesmo tempo, quero que tudo pareça leve e natural. Não gosto de transformar momentos em algo artificial. Prefiro a beleza imperfeita que torna cada lugar — e cada pessoa — diferente.
-            </p>
+            <p className="text-cream/65 leading-relaxed">{sobreTexts.secaoDetalheTexto1}</p>
+            <p className="text-cream/65 leading-relaxed">{sobreTexts.secaoDetalheTexto2}</p>
             <WhisperLight text="muita gente nunca irá reparar · eu reparo" delay={1.8} style="italic" className="mt-8" />
           </Fade>
-
           <Fade delay={0.2} className="md:col-span-6">
             <div className="hover-zoom relative aspect-[4/5] overflow-hidden">
               <img src={barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" />
@@ -221,11 +168,7 @@ function SobrePage() {
           </p>
         </Fade>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-foreground/10">
-          {[
-            { ano: "2020", titulo: "O começo", texto: "A fotografia começa como necessidade de guardar — emoções, lugares, rostos. Uma câmara, Coimbra, e muita disponibilidade para esperar." },
-            { ano: "2022–23", titulo: "As séries tomam forma", texto: "O arquivo organiza-se em quatro direcções: urbanas, natureza, retratos e iguarias. Cada série cresce ao seu ritmo, sem pressa de fechar." },
-            { ano: "2024 →", titulo: "Porto entra no mapa", texto: "As viagens a Porto multiplicam-se. A cidade torna-se um segundo laboratório — azulejos, ribeira, madrugadas e luz de Janeiro." },
-          ].map((item) => (
+          {sobreTexts.percurso.map((item) => (
             <div key={item.ano} className="bg-background px-8 py-10">
               <p className="font-mono-label text-copper mb-4">{item.ano}</p>
               <p className="font-display text-2xl mb-4">{item.titulo}</p>
@@ -256,16 +199,11 @@ function SobrePage() {
           Quatro séries paralelas.<br /><span className="font-italic-serif text-copper">Nenhuma fechada.</span>
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10">
-          {[
-            { n: "01", t: "Urbanas", d: "Ruas, pontes e telhados — a cidade enquanto matéria viva. Porto e Coimbra, principalmente. O azulejo, o granito, a luz de Janeiro." },
-            { n: "02", t: "Natureza", d: "Água, luz e paisagem. O tempo lento dos lugares que não precisam de pessoas para existir. Rios, ribeiros, o Atlântico." },
-            { n: "03", t: "Retratos", d: "Rostos e presença. O instante em que alguém se revela — numa esplanada, numa esquina, contra a luz." },
-            { n: "04", t: "Iguarias", d: "Mesas, texturas e o instante antes do primeiro garfo. A beleza do ordinário — o café, a tosta, o risotto." },
-          ].map((s) => (
-            <div key={s.n} className="bg-background px-8 py-10">
-              <p className="font-mono-label text-copper mb-6">{s.n}</p>
-              <p className="font-display text-4xl mb-5">{s.t}</p>
-              <p className="text-foreground/60 leading-relaxed text-sm">{s.d}</p>
+          {categories.map((cat, i) => (
+            <div key={cat.slug} className="bg-background px-8 py-10">
+              <p className="font-mono-label text-copper mb-6">{String(i + 1).padStart(2, "0")}</p>
+              <p className="font-display text-4xl mb-5">{cat.title}</p>
+              <p className="text-foreground/60 leading-relaxed text-sm">{cat.description}</p>
             </div>
           ))}
         </div>
@@ -304,45 +242,9 @@ function SobrePage() {
           </p>
         </Fade>
         <div className="grid grid-cols-1 md:grid-cols-2 border-t border-foreground/10">
-          {[
-            {
-              titulo: "A câmara",
-              texto: "A câmara não é um instrumento de captura. É uma desculpa para demorar mais tempo num sítio sem que ninguém pergunte o porquê. Isso vale muito mais do que qualquer fotografia.",
-            },
-            {
-              titulo: "Coimbra de manhã",
-              texto: "Coimbra tem ruas que só existem de manhã cedo. Depois disso, a luz muda, as pessoas chegam, e aquela versão específica da cidade desaparece. Só volta no dia seguinte — se houver paciência para ir lá.",
-            },
-            {
-              titulo: "Livros",
-              texto: "Há livros para começos de viagem, livros para regresso a casa, e livros para as tardes em que não acontece nada de especial. Não os confundo. Cada um sabe onde pertence.",
-            },
-            {
-              titulo: "Música",
-              texto: "Alguns músicos têm a capacidade de fazer com que o quotidiano pareça mais lento do que é. Preciso disso mais vezes do que admito. Não gosto de os nomear — perdem qualquer coisa quando se faz isso.",
-            },
-            {
-              titulo: "Cafés",
-              texto: "Não vou a cafés para trabalhar. Vou para observar. O trabalho é apenas um pretexto para ficar sentada tempo suficiente até que alguma coisa interessante aconteça.",
-            },
-            {
-              titulo: "Matcha e escrita",
-              texto: "O matcha tem um sabor que obriga a parar. Não consigo bebê-lo depressa. Talvez seja essa a razão pela qual o encomendo sempre que preciso de escrever algo que ainda não sei como começa.",
-            },
-            {
-              titulo: "Cidades sonhadas",
-              texto: "Há cidades que já visitei nas fotografias de outras pessoas: Bergen, Bruges, Verona. Já conheço algumas ruas. Ainda não fui. Mas quando for, vai parecer um regresso.",
-            },
-            {
-              titulo: "Luz de novembro",
-              texto: "Existe uma forma específica de luz às dezasseis horas de novembro que não acontece em mais nenhum mês. Já tentei descrever várias vezes. Não consigo. Por isso fotografo.",
-            },
-          ].map((item, i) => (
-            <Fade
-              key={item.titulo}
-              delay={i * 0.05}
-              className={`border-b border-foreground/10 py-10 ${i % 2 === 0 ? "md:pr-16 md:border-r md:border-foreground/10" : "md:pl-16"}`}
-            >
+          {sobreTexts.pequenasConstancias.map((item, i) => (
+            <Fade key={item.titulo} delay={i * 0.05}
+              className={`border-b border-foreground/10 py-10 ${i % 2 === 0 ? "md:pr-16 md:border-r md:border-foreground/10" : "md:pl-16"}`}>
               <p className="font-mono-label text-copper/60 mb-4 text-[9px] tracking-[0.38em] uppercase">{item.titulo}</p>
               <p className="text-foreground/65 leading-relaxed font-italic-serif text-lg">{item.texto}</p>
             </Fade>
@@ -362,14 +264,7 @@ function SobrePage() {
             </p>
           </Fade>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-cream/8 max-w-4xl">
-            {[
-              { quando: "Quando preciso de começar:", recurso: "café." },
-              { quando: "Quando preciso de abrandar:", recurso: "matcha." },
-              { quando: "Quando preciso de desaparecer um pouco:", recurso: "livros." },
-              { quando: "Quando preciso de compreender:", recurso: "caminhar." },
-              { quando: "Quando preciso de guardar:", recurso: "fotografar." },
-              { quando: "Quando não preciso de nada:", recurso: "silêncio." },
-            ].map((r, i) => (
+            {sobreTexts.ritmos.map((r, i) => (
               <Fade key={r.recurso} delay={i * 0.07} className="bg-foreground px-8 py-10">
                 <p className="font-mono-label text-cream/35 text-[9px] leading-relaxed mb-5 tracking-[0.2em]">{r.quando}</p>
                 <p className="font-display text-3xl text-copper">{r.recurso}</p>
@@ -391,15 +286,10 @@ function SobrePage() {
           </p>
         </Fade>
         <div className="max-w-3xl space-y-12">
-          {/* Visitadas */}
           <Fade>
             <p className="font-mono-label text-foreground/30 text-[9px] tracking-[0.45em] uppercase mb-4">visitadas</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10">
-              {[
-                { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
-                { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
-                { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
-              ].map((lugar, i) => (
+              {sobreTexts.cartografiaVisitadas.map((lugar, i) => (
                 <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
                   <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
                   <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
@@ -408,17 +298,10 @@ function SobrePage() {
             </div>
           </Fade>
 
-          {/* Sonhadas */}
           <Fade delay={0.15}>
             <p className="font-mono-label text-copper/50 text-[9px] tracking-[0.45em] uppercase mb-4">sonhadas</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10">
-              {[
-                { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
-                { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
-                { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
-                { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
-                { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
-              ].map((lugar, i) => (
+              {sobreTexts.cartografiaSonhadas.map((lugar, i) => (
                 <Fade key={lugar.cidade} delay={i * 0.06} className="bg-background px-8 py-8">
                   <p className="font-display text-2xl mb-3">{lugar.cidade}</p>
                   <p className="text-foreground/50 text-sm leading-relaxed">{lugar.nota}</p>
@@ -451,21 +334,14 @@ function SobrePage() {
       <div className="hairline mx-6 md:mx-12" />
 
       {/* ── Fecho ── */}
-      <motion.section
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        className="px-6 md:px-12 py-32 text-center max-w-2xl mx-auto"
-      >
+      <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
+        className="px-6 md:px-12 py-32 text-center max-w-2xl mx-auto">
         <p className="font-italic-serif text-5xl text-copper mb-10">—</p>
         <p className="text-foreground/60 leading-relaxed text-lg">
           Se algo aqui te ficou, escreve. Não há formulários nem preços. Há uma conversa possível, sobre uma imagem ou um lugar.
         </p>
-        <Link
-          to="/contacto"
-          className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500"
-        >
+        <Link to="/contacto"
+          className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500">
           Escrever
         </Link>
       </motion.section>

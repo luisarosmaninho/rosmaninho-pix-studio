@@ -1,0 +1,222 @@
+import { createServerFn } from "@tanstack/react-start";
+import fs from "fs";
+import path from "path";
+import { categories as staticCategories, photos as staticPhotos } from "./photos";
+import type { Category, Photo } from "./photos";
+import { journal as staticJournal } from "./journal";
+import type { JournalEntry } from "./journal";
+import { notas as staticNotas } from "./notas";
+import type { Nota } from "./notas";
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function readJson<T>(filepath: string, fallback: T): T {
+  try {
+    return JSON.parse(fs.readFileSync(filepath, "utf-8")) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJson(filepath: string, data: unknown) {
+  fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
+}
+
+function checkPassword(password: string) {
+  const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
+  if (password !== expected) throw new Error("Password incorrecta.");
+}
+
+// ── Categories ────────────────────────────────────────────────────────────────
+
+export type CategoryOverrides = Partial<Omit<Category, "slug" | "cover">>;
+type CategoriesConfig = Record<string, CategoryOverrides>;
+
+const CATEGORIES_CONFIG = path.join(process.cwd(), "categories-config.json");
+
+export const getCategories = createServerFn({ method: "GET" }).handler((): Category[] => {
+  const overrides = readJson<CategoriesConfig>(CATEGORIES_CONFIG, {});
+  return staticCategories.map((cat) => ({ ...cat, ...overrides[cat.slug] }));
+});
+
+export const saveCategoryTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; slug: string; data: CategoryOverrides })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const overrides = readJson<CategoriesConfig>(CATEGORIES_CONFIG, {});
+    overrides[data.slug] = data.data;
+    writeJson(CATEGORIES_CONFIG, overrides);
+    return { ok: true };
+  });
+
+// ── Photos meta ───────────────────────────────────────────────────────────────
+
+export type PhotoMetaOverride = { title: string; description: string; conditions: string };
+type PhotosMetaConfig = Record<string, PhotoMetaOverride>;
+
+const PHOTOS_META_CONFIG = path.join(process.cwd(), "photos-meta-config.json");
+
+export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): Photo[] => {
+  const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
+  return staticPhotos.map((photo) => {
+    const ov = overrides[photo.id];
+    if (!ov) return photo;
+    return {
+      ...photo,
+      title: ov.title ?? photo.title,
+      meta: {
+        description: ov.description ?? photo.meta.description,
+        ...(ov.conditions ? { conditions: ov.conditions } : photo.meta.conditions ? { conditions: photo.meta.conditions } : {}),
+      },
+    };
+  });
+});
+
+export const savePhotoMeta = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
+    overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions };
+    writeJson(PHOTOS_META_CONFIG, overrides);
+    return { ok: true };
+  });
+
+// ── Journal ───────────────────────────────────────────────────────────────────
+
+export type JournalEntryEditable = Pick<JournalEntry, "slug" | "date" | "title" | "excerpt" | "body" | "photoTitle">;
+type JournalConfig = Record<string, Partial<JournalEntryEditable>>;
+
+const JOURNAL_CONFIG = path.join(process.cwd(), "journal-config.json");
+
+export const getJournal = createServerFn({ method: "GET" }).handler((): JournalEntry[] => {
+  const overrides = readJson<JournalConfig>(JOURNAL_CONFIG, {});
+  return staticJournal.map((entry) => {
+    const ov = overrides[entry.slug];
+    if (!ov) return entry;
+    return { ...entry, ...ov };
+  });
+});
+
+export const saveJournalEntry = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; slug: string; data: Partial<JournalEntryEditable> })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const overrides = readJson<JournalConfig>(JOURNAL_CONFIG, {});
+    overrides[data.slug] = data.data;
+    writeJson(JOURNAL_CONFIG, overrides);
+    return { ok: true };
+  });
+
+// ── Notas ─────────────────────────────────────────────────────────────────────
+
+const NOTAS_CONFIG = path.join(process.cwd(), "notas-config.json");
+
+export const getNotas = createServerFn({ method: "GET" }).handler((): Nota[] => {
+  try {
+    return JSON.parse(fs.readFileSync(NOTAS_CONFIG, "utf-8")) as Nota[];
+  } catch {
+    return staticNotas;
+  }
+});
+
+export const saveNotas = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; notas: Nota[] })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    writeJson(NOTAS_CONFIG, data.notas);
+    return { ok: true };
+  });
+
+// ── Sobre ─────────────────────────────────────────────────────────────────────
+
+export type SobreConfig = {
+  introParagraphs: string[];
+  introQuote: string;
+  secaoGuardarTitulo: string;
+  secaoGuardarTexto: string;
+  secaoGuardarCitacao: string;
+  secaoVerdadeirasTexto1: string;
+  secaoVerdadeirasTexto2: string;
+  secaoDetalheTexto1: string;
+  secaoDetalheTexto2: string;
+  percurso: { ano: string; titulo: string; texto: string }[];
+  pequenasConstancias: { titulo: string; texto: string }[];
+  ritmos: { quando: string; recurso: string }[];
+  cartografiaVisitadas: { cidade: string; nota: string }[];
+  cartografiaSonhadas: { cidade: string; nota: string }[];
+};
+
+export const SOBRE_DEFAULTS: SobreConfig = {
+  introParagraphs: [
+    "Nem sempre sei explicar quem sou de forma direta.",
+    "Talvez porque grande parte daquilo que me define vive nos detalhes: nas ruas que percorro sem destino, nos livros que me fazem ficar acordada mais tempo do que devia, na música que acompanha os meus pensamentos ou nas conversas que continuo a recordar dias depois.",
+    "Gosto de observar antes de falar. De compreender antes de concluir. De chegar um pouco mais tarde, mas chegar com atenção.",
+    "Entre cafés demorados, chávenas de matcha, caminhadas, fotografias e pequenas notas escritas à margem dos dias, fui construindo uma forma muito própria de olhar para o mundo. Uma forma mais lenta, mais curiosa e mais atenta ao que normalmente passa despercebido.",
+    "Sempre senti que as melhores histórias raramente estão no centro das coisas. Vivem nas margens. Nos instantes breves. Na luz que dura apenas alguns segundos. Nas pessoas que não fazem barulho para serem lembradas.",
+    "Foi por isso que comecei a fotografar.",
+    "Não para colecionar imagens, mas para guardar sensações. Para preservar momentos que, de outra forma, desapareceriam sem deixar rasto. Cada fotografia que faço é uma tentativa de prolongar um encontro entre o olhar e o tempo.",
+    "Este espaço nasceu dessa forma de estar. Não é apenas um portefólio nem apenas um diário. É um arquivo vivo de momentos, imagens, observações, pensamentos e fragmentos de tempo que, por alguma razão, decidiram ficar.",
+    "Se houver um fio condutor entre tudo o que encontras aqui, talvez seja este: a crença de que as coisas mais importantes raramente se revelam à primeira vista.",
+  ],
+  introQuote: "Nunca consegui olhar para a fotografia como apenas tirar fotografias. Para mim, sempre foi muito mais do que isso.",
+  secaoGuardarTitulo: "A minha forma de guardar o que passa demasiado depressa.",
+  secaoGuardarTexto: "A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa. Gosto de reparar nos detalhes que muitas vezes passam despercebidos: a maneira como a luz entra por uma janela ao final da tarde, um olhar distraído, o silêncio confortável entre duas pessoas — ou aquela sensação impossível de explicar que certos momentos conseguem ter.",
+  secaoGuardarCitacao: "Sou uma pessoa bastante emocional e criativa, e acho que isso acaba inevitavelmente por se refletir no meu trabalho.",
+  secaoVerdadeirasTexto1: "Não procuro criar imagens demasiado perfeitas ou forçadas. Procuro criar fotografias que pareçam verdadeiras — naturais, honestamente reais. Quero que as pessoas sintam alguma coisa quando as olham, que consigam voltar àquele momento mesmo muitos anos depois.",
+  secaoVerdadeirasTexto2: "Grande parte daquilo que faço nasce da observação. Gosto de perceber as pessoas, os ambientes, a luz e as emoções antes sequer de pegar na câmara. E talvez seja exactamente isso que mais gosto na fotografia: obriga-me a olhar para o mundo com mais calma, mais atenção e mais sensibilidade.",
+  secaoDetalheTexto1: "Existe um lado muito pessoal em tudo isto. Sou extremamente perfeccionista com os detalhes, mesmo os mais pequenos. Muitas vezes passo horas a pensar numa composição, numa edição, numa cor, numa sombra ou numa sensação específica que quero transmitir. Provavelmente muita gente nunca irá reparar conscientemente nesses detalhes… mas eu reparo. E para mim, isso faz toda a diferença.",
+  secaoDetalheTexto2: "Ao mesmo tempo, quero que tudo pareça leve e natural. Não gosto de transformar momentos em algo artificial. Prefiro a beleza imperfeita que torna cada lugar — e cada pessoa — diferente.",
+  percurso: [
+    { ano: "2020", titulo: "O começo", texto: "A fotografia começa como necessidade de guardar — emoções, lugares, rostos. Uma câmara, Coimbra, e muita disponibilidade para esperar." },
+    { ano: "2022–23", titulo: "As séries tomam forma", texto: "O arquivo organiza-se em quatro direcções: urbanas, natureza, retratos e iguarias. Cada série cresce ao seu ritmo, sem pressa de fechar." },
+    { ano: "2024 →", titulo: "Porto entra no mapa", texto: "As viagens a Porto multiplicam-se. A cidade torna-se um segundo laboratório — azulejos, ribeira, madrugadas e luz de Janeiro." },
+  ],
+  pequenasConstancias: [
+    { titulo: "A câmara", texto: "A câmara não é um instrumento de captura. É uma desculpa para demorar mais tempo num sítio sem que ninguém pergunte o porquê. Isso vale muito mais do que qualquer fotografia." },
+    { titulo: "Coimbra de manhã", texto: "Coimbra tem ruas que só existem de manhã cedo. Depois disso, a luz muda, as pessoas chegam, e aquela versão específica da cidade desaparece. Só volta no dia seguinte — se houver paciência para ir lá." },
+    { titulo: "Livros", texto: "Há livros para começos de viagem, livros para regresso a casa, e livros para as tardes em que não acontece nada de especial. Não os confundo. Cada um sabe onde pertence." },
+    { titulo: "Música", texto: "Alguns músicos têm a capacidade de fazer com que o quotidiano pareça mais lento do que é. Preciso disso mais vezes do que admito. Não gosto de os nomear — perdem qualquer coisa quando se faz isso." },
+    { titulo: "Cafés", texto: "Não vou a cafés para trabalhar. Vou para observar. O trabalho é apenas um pretexto para ficar sentada tempo suficiente até que alguma coisa interessante aconteça." },
+    { titulo: "Matcha e escrita", texto: "O matcha tem um sabor que obriga a parar. Não consigo bebê-lo depressa. Talvez seja essa a razão pela qual o encomendo sempre que preciso de escrever algo que ainda não sei como começa." },
+    { titulo: "Cidades sonhadas", texto: "Há cidades que já visitei nas fotografias de outras pessoas: Bergen, Bruges, Verona. Já conheço algumas ruas. Ainda não fui. Mas quando for, vai parecer um regresso." },
+    { titulo: "Luz de novembro", texto: "Existe uma forma específica de luz às dezasseis horas de novembro que não acontece em mais nenhum mês. Já tentei descrever várias vezes. Não consigo. Por isso fotografo." },
+  ],
+  ritmos: [
+    { quando: "Quando preciso de começar:", recurso: "café." },
+    { quando: "Quando preciso de abrandar:", recurso: "matcha." },
+    { quando: "Quando preciso de desaparecer um pouco:", recurso: "livros." },
+    { quando: "Quando preciso de compreender:", recurso: "caminhar." },
+    { quando: "Quando preciso de guardar:", recurso: "fotografar." },
+    { quando: "Quando não preciso de nada:", recurso: "silêncio." },
+  ],
+  cartografiaVisitadas: [
+    { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
+    { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
+    { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
+  ],
+  cartografiaSonhadas: [
+    { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
+    { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
+    { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
+    { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
+    { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
+  ],
+};
+
+const SOBRE_CONFIG = path.join(process.cwd(), "sobre-config.json");
+
+export const getSobreTexts = createServerFn({ method: "GET" }).handler((): SobreConfig => {
+  const saved = readJson<Partial<SobreConfig>>(SOBRE_CONFIG, {});
+  return { ...SOBRE_DEFAULTS, ...saved };
+});
+
+export const saveSobreTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<SobreConfig>)
+  .handler(({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = readJson<Partial<SobreConfig>>(SOBRE_CONFIG, {});
+    writeJson(SOBRE_CONFIG, { ...current, ...rest });
+    return { ok: true };
+  });

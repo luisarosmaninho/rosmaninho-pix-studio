@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
-import { categories, photosByCategory } from "@/lib/photos";
+import { photosByCategory } from "@/lib/photos";
+import type { Category } from "@/lib/photos";
+import { getCategories } from "@/lib/content-fns";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 import retratoSol from "@/assets/retrato-sol.jpg";
@@ -17,6 +19,10 @@ export const Route = createFileRoute("/portfolio/")({
     ],
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/portfolio" }],
   }),
+  loader: async () => {
+    const categories = await getCategories();
+    return { categories };
+  },
   component: FragmentosPage,
 });
 
@@ -32,15 +38,7 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" as const } },
 };
 
-function SeriesBlock({
-  cat,
-  index,
-  count,
-}: {
-  cat: typeof categories[number];
-  index: number;
-  count: number;
-}) {
+function SeriesBlock({ cat, index, count }: { cat: Category; index: number; count: number }) {
   const isEven = index % 2 === 0;
   const cover = coverPhotos[cat.slug];
   const romanIdx = ["I", "II", "III", "IV"][index] ?? String(index + 1);
@@ -54,8 +52,6 @@ function SeriesBlock({
       className="border-t border-foreground/12"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2">
-
-        {/* Image — order swaps on alternate rows */}
         <Link
           to="/portfolio/$category"
           params={{ category: cat.slug }}
@@ -63,9 +59,7 @@ function SeriesBlock({
         >
           <div className="aspect-[4/3] lg:aspect-auto lg:h-full relative min-h-[400px]">
             <img
-              src={cover}
-              alt={cat.title}
-              loading="lazy"
+              src={cover} alt={cat.title} loading="lazy"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.04]"
             />
             <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/10 transition-colors duration-700" />
@@ -77,23 +71,13 @@ function SeriesBlock({
           </div>
         </Link>
 
-        {/* Text */}
-        <div
-          className={`flex flex-col justify-center px-8 md:px-14 lg:px-16 py-16 lg:py-20 ${isEven ? "lg:order-2" : "lg:order-1"}`}
-        >
-          <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.5em] mb-8">
-            {cat.note}
-          </p>
+        <div className={`flex flex-col justify-center px-8 md:px-14 lg:px-16 py-16 lg:py-20 ${isEven ? "lg:order-2" : "lg:order-1"}`}>
+          <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.5em] mb-8">{cat.note}</p>
           <h2 className="font-display text-[clamp(3.5rem,7vw,6rem)] leading-[0.9] tracking-tight">
-            {cat.title}
-            <span className="font-italic-serif text-copper">.</span>
+            {cat.title}<span className="font-italic-serif text-copper">.</span>
           </h2>
-          <p className="mt-8 text-foreground/60 leading-relaxed text-lg max-w-md font-italic-serif italic">
-            {cat.excerpt}
-          </p>
-          <p className="mt-5 text-foreground/40 leading-relaxed text-sm max-w-md">
-            {cat.introBody[0]}
-          </p>
+          <p className="mt-8 text-foreground/60 leading-relaxed text-lg max-w-md font-italic-serif italic">{cat.excerpt}</p>
+          <p className="mt-5 text-foreground/40 leading-relaxed text-sm max-w-md">{cat.introBody[0]}</p>
           {cat.quote && (
             <p className="mt-8 font-italic-serif text-foreground/25 text-sm italic border-l border-copper/20 pl-5 max-w-xs leading-relaxed">
               "{cat.quote}"
@@ -116,41 +100,27 @@ function SeriesBlock({
 }
 
 function FragmentosPage() {
-  const seriesData = categories.map((cat) => ({
-    cat,
-    count: photosByCategory(cat.slug).length,
-  }));
+  const { categories } = Route.useLoaderData();
+  const seriesData = categories.map((cat) => ({ cat, count: photosByCategory(cat.slug).length }));
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav variant="solid" />
 
-      {/* ── Abertura ── */}
       <header className="px-6 md:px-16 pt-36 pb-20 md:pt-48 md:pb-28">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="max-w-5xl"
-        >
-          <p className="font-mono-label text-copper/70 mb-6 text-[10px] uppercase tracking-[0.48em]">
-            arquivo · quatro séries abertas
-          </p>
+        <motion.div variants={fadeUp} initial="hidden" animate="show" className="max-w-5xl">
+          <p className="font-mono-label text-copper/70 mb-6 text-[10px] uppercase tracking-[0.48em]">arquivo · quatro séries abertas</p>
           <h1 className="font-display text-[clamp(4.5rem,14vw,10rem)] leading-[0.88] tracking-tight">
             Fragmentos<span className="font-italic-serif text-copper">.</span>
           </h1>
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.35 }}
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.35 }}
             className="mt-10 max-w-xl text-foreground/55 text-xl leading-relaxed font-italic-serif italic"
           >
             "Algumas imagens ficaram por causa da luz. Outras por causa das pessoas. Outras simplesmente recusaram desaparecer."
           </motion.p>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.65 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.65 }}
             className="mt-8 flex items-center gap-3"
           >
             <span className="block w-10 h-px bg-foreground/20" />
@@ -161,19 +131,14 @@ function FragmentosPage() {
         </motion.div>
       </header>
 
-      {/* ── Séries ── */}
       <main>
         {seriesData.map(({ cat, count }, i) => (
           <SeriesBlock key={cat.slug} cat={cat} index={i} count={count} />
         ))}
       </main>
 
-      {/* ── Fecho ── */}
       <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
+        variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
         className="px-6 md:px-16 py-32 md:py-44 text-center max-w-xl mx-auto"
       >
         <p className="font-italic-serif text-foreground/20 text-3xl mb-10">—</p>
