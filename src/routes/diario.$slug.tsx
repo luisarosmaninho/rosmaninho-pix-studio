@@ -109,6 +109,9 @@ function EntryPage() {
                 <span className="font-mono-label text-[10px] text-foreground/30 tabular-nums">{dia} {mes}.</span>
                 <span className="font-mono-label text-[8px] text-foreground/20 tabular-nums">{ano}</span>
                 <span className="font-mono-label text-[8px] text-copper/30 uppercase tracking-widest mt-1">{entry.relatedCategory}</span>
+                {entry.location && (
+                  <span className="font-mono-label text-[8px] text-foreground/22 uppercase tracking-widest mt-1">{entry.location}</span>
+                )}
               </div>
 
               {/* Título */}
@@ -201,7 +204,7 @@ function EntryPage() {
                     <div className="w-8 h-px bg-foreground/15 mb-6" />
                     <p className="font-italic-serif text-copper text-xl">L.R.</p>
                     <p className="font-mono-label text-[9px] text-foreground/20 mt-2 uppercase tracking-[0.3em]">
-                      {dia} {mes}. {ano}
+                      {dia} {mes}. {ano}{entry.location ? ` · ${entry.location}` : ""}
                     </p>
                   </div>
                 </Fade>

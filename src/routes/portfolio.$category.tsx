@@ -136,8 +136,13 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }: {
       <div className="px-8 pb-8 shrink-0 text-center" onClick={(e) => e.stopPropagation()}>
         <p className="font-display text-2xl text-cream">{photo.title}</p>
         <p className="font-italic-serif text-cream/40 mt-3 text-sm italic">"{photo.meta.description}"</p>
+        {(photo.meta.date || photo.meta.location) && (
+          <p className="font-mono-label text-cream/30 mt-2 text-[9px] uppercase tracking-[0.35em]">
+            {[photo.meta.date, photo.meta.location].filter(Boolean).join(" · ")}
+          </p>
+        )}
         {photo.meta.conditions && (
-          <p className="font-mono-label text-cream/22 mt-3 text-[9px] uppercase tracking-[0.35em]">{photo.meta.conditions}</p>
+          <p className="font-mono-label text-cream/22 mt-2 text-[9px] uppercase tracking-[0.35em]">{photo.meta.conditions}</p>
         )}
       </div>
     </motion.div>
