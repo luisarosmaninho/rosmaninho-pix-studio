@@ -48,7 +48,7 @@ const rasurasPorSlug: Record<string, string[]> = {
     "o bosque que não estava no mapa",
   ],
   "barco-no-douro": [
-    "o porto em janeiro tem frio de pedra",
+    "o porto em fevereiro tem frio de pedra",
     "fui antes dos turistas",
   ],
 };

@@ -279,7 +279,7 @@ export const photos: Photo[] = [
     title: "Antes do vento",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "Uma varanda sabe mais da rua do que quem passa nela.", conditions: "névoa leve · manhã cedo · janeiro" },
+    meta: { description: "Uma varanda sabe mais da rua do que quem passa nela.", conditions: "névoa leve · manhã cedo · fevereiro" },
   },
   {
     id: "porto-luisi",

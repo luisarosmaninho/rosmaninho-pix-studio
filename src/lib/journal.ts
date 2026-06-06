@@ -106,8 +106,8 @@ export const journal: JournalEntry[] = [
   },
   {
     slug: "barco-no-douro",
-    date: "2026-01-17",
-    title: "Janeiro no Porto tem uma qualidade de luz",
+    date: "2026-02-17",
+    title: "Fevereiro no Porto tem uma qualidade de luz",
     excerpt: "Uma luz fria mas não hostil. Que não promete calor mas também não o nega.",
     body: [
       "Fui ao Douro cedo, antes dos turistas. O barco estava lá — amarrado a um cais de pedra, pintado de vermelho-escuro que já não era bem vermelho. A água refletia o céu branco com a perfeição dos dias sem vento.",
@@ -115,7 +115,7 @@ export const journal: JournalEntry[] = [
       "Há imagens que são sobre a ausência. Fiquei ali sem saber bem o que estava à espera — até perceber que não estava à espera de nada. Só a olhar.",
     ],
     photoSrc: barcoDouro,
-    photoTitle: "Barco ancorado no Douro, janeiro",
+    photoTitle: "Barco ancorado no Douro, fevereiro",
     relatedCategory: "urbanas",
   },
 ];
