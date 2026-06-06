@@ -318,14 +318,27 @@ function SobrePage() {
         <p className="font-mono-label text-copper mb-10">§ 10 — Neste momento</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-foreground/10 max-w-2xl">
           {[
-            { label: "a ler", nota: momento.aLer },
-            { label: "à escuta", nota: momento.aEscutar },
-            { label: "a fotografar", nota: momento.aFotografar },
-            { label: "a pensar em", nota: momento.aPensarEm },
+            { label: "a ler", nota: momento.aLer, url: momento.aLerUrl, linkLabel: "ver no Bertrand" },
+            { label: "à escuta", nota: momento.aEscutar, url: momento.aEscutarUrl, linkLabel: "abrir no Spotify" },
+            { label: "a fotografar", nota: momento.aFotografar, url: undefined, linkLabel: "" },
+            { label: "a pensar em", nota: momento.aPensarEm, url: undefined, linkLabel: "" },
           ].map((item) => (
             <div key={item.label} className="bg-background px-8 py-8">
               <p className="font-mono-label text-copper/50 text-[9px] tracking-[0.4em] uppercase mb-4">{item.label}</p>
               <p className="text-foreground/60 text-sm leading-relaxed">{item.nota}</p>
+              {item.url && (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-1.5 group"
+                >
+                  <span className="font-mono-label text-[8px] uppercase tracking-[0.38em] text-foreground/25 group-hover:text-copper transition-colors duration-300">
+                    {item.linkLabel}
+                  </span>
+                  <span className="text-foreground/20 group-hover:text-copper transition-colors duration-300 text-[9px]">→</span>
+                </a>
+              )}
             </div>
           ))}
         </div>

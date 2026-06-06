@@ -123,11 +123,13 @@ function SectionHeader({ label, children }: { label: string; children?: React.Re
 
 function MomentoSection({ password, initial }: {
   password: string;
-  initial: { aLer: string; aEscutar: string; aFotografar: string; aPensarEm: string };
+  initial: { aLer: string; aLerUrl?: string; aEscutar: string; aEscutarUrl?: string; aFotografar: string; aPensarEm: string };
 }) {
   const router = useRouter();
   const [aLer, setALer] = useState(initial.aLer);
+  const [aLerUrl, setALerUrl] = useState(initial.aLerUrl ?? "");
   const [aEscutar, setAEscutar] = useState(initial.aEscutar);
+  const [aEscutarUrl, setAEscutarUrl] = useState(initial.aEscutarUrl ?? "");
   const [aFotografar, setAFotografar] = useState(initial.aFotografar);
   const [aPensarEm, setAPensarEm] = useState(initial.aPensarEm);
   const [saving, setSaving] = useState(false);
@@ -138,7 +140,7 @@ function MomentoSection({ password, initial }: {
     e.preventDefault();
     setSaving(true); setErr(""); setOk(false);
     try {
-      await saveNesteMomento({ data: { password, aLer, aEscutar, aFotografar, aPensarEm } });
+      await saveNesteMomento({ data: { password, aLer, aLerUrl, aEscutar, aEscutarUrl, aFotografar, aPensarEm } });
       setOk(true); router.invalidate();
     } catch { setErr("Erro ao guardar."); }
     finally { setSaving(false); }
@@ -155,7 +157,9 @@ function MomentoSection({ password, initial }: {
       </SectionHeader>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="A ler" value={aLer} onChange={setALer} rows={3} />
+        <Field label="A ler — link (Bertrand ou outro)" value={aLerUrl} onChange={setALerUrl} rows={1} />
         <Field label="À escuta" value={aEscutar} onChange={setAEscutar} rows={3} />
+        <Field label="À escuta — link (Spotify ou outro)" value={aEscutarUrl} onChange={setAEscutarUrl} rows={1} />
         <Field label="A fotografar" value={aFotografar} onChange={setAFotografar} rows={3} />
         <Field label="A pensar em" value={aPensarEm} onChange={setAPensarEm} rows={3} />
       </div>
