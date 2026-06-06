@@ -91,7 +91,7 @@ function SobrePage() {
       <Fade className="px-6 md:px-12 max-w-6xl mx-auto">
         <div className="hover-zoom relative aspect-[16/9] overflow-hidden">
           <img src={portoRuaCalcada} alt="Rua ao entardecer, Porto" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">Porto · Jan 2026</div>
+          <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">Porto · Fev 2026</div>
         </div>
       </Fade>
 
@@ -154,7 +154,7 @@ function SobrePage() {
             <div className="hover-zoom relative aspect-[4/5] overflow-hidden">
               <img src={barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" />
             </div>
-            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Porto · Jan 2026</p>
+            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Porto · Fev 2026</p>
           </Fade>
         </div>
       </section>

@@ -63,9 +63,9 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
    Sala de revelação — torch effect
    ───────────────────────────────────────────── */
 const darkroomPool: { src: string; caption: string; location: string }[] = [
-  { src: mondegoFigura,    caption: "Parado no meio de tudo",                    location: "Mondego · Coimbra"    },
-  { src: portoRibeira,     caption: "Antes do vento",                            location: "Ribeira · Porto"      },
-  { src: farolPeniche,     caption: "Sentinela",                                 location: "Farol · Peniche"      },
+  { src: mondegoFigura,    caption: "Parado no meio de tudo",                    location: "Outense · Mondego"       },
+  { src: portoRibeira,     caption: "Antes do vento",                            location: "Ribeira · Porto"         },
+  { src: farolPeniche,     caption: "Sentinela",                                 location: "Farol · Figueira da Foz" },
   { src: arcoCoimbra,      caption: "O frio da pedra antiga",                    location: "Arco · Coimbra"       },
   { src: retratoSol,       caption: "Um pensamento por terminar",                location: "Retrato · exterior"   },
   { src: ribeiroMusgo,     caption: "O que existe só para quem se agacha",       location: "Ribeiro · interior"   },
