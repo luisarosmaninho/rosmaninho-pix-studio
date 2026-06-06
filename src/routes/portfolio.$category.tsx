@@ -154,8 +154,8 @@ function QuoteBlock({ text, source }: { text: string; source: string }) {
     <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }}
       transition={{ duration: 1.2, ease: "easeOut" }} className="py-28 md:py-36 px-6 text-center max-w-3xl mx-auto">
       <p className="font-italic-serif text-5xl text-copper mb-6">"</p>
-      <p className="font-display text-3xl md:text-4xl leading-[1.2] text-foreground/80">{text}</p>
-      <p className="font-mono-label text-foreground/35 mt-8 uppercase tracking-[0.3em]">— {source}</p>
+      <p className="font-display text-3xl md:text-4xl leading-[1.2] text-[#1c1612]/80">{text}</p>
+      <p className="font-mono-label text-[#1c1612]/35 mt-8 uppercase tracking-[0.3em]">— {source}</p>
     </motion.section>
   );
 }
@@ -257,13 +257,13 @@ function CategoryPage() {
           <div className="max-w-7xl mx-auto px-10 md:px-20 pt-12 pb-0">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
               className="flex flex-wrap gap-2 items-center">
-              <span className="font-mono-label text-[8px] uppercase tracking-[0.4em] text-foreground/30 mr-2">filtrar</span>
+              <span className="font-mono-label text-[8px] uppercase tracking-[0.4em] text-[#1c1612]/30 mr-2">filtrar</span>
               <button
                 onClick={() => setActiveCondition(null)}
                 className={`font-mono-label text-[9px] uppercase tracking-[0.32em] border px-3 py-1.5 transition-colors duration-200 ${
                   activeCondition === null
-                    ? "bg-foreground text-cream border-foreground"
-                    : "border-foreground/20 text-foreground/45 hover:border-foreground/50 hover:text-foreground/70"
+                    ? "bg-[#1c1612] text-[#f0ebe2] border-[#1c1612]"
+                    : "border-[#1c1612]/20 text-[#1c1612]/45 hover:border-[#1c1612]/50 hover:text-[#1c1612]/70"
                 }`}
               >
                 Todas ({pics.length})
@@ -278,8 +278,8 @@ function CategoryPage() {
                     onClick={() => setActiveCondition(activeCondition === cond ? null : cond)}
                     className={`font-mono-label text-[9px] uppercase tracking-[0.32em] border px-3 py-1.5 transition-colors duration-200 ${
                       activeCondition === cond
-                        ? "bg-foreground text-cream border-foreground"
-                        : "border-foreground/20 text-foreground/45 hover:border-foreground/50 hover:text-foreground/70"
+                        ? "bg-[#1c1612] text-[#f0ebe2] border-[#1c1612]"
+                        : "border-[#1c1612]/20 text-[#1c1612]/45 hover:border-[#1c1612]/50 hover:text-[#1c1612]/70"
                     }`}
                   >
                     {cond} ({count})
