@@ -94,6 +94,14 @@ export const Route = createFileRoute("/diario/")({
     meta: [
       { title: "Caderno de Matcha — Rosmaninho Fotografia" },
       { name: "description", content: "Escrevo aqui quando há uma pausa longa o suficiente — com uma chávena à frente. Notas sobre fotografias que fiz e sobre o que estava a sentir quando as fiz." },
+      { property: "og:title", content: "Caderno de Matcha — Rosmaninho Fotografia" },
+      { property: "og:description", content: "Notas sobre fotografias e o que estava a sentir quando as fiz. Por Luísa Rosmaninho." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rosmaninhofotografia.pt/diario" },
+      { property: "og:image", content: "https://rosmaninhofotografia.pt/og/diario.jpg" },
+      { property: "og:image:alt", content: "Caderno de Matcha — notas de fotografia por Luísa Rosmaninho" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://rosmaninhofotografia.pt/og/diario.jpg" },
     ],
     links: [
       { rel: "canonical", href: "https://rosmaninhofotografia.pt/diario" },

@@ -15,7 +15,16 @@ export const Route = createFileRoute("/diario/$slug")({
       meta: [
         { title: `${e?.title ?? "Diário"} — Rosmaninho Fotografia` },
         { name: "description", content: e?.excerpt ?? "" },
-        { property: "og:image", content: e?.photoSrc ?? "" },
+        { property: "og:title", content: `${e?.title ?? "Diário"} — Rosmaninho Fotografia` },
+        { property: "og:description", content: e?.excerpt ?? "" },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: `https://rosmaninhofotografia.pt/diario/${params.slug}` },
+        { property: "og:image", content: "https://rosmaninhofotografia.pt/og/diario.jpg" },
+        { property: "og:image:alt", content: `${e?.title ?? "Caderno de Matcha"} — Rosmaninho Fotografia` },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: `${e?.title ?? "Diário"} — Rosmaninho Fotografia` },
+        { name: "twitter:description", content: e?.excerpt ?? "" },
+        { name: "twitter:image", content: "https://rosmaninhofotografia.pt/og/diario.jpg" },
       ],
       links: [{ rel: "canonical", href: `https://rosmaninhofotografia.pt/diario/${params.slug}` }],
     };

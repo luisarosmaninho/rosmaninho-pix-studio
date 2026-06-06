@@ -40,10 +40,25 @@ export const Route = createFileRoute("/portfolio/$category")({
   },
   head: ({ params }) => {
     const cat = getCategory(params.category as CategorySlug);
+    const ogImages: Record<string, string> = {
+      natureza: "https://rosmaninhofotografia.pt/og/natureza.jpg",
+      urbanas: "https://rosmaninhofotografia.pt/og/urbanas.jpg",
+      retratos: "https://rosmaninhofotografia.pt/og/retratos.jpg",
+      iguarias: "https://rosmaninhofotografia.pt/og/iguarias.jpg",
+    };
+    const ogImage = ogImages[params.category] ?? "https://rosmaninhofotografia.pt/og/portfolio.jpg";
     return {
       meta: [
         { title: `${cat?.title ?? "Colecção"} — Rosmaninho Fotografia` },
         { name: "description", content: cat?.description ?? "" },
+        { property: "og:title", content: `${cat?.title ?? "Colecção"} — Rosmaninho Fotografia` },
+        { property: "og:description", content: cat?.description ?? "" },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `${BASE_URL}/portfolio/${params.category}` },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:alt", content: `${cat?.title ?? "Colecção"} — fotografia por Luísa Rosmaninho` },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: ogImage },
       ],
       links: [{ rel: "canonical", href: `${BASE_URL}/portfolio/${params.category}` }],
     };
