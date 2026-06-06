@@ -166,6 +166,9 @@ function FragmentosPage() {
         <p className="font-mono-label text-foreground/18 text-[9px] uppercase tracking-[0.48em]">
           fim dos fragmentos · {seriesData.reduce((a, s) => a + s.count, 0)} imagens · {seriesData.length} séries
         </p>
+        <p className="font-italic-serif text-[10px] text-foreground/10 mt-8 italic">
+          este arquivo tem mais uma camada — chega-se com palavras, não com cliques.
+        </p>
       </motion.div>
 
       <SiteFooter />

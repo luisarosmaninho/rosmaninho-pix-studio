@@ -739,6 +739,7 @@ function HomePage() {
           </p>
           <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
           <Whisper text="obrigada por ficares até aqui" delay={2.0} className="mt-6 justify-center" />
+          <Whisper text="há portas neste sítio que se abrem escrevendo — não clicando." delay={4.0} className="mt-3 justify-center" />
         </div>
       </Section>
 

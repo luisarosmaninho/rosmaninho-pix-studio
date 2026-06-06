@@ -530,6 +530,9 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} Rosmaninho Fotografia</p>
           <p>Feito com luz, café e paciência</p>
         </div>
+        <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/12 italic font-italic-serif lowercase text-center">
+          rosmarinus officinalis · algumas coisas encontram-se escrevendo, não procurando.
+        </p>
       </div>
     </footer>
   );

@@ -176,6 +176,7 @@ export const SOBRE_DEFAULTS: SobreConfig = {
     { titulo: "Matcha e escrita", texto: "O matcha tem um sabor que obriga a parar. Não consigo bebê-lo depressa. Talvez seja essa a razão pela qual o encomendo sempre que preciso de escrever algo que ainda não sei como começa." },
     { titulo: "Cidades sonhadas", texto: "Há cidades que já visitei nas fotografias de outras pessoas: Bergen, Bruges, Verona. Já conheço algumas ruas. Ainda não fui. Mas quando for, vai parecer um regresso." },
     { titulo: "Luz de novembro", texto: "Existe uma forma específica de luz às dezasseis horas de novembro que não acontece em mais nenhum mês. Já tentei descrever várias vezes. Não consigo. Por isso fotografo." },
+    { titulo: "Alecrim", texto: "Há um vaso de alecrim na janela que não me lembro de ter plantado. Cresce sem que eu precise de o chamar. Algumas coisas são assim — persistem sem atenção, aguardam sem pressa, aparecem quando menos se espera. Às vezes basta escrever o nome." },
   ],
   ritmos: [
     { quando: "Quando preciso de começar:", recurso: "café." },

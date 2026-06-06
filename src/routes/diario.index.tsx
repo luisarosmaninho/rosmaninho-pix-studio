@@ -266,6 +266,9 @@ function JournalIndex() {
           <p className="font-mono-label text-[9px] text-foreground/20 mt-8 uppercase tracking-[0.38em]">
             Coimbra · caderno de matcha · L.R.
           </p>
+          <p className="font-italic-serif text-[10px] text-foreground/10 mt-6 italic leading-relaxed max-w-xs">
+            nem tudo o que existe neste arquivo está numa página com link.
+          </p>
         </div>
       </motion.section>
 
