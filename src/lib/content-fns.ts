@@ -85,26 +85,82 @@ export const savePhotoMeta = createServerFn({ method: "POST" })
 // ── Journal ───────────────────────────────────────────────────────────────────
 
 export type JournalEntryEditable = Pick<JournalEntry, "slug" | "date" | "title" | "excerpt" | "body" | "photoTitle">;
-type JournalConfig = Record<string, Partial<JournalEntryEditable>>;
+
+type JournalFileConfig = {
+  overrides: Record<string, Partial<JournalEntryEditable>>;
+  newEntries: JournalEntry[];
+};
 
 const JOURNAL_CONFIG = path.join(process.cwd(), "journal-config.json");
 
+function readJournalConfig(): JournalFileConfig {
+  try {
+    const raw = JSON.parse(fs.readFileSync(JOURNAL_CONFIG, "utf-8")) as Record<string, unknown>;
+    if (raw && typeof raw.overrides === "object" && !Array.isArray(raw.overrides)) {
+      return {
+        overrides: (raw.overrides ?? {}) as Record<string, Partial<JournalEntryEditable>>,
+        newEntries: Array.isArray(raw.newEntries) ? (raw.newEntries as JournalEntry[]) : [],
+      };
+    }
+    // Migrate old flat format
+    return { overrides: raw as Record<string, Partial<JournalEntryEditable>>, newEntries: [] };
+  } catch {
+    return { overrides: {}, newEntries: [] };
+  }
+}
+
+const STATIC_SLUGS = new Set(staticJournal.map((e) => e.slug));
+
 export const getJournal = createServerFn({ method: "GET" }).handler((): JournalEntry[] => {
-  const overrides = readJson<JournalConfig>(JOURNAL_CONFIG, {});
-  return staticJournal.map((entry) => {
+  const { overrides, newEntries } = readJournalConfig();
+  const withOverrides = staticJournal.map((entry) => {
     const ov = overrides[entry.slug];
-    if (!ov) return entry;
-    return { ...entry, ...ov };
+    return ov ? { ...entry, ...ov } : entry;
   });
+  return [...withOverrides, ...newEntries].sort((a, b) => b.date.localeCompare(a.date));
+});
+
+export const getNewJournalEntries = createServerFn({ method: "GET" }).handler((): JournalEntry[] => {
+  return readJournalConfig().newEntries;
 });
 
 export const saveJournalEntry = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; slug: string; data: Partial<JournalEntryEditable> })
   .handler(({ data }) => {
     checkPassword(data.password);
-    const overrides = readJson<JournalConfig>(JOURNAL_CONFIG, {});
-    overrides[data.slug] = data.data;
-    writeJson(JOURNAL_CONFIG, overrides);
+    const cfg = readJournalConfig();
+    if (STATIC_SLUGS.has(data.slug)) {
+      cfg.overrides[data.slug] = data.data;
+    } else {
+      const idx = cfg.newEntries.findIndex((e) => e.slug === data.slug);
+      if (idx !== -1) {
+        cfg.newEntries[idx] = { ...cfg.newEntries[idx], ...data.data, slug: data.slug };
+      }
+    }
+    writeJson(JOURNAL_CONFIG, cfg);
+    return { ok: true };
+  });
+
+export const addNewJournalEntry = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; entry: JournalEntry })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const cfg = readJournalConfig();
+    const existing = cfg.newEntries.findIndex((e) => e.slug === data.entry.slug);
+    if (existing !== -1) throw new Error("Já existe uma entrada com este slug.");
+    if (STATIC_SLUGS.has(data.entry.slug)) throw new Error("Este slug já está em uso.");
+    cfg.newEntries.push(data.entry);
+    writeJson(JOURNAL_CONFIG, cfg);
+    return { ok: true };
+  });
+
+export const deleteNewJournalEntry = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; slug: string })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const cfg = readJournalConfig();
+    cfg.newEntries = cfg.newEntries.filter((e) => e.slug !== data.slug);
+    writeJson(JOURNAL_CONFIG, cfg);
     return { ok: true };
   });
 
