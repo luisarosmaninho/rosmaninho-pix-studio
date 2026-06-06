@@ -89,7 +89,6 @@ function SeriesBlock({ cat, index, count, visits }: { cat: Category; index: numb
         </Link>
 
         <div className={`flex flex-col justify-center px-8 md:px-14 lg:px-16 py-16 lg:py-20 ${isEven ? "lg:order-2" : "lg:order-1"}`}>
-          <p className="font-mono-label text-copper/60 text-[9px] uppercase tracking-[0.5em] mb-8">{cat.note}</p>
           <h2 className="font-display text-[clamp(3.5rem,7vw,6rem)] leading-[0.9] tracking-tight">
             {cat.title}<span className="font-italic-serif text-copper">.</span>
           </h2>
