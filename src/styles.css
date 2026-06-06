@@ -58,13 +58,50 @@ html.dark {
   --secondary:          oklch(0.18 0.025 38);
   --secondary-foreground: oklch(0.88 0.018 70);
   --muted:         oklch(0.18 0.025 38);
-  --muted-foreground: oklch(0.58 0.028 55);
+  --muted-foreground: oklch(0.65 0.030 58);
   --accent:        oklch(0.66 0.115 55);
   --accent-foreground: oklch(0.10 0.022 35);
   --destructive:   oklch(0.55 0.220 27);
-  --border:        oklch(0.88 0.018 70 / 12%);
-  --input:         oklch(0.88 0.018 70 / 18%);
+  --border:        oklch(0.88 0.018 70 / 14%);
+  --input:         oklch(0.88 0.018 70 / 20%);
   --ring:          oklch(0.66 0.115 55);
+}
+
+/*
+ * ── Correcções de modo escuro ────────────────────────────────────────────────
+ *
+ * Problema: --foreground mudou para creme claro em modo escuro.
+ * Isso quebra todas as secções, botões e overlays que usam bg-foreground
+ * como painel escuro (rodapé, hero, menu mobile, secções de sobre, etc.).
+ *
+ * Solução: sobrepor .bg-foreground para sempre manter o fundo escuro,
+ * mantendo ao mesmo tempo text-foreground a funcionar como texto claro.
+ * Overlays de imagem (from-foreground, bg-foreground/N) são corrigidos
+ * directamente nos ficheiros TSX com valores fixos.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/* Painéis escuros (footer, hero, secções inversas, menu mobile) mantêm fundo escuro */
+html.dark .bg-foreground {
+  background-color: oklch(0.14 0.026 36);
+}
+
+/* bg-cream em modo escuro = painel diferenciado ligeiramente mais claro que o fundo */
+html.dark .bg-cream {
+  background-color: oklch(0.15 0.022 38);
+}
+
+/* Menu mobile sempre escuro */
+html.dark .mobile-menu {
+  background: oklch(0.14 0.026 36);
+}
+
+/* Botão "Back to top" e outros traços decorativos bg-foreground/20 ficam visíveis */
+html.dark .bg-foreground\/20 {
+  background-color: oklch(0.88 0.018 70 / 12%);
+}
+html.dark .group:hover .bg-foreground\/10,
+html.dark .group-hover\:bg-foreground\/10:where(:hover, :focus-visible) {
+  background-color: oklch(0.88 0.018 70 / 6%);
 }
 
 :root {

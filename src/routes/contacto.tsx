@@ -193,7 +193,7 @@ function ContactoPage() {
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-foreground/20 via-foreground/50 to-foreground/80" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/55 to-black/82" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

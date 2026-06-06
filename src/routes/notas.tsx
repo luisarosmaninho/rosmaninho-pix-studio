@@ -147,7 +147,7 @@ function TagButton({
       onClick={onClick}
       className={`flex items-center gap-2 px-4 py-2 rounded-sm text-[10px] uppercase tracking-[0.28em] transition-all duration-300 border ${
         active
-          ? "border-foreground/30 bg-foreground text-background"
+          ? "border-foreground/30 bg-foreground text-cream"
           : "border-foreground/12 text-foreground/50 hover:text-foreground/80 hover:border-foreground/25"
       }`}
       style={active && colors ? { background: colors.bg, color: colors.dot, borderColor: colors.dot + "55" } : undefined}

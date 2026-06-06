@@ -62,7 +62,7 @@ function SeriesBlock({ cat, index, count }: { cat: Category; index: number; coun
               src={cover} alt={cat.title} loading="lazy"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/10 transition-colors duration-700" />
+            <div className="absolute inset-0 bg-black/25 group-hover:bg-black/12 transition-colors duration-700" />
             <div className="absolute top-6 left-6">
               <span className="font-mono-label text-cream/50 text-[9px] uppercase tracking-[0.45em]">
                 série {romanIdx} · {count} {count === 1 ? "fotografia" : "fotografias"}

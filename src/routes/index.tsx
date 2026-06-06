@@ -364,7 +364,7 @@ function HomePage() {
           animate={{ scale: 1 }}
           transition={{ duration: 3.4, ease: "easeOut" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/40 to-foreground/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85" />
 
         {/* Metadata superior */}
         <motion.div
@@ -533,7 +533,7 @@ function HomePage() {
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.04]"
                       />
                     )}
-                    <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/10 transition-colors duration-700" />
+                    <div className="absolute inset-0 bg-black/25 group-hover:bg-black/12 transition-colors duration-700" />
                     <div className="absolute top-5 left-5">
                       <span className="font-mono-label text-cream/50 text-[9px] uppercase tracking-[0.42em]">
                         0{i + 1} · {photosByCategory(c.slug).length} fotografias

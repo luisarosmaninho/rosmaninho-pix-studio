@@ -341,7 +341,7 @@ function SobrePage() {
           Se algo aqui te ficou, escreve. Não há formulários nem preços. Há uma conversa possível, sobre uma imagem ou um lugar.
         </p>
         <Link to="/contacto"
-          className="mt-12 inline-block bg-foreground text-cream px-10 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper transition-colors duration-500">
+          className="mt-12 inline-block border border-foreground/30 text-foreground px-10 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper hover:border-copper hover:text-cream transition-all duration-500">
           Escrever
         </Link>
       </motion.section>
