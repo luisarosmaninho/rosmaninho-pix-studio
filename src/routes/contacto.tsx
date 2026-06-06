@@ -6,6 +6,13 @@ import { z } from "zod";
 import { sendContactEmail } from "@/lib/contact-fn";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 
+const assuntoOpcoes = [
+  { value: "uma imagem",          label: "Uma imagem"          },
+  { value: "uma impressão",       label: "Uma impressão"       },
+  { value: "uma conversa",        label: "Uma conversa"        },
+  { value: "outra coisa",         label: "Outra coisa"         },
+];
+
 const notasPool = [
   "Respondo melhor à tarde. De manhã o silêncio ainda não acabou.",
   "Leio cada mensagem duas vezes antes de responder.",
@@ -40,6 +47,7 @@ export const Route = createFileRoute("/contacto")({
 const schema = z.object({
   nome: z.string().trim().min(2, "Diz-me o teu nome").max(100),
   email: z.string().trim().email("Email inválido").max(255),
+  assunto: z.string().optional(),
   mensagem: z.string().trim().min(10, "Conta-me um pouco mais").max(1500),
 });
 
@@ -48,10 +56,12 @@ function ContactoPage() {
   const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState("");
+  const [assunto, setAssunto] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    if (assunto) fd.set("assunto", assunto);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) {
       const errs: Record<string, string> = {};
@@ -135,6 +145,33 @@ function ContactoPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <Field label="Nome" name="nome" error={errors.nome} placeholder="o teu nome" />
                     <Field label="Email" name="email" type="email" error={errors.email} placeholder="o teu email" />
+                  </div>
+
+                  {/* Assunto — opcional */}
+                  <div className="flex flex-col gap-3">
+                    <label className="font-mono-label text-foreground/50">
+                      Sobre o quê?
+                      <span className="ml-2 text-foreground/25 normal-case tracking-normal" style={{ fontSize: "10px" }}>opcional</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {assuntoOpcoes.map((op) => {
+                        const active = assunto === op.value;
+                        return (
+                          <button
+                            key={op.value}
+                            type="button"
+                            onClick={() => setAssunto(active ? null : op.value)}
+                            className={`px-4 py-2 text-[10px] uppercase tracking-[0.28em] border transition-all duration-300 ${
+                              active
+                                ? "border-copper bg-copper/10 text-copper"
+                                : "border-foreground/15 text-foreground/40 hover:border-foreground/30 hover:text-foreground/70"
+                            }`}
+                          >
+                            {op.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-3">
