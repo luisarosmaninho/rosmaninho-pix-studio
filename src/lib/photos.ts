@@ -100,7 +100,7 @@ export const categories: Category[] = [
   {
     slug: "urbanas",
     title: "Urbanas",
-    description: "Ruas, pontes e telhados — a cidade enquanto matéria viva.",
+    description: "A cidade como coisa viva. Ruas, pontes, telhados — e tudo o que insiste em ficar.",
     cover: "porto-street",
     excerpt: "Há dias em que saio de casa sem qualquer plano. Levo a máquina fotográfica porque já aprendi que as melhores imagens raramente aparecem quando as procuramos diretamente.",
     intro: "Há dias em que saio de casa sem qualquer plano. Levo a máquina fotográfica porque já aprendi que as melhores imagens raramente aparecem quando as procuramos diretamente.",
@@ -118,7 +118,7 @@ export const categories: Category[] = [
   {
     slug: "natureza",
     title: "Natureza",
-    description: "Água, luz e paisagem — o tempo lento dos lugares.",
+    description: "Água, luz, paisagem. O tempo lento dos lugares que não têm pressa de nada.",
     cover: "sunset-beach",
     excerpt: "Nem sempre procuro a natureza. Muitas vezes é ela que me encontra.",
     intro: "Nem sempre procuro a natureza. Muitas vezes é ela que me encontra. Acontece quando decido parar junto ao rio durante mais alguns minutos. Quando a névoa demora a desaparecer.",
@@ -134,7 +134,7 @@ export const categories: Category[] = [
   {
     slug: "retratos",
     title: "Retratos",
-    description: "Rostos, presença e o instante em que alguém se revela.",
+    description: "Rostos, presença. O instante antes de alguém voltar a estar em guarda.",
     cover: "retrato-sol",
     excerpt: "Durante muito tempo tive receio de fotografar pessoas. As ruas não ficam nervosas. As árvores não se preocupam com a sua aparência.",
     intro: "Durante muito tempo tive receio de fotografar pessoas. As ruas não ficam nervosas. As árvores não se preocupam com a sua aparência. Os edifícios não perguntam se ficaram bem na fotografia.",
@@ -151,7 +151,7 @@ export const categories: Category[] = [
   {
     slug: "iguarias",
     title: "Iguarias",
-    description: "Mesas, texturas e o instante antes do primeiro garfo.",
+    description: "Mesas, texturas. O instante antes do primeiro garfo.",
     cover: "cafe-matcha",
     excerpt: "Sempre gostei de lugares onde as pessoas ficam mais tempo do que era necessário. Talvez seja por isso que gosto tanto de cafés. Talvez seja por isso que gosto tanto de matcha.",
     intro: "Sempre gostei de lugares onde as pessoas ficam mais tempo do que era necessário. Talvez seja por isso que gosto tanto de cafés. Talvez seja por isso que muitas das minhas fotografias nascem à volta de mesas.",

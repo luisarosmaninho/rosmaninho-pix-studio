@@ -218,14 +218,14 @@ function SobrePage() {
       <Fade className="px-6 md:px-12 py-28 max-w-6xl mx-auto">
         <p className="font-mono-label text-copper mb-8">§ 06 — O porquê</p>
         <p className="font-display text-4xl md:text-6xl leading-[1.05] mb-12 max-w-4xl">
-          A Rosmaninho Fotografia nasceu exactamente dessa vontade: criar algo <span className="font-italic-serif text-copper">íntimo</span>, artístico e emocional.
+          Nasceu de uma vontade simples: criar algo que se <span className="font-italic-serif text-copper">sinta</span> mais do que se veja.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl">
           <p className="text-foreground/68 leading-relaxed">
-            Um espaço onde a fotografia não serve apenas para mostrar como um momento parecia, mas principalmente como ele se <em>sentia</em>. Este sítio não é um portefólio comercial — é o lugar onde as séries vivem enquanto crescem.
+            A fotografia aqui não serve para mostrar como um momento parecia. Serve para guardar como ele se <em>sentia</em>. Este sítio não é um portefólio comercial — é o lugar onde as séries vivem enquanto crescem.
           </p>
           <p className="text-foreground/68 leading-relaxed">
-            No fundo, aquilo que procuro capturar é simples: emoções verdadeiras, momentos sinceros e memórias que continuam vivas muito depois do clique. O arquivo cresce devagar — que é a única velocidade que faz sentido.
+            O que procuro é simples. Momentos que continuam vivos muito depois do clique. O arquivo cresce devagar — que é a única velocidade que faz sentido.
           </p>
         </div>
       </Fade>
