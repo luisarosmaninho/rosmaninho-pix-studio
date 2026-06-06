@@ -1,9 +1,97 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { isNightInPortugal } from "@/lib/sun";
+import { isNightInPortugal, getSunTimes } from "@/lib/sun";
 import Lenis from "lenis";
 import logo from "@/assets/logo-rosmaninho.png";
+
+/* ── Informação solar ─────────────────────────────────────────────────────── */
+interface SunInfo {
+  isDark: boolean;
+  sunrise: string;
+  sunset: string;
+  nextLabel: string;   // "Amanhecer" | "Anoitecer"
+  nextTime: string;    // "HH:MM"
+  nextIn: string;      // "em Xh Ymin" | "em Ymin"
+}
+
+function useSunInfo(): SunInfo | null {
+  const [info, setInfo] = useState<SunInfo | null>(null);
+
+  useEffect(() => {
+    function compute() {
+      const now = new Date();
+      const t = getSunTimes(now);
+      const dark = isNightInPortugal();
+
+      const fmt = (d: Date) =>
+        d.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+
+      let next: Date;
+      let nextLabel: string;
+      if (dark) {
+        nextLabel = "Amanhecer";
+        next = t.sunrise;
+        if (next.getTime() <= now.getTime()) {
+          next = new Date(next.getTime() + 86_400_000);
+        }
+      } else {
+        nextLabel = "Anoitecer";
+        next = t.sunset;
+      }
+
+      const diffMs = next.getTime() - now.getTime();
+      const diffH  = Math.floor(diffMs / 3_600_000);
+      const diffM  = Math.floor((diffMs % 3_600_000) / 60_000);
+      const nextIn = diffH > 0 ? `em ${diffH}h ${diffM}min` : `em ${diffM}min`;
+
+      setInfo({
+        isDark: dark,
+        sunrise: fmt(t.sunrise),
+        sunset:  fmt(t.sunset),
+        nextLabel,
+        nextTime: fmt(next),
+        nextIn,
+      });
+    }
+
+    compute();
+    const id = setInterval(compute, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  return info;
+}
+
+/* ── Ícones SVG mínimos ───────────────────────────────────────────────────── */
+function MoonIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="10" height="10" viewBox="0 0 10 10"
+      fill="currentColor" aria-hidden="true">
+      <path d="M5 1.5A3.5 3.5 0 0 0 5 8.5 3 3 0 0 1 5 1.5z" />
+    </svg>
+  );
+}
+
+function SunIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="11" height="11" viewBox="0 0 11 11"
+      fill="currentColor" aria-hidden="true">
+      <circle cx="5.5" cy="5.5" r="1.7" />
+      {([0,45,90,135,180,225,270,315] as const).map((deg) => {
+        const r  = (deg * Math.PI) / 180;
+        const x1 = +(5.5 + Math.cos(r) * 2.7).toFixed(2);
+        const y1 = +(5.5 + Math.sin(r) * 2.7).toFixed(2);
+        const x2 = +(5.5 + Math.cos(r) * 3.9).toFixed(2);
+        const y2 = +(5.5 + Math.sin(r) * 3.9).toFixed(2);
+        return (
+          <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="currentColor" strokeWidth="0.7" strokeLinecap="round" />
+        );
+      })}
+    </svg>
+  );
+}
 
 /* ── Modo noturno automático (Portugal — nascer/pôr do sol real) ─────────── */
 export function NightMode() {
@@ -204,10 +292,11 @@ const navLinks = [
 export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const sunInfo = useSunInfo();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -217,17 +306,108 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
   }, [menuOpen]);
 
   const isOverlay = variant === "overlay" && !scrolled;
-  const headerBg = scrolled ? "bg-background/90 backdrop-blur-md border-b border-border" : isOverlay ? "bg-transparent" : "bg-background";
+  const headerBg = scrolled
+    ? "bg-background/95 backdrop-blur-md border-b border-border"
+    : isOverlay ? "bg-transparent" : "bg-background";
   const text = isOverlay ? "text-cream" : "text-foreground";
 
   return (
     <>
-      <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ${headerBg} ${text}`}>
+      <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-700 ${headerBg} ${text}`}>
         <div className="flex items-center justify-between px-6 md:px-12 py-5">
-          <Link to="/" className="flex items-baseline gap-3" style={{ color: "inherit" }} onClick={() => setMenuOpen(false)}>
-            <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
-            <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
-          </Link>
+
+          {/* ── Logo + easter egg lua/sol ── */}
+          <div className="relative group/logo">
+            <Link
+              to="/"
+              className="flex items-baseline gap-3"
+              style={{ color: "inherit" }}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
+              <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
+
+              {/* Ícone lunar/solar — aparece subtilmente ao hover */}
+              {sunInfo && (
+                <span
+                  className="hidden md:inline-flex items-center ml-2 opacity-0 group-hover/logo:opacity-35 transition-opacity duration-700 ease-in-out"
+                  aria-hidden="true"
+                >
+                  {sunInfo.isDark
+                    ? <MoonIcon />
+                    : <SunIcon />
+                  }
+                </span>
+              )}
+            </Link>
+
+            {/* Tooltip — visível só em desktop ao hover, CSS puro */}
+            {sunInfo && (
+              <div
+                className="
+                  absolute top-full left-0 mt-3 z-50
+                  hidden md:block pointer-events-none select-none
+                  opacity-0 translate-y-1.5
+                  group-hover/logo:opacity-100 group-hover/logo:translate-y-0
+                  transition-all duration-[380ms] ease-out
+                  delay-0 group-hover/logo:delay-[140ms]
+                "
+              >
+                <div
+                  className="px-5 py-4 text-cream min-w-[196px]"
+                  style={{
+                    backgroundColor: "oklch(0.14 0.026 36)",
+                    boxShadow: "0 12px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)",
+                  }}
+                >
+                  {/* Cabeçalho */}
+                  <p className="font-mono-label text-copper/55 text-[8px] uppercase tracking-[0.42em] mb-3.5 flex items-center gap-2">
+                    {sunInfo.isDark
+                      ? <MoonIcon className="text-copper/60" />
+                      : <SunIcon className="text-copper/60" />
+                    }
+                    {sunInfo.isDark ? "Modo Noturno" : "Modo Diurno"}
+                  </p>
+
+                  {/* Horas */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-8">
+                      <span className="font-mono-label text-cream/35 text-[9px] uppercase tracking-[0.18em]">
+                        Amanhecer
+                      </span>
+                      <span className="font-mono-label text-cream/75 text-[10px] tabular-nums">
+                        {sunInfo.sunrise}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-8">
+                      <span className="font-mono-label text-cream/35 text-[9px] uppercase tracking-[0.18em]">
+                        Anoitecer
+                      </span>
+                      <span className="font-mono-label text-cream/75 text-[10px] tabular-nums">
+                        {sunInfo.sunset}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Próxima mudança */}
+                  <div className="mt-3.5 pt-3 border-t border-cream/8">
+                    <p className="font-mono-label text-cream/28 text-[8px] uppercase tracking-[0.25em] mb-1">
+                      Próxima mudança · {sunInfo.nextLabel}
+                    </p>
+                    <p className="font-mono-label text-copper/65 text-[9px] tabular-nums">
+                      {sunInfo.nextTime}
+                      <span className="text-cream/35 ml-2">{sunInfo.nextIn}</span>
+                    </p>
+                  </div>
+
+                  {/* Coordenadas — rodapé discreto */}
+                  <p className="font-mono-label text-cream/18 text-[7.5px] tracking-[0.22em] mt-3.5">
+                    40°12′N · 8°25′O · Coimbra
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-[0.32em] uppercase">
