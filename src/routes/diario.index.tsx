@@ -216,7 +216,7 @@ function JournalIndex() {
 
                   {/* Imagem ao hover */}
                   <div className="hidden md:flex items-center shrink-0">
-                    <div className="w-16 h-24 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-700 translate-x-2 group-hover:translate-x-0">
+                    <div className="w-24 h-32 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-700 translate-x-3 group-hover:translate-x-0">
                       <img src={entry.photoSrc} alt="" loading="lazy" className="w-full h-full object-cover" />
                     </div>
                   </div>

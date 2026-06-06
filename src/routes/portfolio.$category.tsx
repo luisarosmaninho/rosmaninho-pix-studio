@@ -70,32 +70,6 @@ function NotFoundPage() {
   );
 }
 
-function RevealPhoto({ photo, onClick, className = "", loading = "lazy" }: {
-  photo: Photo; onClick: () => void; className?: string; loading?: "lazy" | "eager";
-}) {
-  const [revealed, setRevealed] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleEnter = () => { timer.current = setTimeout(() => setRevealed(true), 2200); };
-  const handleLeave = () => { if (timer.current) clearTimeout(timer.current); setRevealed(false); };
-
-  return (
-    <figure onClick={onClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave}
-      className={`group relative cursor-zoom-in overflow-hidden ${className}`}>
-      <img src={photo.src} alt={photo.title} loading={loading}
-        className="w-full h-full object-cover block transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]" />
-      <div className="absolute inset-x-0 bottom-0 px-6 py-5 bg-gradient-to-t from-black/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-        <p className="font-display text-xl text-cream">{photo.title}</p>
-        <p className="font-italic-serif text-cream/60 mt-1 text-sm italic">{photo.meta.description}</p>
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-[1200ms]" style={{ opacity: revealed ? 1 : 0 }}>
-        <div className="absolute inset-0 bg-black/40" />
-        <p className="relative font-display italic text-cream text-center text-2xl md:text-3xl px-10 leading-relaxed max-w-md">
-          "{photo.meta.description}"
-        </p>
-      </div>
-    </figure>
-  );
-}
 
 function Lightbox({ photos, index, onClose, onPrev, onNext }: {
   photos: Photo[]; index: number; onClose: () => void; onPrev: () => void; onNext: () => void;
@@ -144,6 +118,9 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }: {
       <div className="px-8 pb-8 shrink-0 text-center" onClick={(e) => e.stopPropagation()}>
         <p className="font-display text-2xl text-cream">{photo.title}</p>
         <p className="font-italic-serif text-cream/40 mt-3 text-sm italic">"{photo.meta.description}"</p>
+        {photo.meta.conditions && (
+          <p className="font-mono-label text-cream/22 mt-3 text-[9px] uppercase tracking-[0.35em]">{photo.meta.conditions}</p>
+        )}
       </div>
     </motion.div>
   );

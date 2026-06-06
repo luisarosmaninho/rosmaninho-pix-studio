@@ -168,6 +168,10 @@ function NotasPage() {
   const { notas } = Route.useLoaderData();
   const [activeTag, setActiveTag] = useState<Nota["tag"] | null>(null);
   const visible = activeTag ? notas.filter((n) => n.tag === activeTag) : notas;
+  const tagCounts = notas.reduce<Record<string, number>>((acc, n) => {
+    acc[n.tag] = (acc[n.tag] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -194,10 +198,10 @@ function NotasPage() {
           transition={{ duration: 1, delay: 0.4 }}
           className="mt-12 flex flex-wrap gap-2"
         >
-          <TagButton tag="all" label="Todas" active={activeTag === null} onClick={() => setActiveTag(null)} />
+          <TagButton tag="all" label={`Todas · ${notas.length}`} active={activeTag === null} onClick={() => setActiveTag(null)} />
           {tags.map((t) => (
             <TagButton
-              key={t.value} tag={t.value} label={t.label}
+              key={t.value} tag={t.value} label={`${t.label} · ${tagCounts[t.value] ?? 0}`}
               active={activeTag === t.value}
               onClick={() => setActiveTag(activeTag === t.value ? null : t.value)}
             />
