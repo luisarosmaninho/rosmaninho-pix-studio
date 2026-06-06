@@ -85,6 +85,8 @@ export type Category = {
 export type PhotoMeta = {
   description: string;
   conditions?: string;
+  date?: string;
+  location?: string;
 };
 
 export type Photo = {

@@ -51,8 +51,8 @@ export const saveCategoryTexts = createServerFn({ method: "POST" })
 
 // ── Photos meta ───────────────────────────────────────────────────────────────
 
-export type PhotoMetaOverride = { title: string; description: string; conditions: string };
-type PhotosMetaConfig = Record<string, PhotoMetaOverride>;
+export type PhotoMetaOverride = { title: string; description: string; conditions: string; date: string; location: string };
+type PhotosMetaConfig = Record<string, Partial<PhotoMetaOverride>>;
 
 const PHOTOS_META_CONFIG = path.join(process.cwd(), "photos-meta-config.json");
 
@@ -64,6 +64,8 @@ export type NewPhotoEntry = {
   orientation: "portrait" | "landscape" | "square";
   description: string;
   conditions: string;
+  date: string;
+  location: string;
 };
 
 const NEW_PHOTOS_CONFIG = path.join(process.cwd(), "new-photos-config.json");
@@ -87,6 +89,8 @@ export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): P
       meta: {
         description: ov.description ?? photo.meta.description,
         ...(ov.conditions ? { conditions: ov.conditions } : photo.meta.conditions ? { conditions: photo.meta.conditions } : {}),
+        ...(ov.date ? { date: ov.date } : {}),
+        ...(ov.location ? { location: ov.location } : {}),
       },
     };
   });
@@ -96,7 +100,12 @@ export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): P
     title: np.title,
     category: np.category as Photo["category"],
     orientation: (np.orientation ?? "landscape") as Photo["orientation"],
-    meta: { description: np.description, ...(np.conditions ? { conditions: np.conditions } : {}) },
+    meta: {
+      description: np.description,
+      ...(np.conditions ? { conditions: np.conditions } : {}),
+      ...(np.date ? { date: np.date } : {}),
+      ...(np.location ? { location: np.location } : {}),
+    },
   }));
   return [...staticWithMeta, ...newPhotos];
 });
@@ -106,19 +115,19 @@ export const getNewPhotos = createServerFn({ method: "GET" }).handler((): NewPho
 });
 
 export const savePhotoMeta = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string })
+  .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string; date: string; location: string })
   .handler(({ data }) => {
     checkPassword(data.password);
     const staticIds = new Set(staticPhotos.map((p) => p.id));
     if (staticIds.has(data.photoId)) {
       const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
-      overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions };
+      overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions, date: data.date, location: data.location };
       writeJson(PHOTOS_META_CONFIG, overrides);
     } else {
       const newPhotos = readNewPhotos();
       const idx = newPhotos.findIndex((p) => p.id === data.photoId);
       if (idx !== -1) {
-        newPhotos[idx] = { ...newPhotos[idx], title: data.title, description: data.description, conditions: data.conditions };
+        newPhotos[idx] = { ...newPhotos[idx], title: data.title, description: data.description, conditions: data.conditions, date: data.date, location: data.location };
         writeJson(NEW_PHOTOS_CONFIG, newPhotos);
       }
     }
@@ -147,7 +156,7 @@ export const deleteNewPhoto = createServerFn({ method: "POST" })
 
 // ── Journal ───────────────────────────────────────────────────────────────────
 
-export type JournalEntryEditable = Pick<JournalEntry, "slug" | "date" | "title" | "excerpt" | "body" | "photoTitle">;
+export type JournalEntryEditable = Pick<JournalEntry, "slug" | "date" | "location" | "title" | "excerpt" | "body" | "photoTitle">;
 
 type JournalFileConfig = {
   overrides: Record<string, Partial<JournalEntryEditable>>;

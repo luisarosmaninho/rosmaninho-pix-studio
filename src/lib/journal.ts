@@ -3,6 +3,7 @@ import type { CategorySlug } from "./photos";
 export type JournalEntry = {
   slug: string;
   date: string;
+  location?: string;
   title: string;
   excerpt: string;
   body: string[];

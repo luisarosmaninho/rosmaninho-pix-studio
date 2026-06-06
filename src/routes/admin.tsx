@@ -262,8 +262,8 @@ function SeriesSection({ password, initial }: { password: string; initial: Categ
 
 // ── Fotos section ─────────────────────────────────────────────────────────────
 
-type NewPhotoForm = { title: string; category: CategorySlug; orientation: "portrait" | "landscape" | "square"; src: string; description: string; conditions: string };
-const emptyPhotoForm = (): NewPhotoForm => ({ title: "", category: "urbanas", orientation: "landscape", src: "", description: "", conditions: "" });
+type NewPhotoForm = { title: string; category: CategorySlug; orientation: "portrait" | "landscape" | "square"; src: string; description: string; conditions: string; date: string; location: string };
+const emptyPhotoForm = (): NewPhotoForm => ({ title: "", category: "urbanas", orientation: "landscape", src: "", description: "", conditions: "", date: "", location: "" });
 
 function FotosSection({ password, initial, initialNewPhotos }: {
   password: string; initial: Photo[]; initialNewPhotos: NewPhotoEntry[];
@@ -274,9 +274,9 @@ function FotosSection({ password, initial, initialNewPhotos }: {
   const [showNewForm, setShowNewForm] = useState(false);
   const [newForm, setNewForm] = useState<NewPhotoForm>(emptyPhotoForm());
   const [newPhotoIds, setNewPhotoIds] = useState<Set<string>>(() => new Set(initialNewPhotos.map((p) => p.id)));
-  const [edits, setEdits] = useState<Record<string, { title: string; description: string; conditions: string }>>(() => {
-    const d: Record<string, { title: string; description: string; conditions: string }> = {};
-    initial.forEach((p) => { d[p.id] = { title: p.title, description: p.meta.description, conditions: p.meta.conditions ?? "" }; });
+  const [edits, setEdits] = useState<Record<string, { title: string; description: string; conditions: string; date: string; location: string }>>(() => {
+    const d: Record<string, { title: string; description: string; conditions: string; date: string; location: string }> = {};
+    initial.forEach((p) => { d[p.id] = { title: p.title, description: p.meta.description, conditions: p.meta.conditions ?? "", date: p.meta.date ?? "", location: p.meta.location ?? "" }; });
     return d;
   });
   const [saving, setSaving] = useState<string | null>(null);
@@ -311,7 +311,7 @@ function FotosSection({ password, initial, initialNewPhotos }: {
     const id = `foto-${Date.now()}`;
     try {
       await addNewPhoto({ data: { password, photo: { id, ...newForm } } });
-      setEdits((prev) => ({ ...prev, [id]: { title: newForm.title, description: newForm.description, conditions: newForm.conditions } }));
+      setEdits((prev) => ({ ...prev, [id]: { title: newForm.title, description: newForm.description, conditions: newForm.conditions, date: newForm.date, location: newForm.location } }));
       setNewPhotoIds((prev) => new Set([...prev, id]));
       setNewForm(emptyPhotoForm());
       setShowNewForm(false);
@@ -362,6 +362,10 @@ function FotosSection({ password, initial, initialNewPhotos }: {
             <Field label="URL da imagem * (endereço web da foto)" value={newForm.src} onChange={(v) => setNewForm((p) => ({ ...p, src: v }))}
               hint="Ex: https://... ou um caminho relativo" />
             <Field label="Descrição (texto revelado no hover)" value={newForm.description} onChange={(v) => setNewForm((p) => ({ ...p, description: v }))} rows={2} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="Data (ex: Março 2024 · Inverno 2023)" value={newForm.date} onChange={(v) => setNewForm((p) => ({ ...p, date: v }))} />
+              <Field label="Local (ex: Porto · Serra da Estrela)" value={newForm.location} onChange={(v) => setNewForm((p) => ({ ...p, location: v }))} />
+            </div>
             <Field label="Condições (ex: entardecer · luz rasante · inverno)" value={newForm.conditions} onChange={(v) => setNewForm((p) => ({ ...p, conditions: v }))} />
             {newForm.src && (
               <div className="space-y-1">
@@ -421,7 +425,11 @@ function FotosSection({ password, initial, initialNewPhotos }: {
                   <div className="pt-3 space-y-3">
                     <Field label="Título" value={e.title} onChange={(v) => updEdit(photo.id, "title", v)} />
                     <Field label="Descrição (texto revelado no hover)" value={e.description} onChange={(v) => updEdit(photo.id, "description", v)} rows={2} />
-                    <Field label="Condições (opcional, ex: entardecer · luz rasante · inverno)" value={e.conditions} onChange={(v) => updEdit(photo.id, "conditions", v)} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <Field label="Data (ex: Março 2024 · Inverno 2023)" value={e.date} onChange={(v) => updEdit(photo.id, "date", v)} />
+                      <Field label="Local (ex: Porto · Serra da Estrela)" value={e.location} onChange={(v) => updEdit(photo.id, "location", v)} />
+                    </div>
+                    <Field label="Condições (opcional, ex: entardecer · luz rasante)" value={e.conditions} onChange={(v) => updEdit(photo.id, "conditions", v)} />
                   </div>
                   <div className="flex items-center justify-between gap-3 pt-1">
                     <div>
@@ -471,14 +479,14 @@ const CAT_OPTIONS = [
 ];
 
 type EntryDraft = {
-  date: string; title: string; excerpt: string;
+  date: string; location: string; title: string; excerpt: string;
   body: string; photoSrc: string; photoTitle: string;
   relatedCategory: CategorySlug;
 };
 
 const emptyDraft = (): EntryDraft => ({
   date: new Date().toISOString().slice(0, 10),
-  title: "", excerpt: "", body: "",
+  location: "", title: "", excerpt: "", body: "",
   photoSrc: "", photoTitle: "",
   relatedCategory: "urbanas",
 });
@@ -511,6 +519,7 @@ function NewEntryForm({ password, onSaved, onCancel }: {
       const entry: JournalEntry = {
         slug: slug.trim(),
         date: d.date,
+        ...(d.location.trim() ? { location: d.location.trim() } : {}),
         title: d.title,
         excerpt: d.excerpt,
         body: d.body.split("\n\n").map((s) => s.trim()).filter(Boolean),
@@ -532,9 +541,10 @@ function NewEntryForm({ password, onSaved, onCancel }: {
         <button onClick={onCancel} className="text-white/30 hover:text-white text-lg leading-none transition-colors">×</button>
       </div>
       <form onSubmit={handleSave} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field label="Título *" value={d.title} onChange={(v) => upd("title", v)} />
           <Field label="Data * (AAAA-MM-DD)" value={d.date} onChange={(v) => upd("date", v)} mono />
+          <Field label="Local (ex: Coimbra · Porto)" value={d.location} onChange={(v) => upd("location", v)} />
         </div>
         <div className="space-y-1">
           <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Slug * (URL)</p>
@@ -585,11 +595,11 @@ function CadernoSection({ password, initial, initialNewSlugs }: {
   const [newSlugs, setNewSlugs] = useState<Set<string>>(initialNewSlugs);
   const [showNewForm, setShowNewForm] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [edits, setEdits] = useState<Record<string, { date: string; title: string; excerpt: string; body: string; photoTitle: string; photoSrc: string; relatedCategory: string }>>(() => {
-    const d: Record<string, { date: string; title: string; excerpt: string; body: string; photoTitle: string; photoSrc: string; relatedCategory: string }> = {};
+  const [edits, setEdits] = useState<Record<string, { date: string; location: string; title: string; excerpt: string; body: string; photoTitle: string; photoSrc: string; relatedCategory: string }>>(() => {
+    const d: Record<string, { date: string; location: string; title: string; excerpt: string; body: string; photoTitle: string; photoSrc: string; relatedCategory: string }> = {};
     initial.forEach((e) => {
       d[e.slug] = {
-        date: e.date, title: e.title, excerpt: e.excerpt,
+        date: e.date, location: e.location ?? "", title: e.title, excerpt: e.excerpt,
         body: e.body.join("\n\n"), photoTitle: e.photoTitle,
         photoSrc: e.photoSrc ?? "",
         relatedCategory: e.relatedCategory,
@@ -675,9 +685,10 @@ function CadernoSection({ password, initial, initialNewSlugs }: {
               </button>
               {isOpen && (
                 <div className="px-4 pb-5 space-y-3 border-t border-white/8 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <Field label="Título" value={e.title} onChange={(v) => setEdits((p) => ({ ...p, [entry.slug]: { ...p[entry.slug], title: v } }))} rows={2} />
                     <Field label="Data (AAAA-MM-DD)" value={e.date} onChange={(v) => setEdits((p) => ({ ...p, [entry.slug]: { ...p[entry.slug], date: v } }))} mono />
+                    <Field label="Local (ex: Coimbra · Porto · Serra da Estrela)" value={e.location} onChange={(v) => setEdits((p) => ({ ...p, [entry.slug]: { ...p[entry.slug], location: v } }))} />
                   </div>
                   <Field label="Excerto (resumo)" value={e.excerpt} onChange={(v) => setEdits((p) => ({ ...p, [entry.slug]: { ...p[entry.slug], excerpt: v } }))} rows={3} />
                   <Field label="Corpo (parágrafos separados por linha em branco)" value={e.body} onChange={(v) => setEdits((p) => ({ ...p, [entry.slug]: { ...p[entry.slug], body: v } }))} rows={12} />
