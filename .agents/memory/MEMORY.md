@@ -1,1 +1,2 @@
 - [Admin content architecture](admin-content-arch.md) — JSON override files (6 types) + server functions in content-fns.ts power the comprehensive /admin with 7 tabs.
+- [API endpoints in TanStack Start](api-endpoints-tanstack-start.md) — createAPIFileRoute doesn't exist; use Vite configureServer middleware for dev + server.ts interception for prod.

@@ -4,6 +4,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photosByCategory } from "@/lib/photos";
 import type { Category } from "@/lib/photos";
 import { getCategories } from "@/lib/content-fns";
+import { getVisitCounts } from "@/lib/visits-fns";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 import retratoSol from "@/assets/retrato-sol.jpg";
@@ -20,8 +21,11 @@ export const Route = createFileRoute("/portfolio/")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/portfolio" }],
   }),
   loader: async () => {
-    const categories = await getCategories();
-    return { categories };
+    const [categories, visitCounts] = await Promise.all([
+      getCategories(),
+      getVisitCounts(),
+    ]);
+    return { categories, visitCounts };
   },
   component: FragmentosPage,
 });
@@ -38,7 +42,7 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" as const } },
 };
 
-function SeriesBlock({ cat, index, count }: { cat: Category; index: number; count: number }) {
+function SeriesBlock({ cat, index, count, visits }: { cat: Category; index: number; count: number; visits: number }) {
   const isEven = index % 2 === 0;
   const cover = coverPhotos[cat.slug];
   const romanIdx = ["I", "II", "III", "IV"][index] ?? String(index + 1);
@@ -68,6 +72,13 @@ function SeriesBlock({ cat, index, count }: { cat: Category; index: number; coun
                 série {romanIdx} · {count} {count === 1 ? "fotografia" : "fotografias"}
               </span>
             </div>
+            {visits > 1 && (
+              <div className="absolute bottom-6 right-6">
+                <span className="font-mono-label text-cream/35 text-[8px] uppercase tracking-[0.4em]">
+                  {visits.toLocaleString("pt-PT")} visitas
+                </span>
+              </div>
+            )}
           </div>
         </Link>
 
@@ -100,8 +111,12 @@ function SeriesBlock({ cat, index, count }: { cat: Category; index: number; coun
 }
 
 function FragmentosPage() {
-  const { categories } = Route.useLoaderData();
-  const seriesData = categories.map((cat) => ({ cat, count: photosByCategory(cat.slug).length }));
+  const { categories, visitCounts } = Route.useLoaderData();
+  const seriesData = categories.map((cat) => ({
+    cat,
+    count: photosByCategory(cat.slug).length,
+    visits: visitCounts[cat.slug] ?? 0,
+  }));
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -132,8 +147,8 @@ function FragmentosPage() {
       </header>
 
       <main>
-        {seriesData.map(({ cat, count }, i) => (
-          <SeriesBlock key={cat.slug} cat={cat} index={i} count={count} />
+        {seriesData.map(({ cat, count, visits }, i) => (
+          <SeriesBlock key={cat.slug} cat={cat} index={i} count={count} visits={visits} />
         ))}
       </main>
 

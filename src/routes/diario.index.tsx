@@ -95,7 +95,10 @@ export const Route = createFileRoute("/diario/")({
       { title: "Caderno de Matcha — Rosmaninho Fotografia" },
       { name: "description", content: "Escrevo aqui quando há uma pausa longa o suficiente — com uma chávena à frente. Notas sobre fotografias que fiz e sobre o que estava a sentir quando as fiz." },
     ],
-    links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/diario" }],
+    links: [
+      { rel: "canonical", href: "https://rosmaninhofotografia.pt/diario" },
+      { rel: "alternate", type: "application/rss+xml", title: "Caderno de Matcha — RSS", href: "https://rosmaninhofotografia.pt/api/rss" },
+    ],
   }),
   loader: async () => {
     const journal = await getJournal();
@@ -152,6 +155,22 @@ function JournalIndex() {
               <p className="font-italic-serif text-foreground/25 text-xs italic">ao café, ao matcha, e às vezes a seco.</p>
             </div>
           </div>
+          <a
+            href="/api/rss"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 group"
+            title="Feed RSS do Caderno"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-copper/40 group-hover:text-copper transition-colors duration-300">
+              <circle cx="2" cy="10" r="1.5" fill="currentColor"/>
+              <path d="M1 6.5C3.48528 6.5 5.5 8.51472 5.5 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+              <path d="M1 2.5C5.69442 2.5 9.5 6.30558 9.5 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+            </svg>
+            <span className="font-mono-label text-[8px] uppercase tracking-[0.4em] text-foreground/25 group-hover:text-copper transition-colors duration-300">
+              feed rss
+            </span>
+          </a>
         </motion.div>
       </section>
 

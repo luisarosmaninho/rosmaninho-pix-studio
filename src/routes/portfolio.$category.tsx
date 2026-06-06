@@ -5,6 +5,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { getCategory, photosByCategory, categories as staticCategories, type CategorySlug, type Photo } from "@/lib/photos";
 import { getPhotoConfig } from "@/lib/photo-config-fns";
 import { getCategories, getPhotosWithMeta } from "@/lib/content-fns";
+import { incrementVisit } from "@/lib/visits-fns";
 
 const BASE_URL = "https://rosmaninhofotografia.pt";
 
@@ -14,10 +15,11 @@ export const Route = createFileRoute("/portfolio/$category")({
     if (!getCategory(params.category)) throw notFound();
   },
   loader: async ({ params }) => {
-    const [config, allCategories, allPhotosRaw] = await Promise.all([
+    const [config, allCategories, allPhotosRaw, visitResult] = await Promise.all([
       getPhotoConfig(),
       getCategories(),
       getPhotosWithMeta(),
+      incrementVisit({ data: { slug: params.category } }),
     ]);
     const cat = allCategories.find((c) => c.slug === params.category) ?? allCategories[0];
     const catPhotos = allPhotosRaw.filter((p) => p.category === params.category);
@@ -33,7 +35,8 @@ export const Route = createFileRoute("/portfolio/$category")({
       : catPhotos;
     const pics = ordered.filter((p) => !config.hidden.includes(p.id));
     const otherCats = allCategories.filter((c) => c.slug !== params.category);
-    return { config, cat, pics, otherCats };
+    const visitCount = visitResult.count;
+    return { config, cat, pics, otherCats, visitCount };
   },
   head: ({ params }) => {
     const cat = getCategory(params.category as CategorySlug);
@@ -157,16 +160,34 @@ function PrintCard({ photo, index, onOpen }: { photo: Photo; index: number; onOp
   );
 }
 
+function parseConditions(pics: Photo[]): string[] {
+  const all = new Set<string>();
+  for (const p of pics) {
+    if (!p.meta.conditions) continue;
+    for (const c of p.meta.conditions.split("·")) {
+      const trimmed = c.trim();
+      if (trimmed) all.add(trimmed);
+    }
+  }
+  return Array.from(all).sort();
+}
+
 function CategoryPage() {
   const { category } = Route.useParams();
-  const { cat, pics, otherCats } = Route.useLoaderData();
+  const { cat, pics, otherCats, visitCount } = Route.useLoaderData();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [activeCondition, setActiveCondition] = useState<string | null>(null);
+
+  const conditions = parseConditions(pics);
+  const filteredPics = activeCondition
+    ? pics.filter((p) => p.meta.conditions?.split("·").map((c) => c.trim()).includes(activeCondition))
+    : pics;
 
   const openLightbox = (i: number) => setLightboxIndex(i);
   const closeLightbox = () => setLightboxIndex(null);
   const prevPhoto = () => setLightboxIndex((i) => (i != null && i > 0 ? i - 1 : i));
-  const nextPhoto = () => setLightboxIndex((i) => (i != null && i < pics.length - 1 ? i + 1 : i));
-  const quoteAfterIndex = Math.floor(pics.length / 2);
+  const nextPhoto = () => setLightboxIndex((i) => (i != null && i < filteredPics.length - 1 ? i + 1 : i));
+  const quoteAfterIndex = Math.floor(filteredPics.length / 2);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -199,6 +220,11 @@ function CategoryPage() {
               <div className="flex justify-between font-mono-label text-cream/35 gap-8">
                 <span>Luísa Rosmaninho</span><span>Portugal</span>
               </div>
+              {visitCount > 1 && (
+                <div className="flex justify-between font-mono-label text-cream/25 gap-8">
+                  <span>{visitCount.toLocaleString("pt-PT")} visitas</span>
+                </div>
+              )}
               <div className="h-px bg-cream/15 w-full" />
               <p className="font-mono-label text-cream/25 text-[10px] leading-relaxed pt-1">{cat.note}</p>
             </motion.div>
@@ -207,29 +233,78 @@ function CategoryPage() {
       </section>
 
       <div className="bg-[#f0ebe2]">
+        {conditions.length > 0 && (
+          <div className="max-w-7xl mx-auto px-10 md:px-20 pt-12 pb-0">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+              className="flex flex-wrap gap-2 items-center">
+              <span className="font-mono-label text-[8px] uppercase tracking-[0.4em] text-foreground/30 mr-2">filtrar</span>
+              <button
+                onClick={() => setActiveCondition(null)}
+                className={`font-mono-label text-[9px] uppercase tracking-[0.32em] border px-3 py-1.5 transition-colors duration-200 ${
+                  activeCondition === null
+                    ? "bg-foreground text-cream border-foreground"
+                    : "border-foreground/20 text-foreground/45 hover:border-foreground/50 hover:text-foreground/70"
+                }`}
+              >
+                Todas ({pics.length})
+              </button>
+              {conditions.map((cond) => {
+                const count = pics.filter((p) =>
+                  p.meta.conditions?.split("·").map((c) => c.trim()).includes(cond)
+                ).length;
+                return (
+                  <button
+                    key={cond}
+                    onClick={() => setActiveCondition(activeCondition === cond ? null : cond)}
+                    className={`font-mono-label text-[9px] uppercase tracking-[0.32em] border px-3 py-1.5 transition-colors duration-200 ${
+                      activeCondition === cond
+                        ? "bg-foreground text-cream border-foreground"
+                        : "border-foreground/20 text-foreground/45 hover:border-foreground/50 hover:text-foreground/70"
+                    }`}
+                  >
+                    {cond} ({count})
+                  </button>
+                );
+              })}
+            </motion.div>
+          </div>
+        )}
+
         <div className="max-w-7xl mx-auto px-10 md:px-20 pt-24 pb-10">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
-            {pics.slice(0, quoteAfterIndex).map((photo, i) => (
-              <PrintCard key={photo.src} photo={photo} index={i} onOpen={openLightbox} />
-            ))}
+          <AnimatePresence mode="wait">
+            <motion.div key={activeCondition ?? "all-top"}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+              className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
+              {filteredPics.slice(0, quoteAfterIndex).map((photo, i) => (
+                <PrintCard key={photo.src} photo={photo} index={i} onOpen={openLightbox} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        {!activeCondition && (
+          <div className="max-w-3xl mx-auto">
+            <QuoteBlock text={cat.quote} source={cat.quoteSource} />
           </div>
-        </div>
-        <div className="max-w-3xl mx-auto">
-          <QuoteBlock text={cat.quote} source={cat.quoteSource} />
-        </div>
+        )}
         <div className="max-w-7xl mx-auto px-10 md:px-20 pt-6 pb-28">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
-            {pics.slice(quoteAfterIndex).map((photo, i) => (
-              <PrintCard key={photo.src} photo={photo} index={quoteAfterIndex + i} onOpen={openLightbox} />
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div key={activeCondition ?? "all-bot"}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+              className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-16" style={{ isolation: "isolate" }}>
+              {filteredPics.slice(quoteAfterIndex).map((photo, i) => (
+                <PrintCard key={photo.src} photo={photo} index={quoteAfterIndex + i} onOpen={openLightbox} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.4 }}
         className="text-center py-20 border-t border-border mt-16">
         <p className="font-mono-label text-foreground/25 uppercase tracking-[0.4em]">
-          fim da série · {cat.title.toLowerCase()} · {pics.length} fotografias
+          {activeCondition
+            ? `${filteredPics.length} fotografias · ${activeCondition}`
+            : `fim da série · ${cat.title.toLowerCase()} · ${pics.length} fotografias`}
         </p>
       </motion.div>
 
@@ -260,7 +335,7 @@ function CategoryPage() {
 
       <AnimatePresence>
         {lightboxIndex !== null && (
-          <Lightbox photos={pics} index={lightboxIndex} onClose={closeLightbox} onPrev={prevPhoto} onNext={nextPhoto} />
+          <Lightbox photos={filteredPics} index={lightboxIndex} onClose={closeLightbox} onPrev={prevPhoto} onNext={nextPhoto} />
         )}
       </AnimatePresence>
     </div>

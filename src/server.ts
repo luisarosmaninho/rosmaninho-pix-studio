@@ -1,7 +1,11 @@
 import "./lib/error-capture";
 
+import fs from "fs";
+import path from "path";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { journal as staticJournal } from "./lib/journal";
+import type { JournalEntry } from "./lib/journal";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -66,8 +70,72 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+// ── RSS Feed ───────────────────────────────────────────────────────────────────
+
+type JournalConfig = Record<string, Partial<JournalEntry>>;
+
+function buildRssFeed(): string {
+  const configPath = path.join(process.cwd(), "journal-config.json");
+  let overrides: JournalConfig = {};
+  try {
+    overrides = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+  } catch {
+    // no overrides file yet
+  }
+  const entries = staticJournal.map((entry) => {
+    const ov = overrides[entry.slug];
+    return ov ? { ...entry, ...ov } : entry;
+  });
+  const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
+  const BASE = "https://rosmaninhofotografia.pt";
+
+  const items = sorted
+    .map(
+      (e) => `    <item>
+      <title><![CDATA[${e.title}]]></title>
+      <link>${BASE}/diario/${e.slug}</link>
+      <guid isPermaLink="true">${BASE}/diario/${e.slug}</guid>
+      <pubDate>${new Date(e.date + "T12:00:00Z").toUTCString()}</pubDate>
+      <description><![CDATA[${e.excerpt}]]></description>
+    </item>`,
+    )
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Caderno de Matcha — Rosmaninho Fotografia</title>
+    <link>${BASE}/diario</link>
+    <description>Notas sobre fotografias e o que estava a sentir quando as fiz. Por Luísa Rosmaninho.</description>
+    <language>pt-PT</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="${BASE}/api/rss" rel="self" type="application/rss+xml"/>
+${items}
+  </channel>
+</rss>`;
+}
+
+function handleRss(): Response {
+  try {
+    return new Response(buildRssFeed(), {
+      headers: { "Content-Type": "application/rss+xml; charset=utf-8" },
+    });
+  } catch (err) {
+    console.error("RSS generation error:", err);
+    return new Response("RSS unavailable", { status: 500 });
+  }
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/rss") {
+      return handleRss();
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
