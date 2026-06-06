@@ -37,7 +37,7 @@ export const journal: JournalEntry[] = [
   {
     slug: "figura-no-mondego",
     date: "2026-04-12",
-    title: "Uma vez, havia uma figura no meio do Mondego",
+    title: "Uma vez, havia uma figura no rio, em Outense",
     excerpt: "Não estava a fazer nada que eu conseguisse perceber. Só estava. Água pelos joelhos, costas para mim.",
     body: [
       "Cheguei à margem com o sol ainda baixo. A água tinha a cor de chumbo de manhã cedo. Não esperava encontrar ninguém — essa é sempre a condição implícita dos lugares a esta hora.",
@@ -45,7 +45,7 @@ export const journal: JournalEntry[] = [
       "Depois guardei a câmara e fiquei a olhar também. Por uns minutos, fomos os dois a fazer o mesmo — estar no rio sem razão nenhuma. Não sei se ela me viu. Nunca olhou para trás.",
     ],
     photoSrc: mondegoFigura,
-    photoTitle: "Figura no Mondego, abril",
+    photoTitle: "Figura em Outense, abril",
     relatedCategory: "urbanas",
   },
   {
