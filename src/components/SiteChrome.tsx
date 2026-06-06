@@ -506,7 +506,7 @@ export function SiteFooter() {
           <div className="md:col-span-3 flex flex-col gap-3 text-sm">
             <p className="font-mono-label text-cream/40 mb-3">Contacto</p>
             <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper transition-colors">ola@rosmaninhofotografia.pt</a>
-            <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">Instagram · @luisarosmaninh</a>
+            <a href="https://instagram.com/luisarosmanih" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">Instagram · @luisarosmanih</a>
           </div>
         </div>
 

@@ -177,8 +177,8 @@ function ContactoPage() {
                 </div>
                 <div>
                   <p className="font-mono-label text-foreground/35 mb-1">Instagram</p>
-                  <a href="https://instagram.com/luisarosmaninh" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">
-                    @luisarosmaninh
+                  <a href="https://instagram.com/luisarosmanih" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">
+                    @luisarosmanih
                   </a>
                 </div>
               </div>
