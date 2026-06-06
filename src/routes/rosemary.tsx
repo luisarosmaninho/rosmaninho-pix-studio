@@ -13,64 +13,66 @@ export const Route = createFileRoute("/rosemary")({
 
 const SECTIONS = [
   {
-    heading: "SOBRE O OLHAR",
+    heading: "I — O QUE FICOU POR DIZER",
     body: [
-      "Sempre soube que pertenço mais ao mundo das histórias do que ao ritmo apressado que muita gente escolhe.",
-      "Sou tímida. Reservada. Observadora.",
-      "Sinto devagar. Amo devagar. Confio devagar.",
-      "Para algumas pessoas isso parece defeito.\nPara mim é simplesmente o meu ritmo.",
-      "O valor de alguém está no que não se vê — na forma como escuta, nos pequenos gestos, nos detalhes que passam despercebidos aos mais distraídos.",
-      "Já senti o peso daquele olhar que não vê, mas avalia. Aquela indiferença que dói mais do que um comentário. Aquele desprezo que nem sempre vem em palavras, mas que se sente no silêncio.",
-      "A minha estranheza — se assim se quiser chamar — está no meu interior. E isso não cabe numa primeira impressão.",
+      "Encontraste isto. Isso já diz algo de ti.",
+      "Há pessoas que passam pelo arquivo inteiro e não param para escutar o silêncio entre as imagens. Tu ficaste. Procuraste. Escreveste.",
+      "Por isso mereces o que está aqui dentro.",
     ],
   },
   {
-    heading: "SOBRE OS LUGARES",
+    heading: "II — SOBRE O RITMO",
     body: [
-      "Há lugares que me falam ao coração sem os ter visto.",
-      "A Irlanda — a magia verde.\nA Escócia — um poema escrito em pedra e nevoeiro.\nVerona — onde o romantismo se entranha nas paredes.\nBruges — encantadora demais para ser real.\nA Noruega — o silêncio da neve e a aurora boreal.",
-      "Viajar sem sair do lugar foi, durante muito tempo, a minha forma de fugir, de aprender, de viver um pouco mais.",
-      "Guardo-os dentro de mim até poder guardá-los numa imagem.",
+      "Não sou rápida. Nunca fui.",
+      "Sinto devagar, como quem deixa a fotografia revelar em câmara escura — sem pressa, sem certezas, esperando que a imagem apareça quando estiver pronta.",
+      "Durante muito tempo achei que isso era uma falha. Agora sei que é a única forma que conheço de fazer as coisas com verdade.",
+      "O mundo apressado não sabe o que perde por não esperar.",
     ],
   },
   {
-    heading: "SOBRE A MÚSICA",
+    heading: "III — SOBRE OS LUGARES QUE AINDA NÃO VI",
     body: [
-      "Tom Walker tem um jeito de cantar que me toca num lugar estranho e bonito. Como se dissesse aquilo que a minha voz ainda não achou coragem para dizer.",
-      "Música, para mim, não é som.\nÉ linguagem emocional.",
+      "A Irlanda existe dentro de mim em verde e chuva fina.\nA Escócia em pedra e nevoeiro que não se dissipa.\nVerona em varandas e cartas não enviadas.\nBruges em canais que reflectem uma luz que imagino dourada.",
+      "Já percorri estas cidades nas fotografias de outras pessoas, nas páginas de livros que ficaram dobrados em lugares errados, nas músicas que soam a chegada.",
+      "Quando for — e vou — vai parecer um regresso.",
+      "Guardar um lugar dentro de mim antes de o visitar é a coisa mais estranha e mais minha que faço.",
     ],
   },
   {
-    heading: "SOBRE OS LIVROS",
+    heading: "IV — SOBRE O QUE A LENTE NÃO ALCANÇA",
     body: [
-      "Desde pequena que encontro nos livros um lugar para respirar.",
-      "Guillaume Musso escreve de forma quase cinematográfica — deixo-me envolver como se cada livro fosse uma viagem emocional.",
-      "Harry Potter e O Senhor dos Anéis não são apenas ficção. São lições que cresceram comigo. O valor da amizade. O poder da esperança. A coragem de continuar quando tudo parece impossível.",
-      "São universos onde encontro conforto — e, curiosamente, respostas.",
+      "Há uma tensão antes do clique que não cabe em nenhuma imagem.",
+      "É a respiração suspensa. A decisão de ficar quieta mais um segundo. A consciência de que este momento específico — esta luz, esta sombra, este ar — nunca vai voltar exactamente assim.",
+      "Fotografo porque não confio na memória. Ela romanticiza, apaga, reescreve sem avisar.",
+      "A imagem não deixa. Fica onde a pus.",
     ],
   },
   {
-    heading: "SOBRE A FOTOGRAFIA",
+    heading: "V — SOBRE OS LIVROS E A MÚSICA",
     body: [
-      "Fotografar é capturar aquilo que passa depressa demais para a memória segurar.",
-      "É guardar sensações.\nÉ transformar segundos em algo eterno.",
-      "Através da lente compreendo o mundo de uma forma diferente — e talvez até me compreenda a mim.",
+      "Tom Walker canta como se soubesse de algo que eu ainda não disse em voz alta. Há artistas assim — que chegam antes das palavras.",
+      "Os livros são o sítio onde me escondo quando o mundo fica barulhento demais. Guillaume Musso, Tolkien, Rowling — não são apenas histórias. São arquitecturas onde aprendi que o invisível importa, que a amizade salva, que a coragem não é a ausência do medo.",
+      "Algumas noites o silêncio só é suportável com música a baixo volume e um livro que ainda não acabei.",
+      "Isso é o suficiente. Mais do que o suficiente.",
     ],
   },
   {
-    heading: "SOBRE O FUTURO",
+    heading: "VI — SOBRE AQUILO QUE AINDA QUERO",
     body: [
-      "Quero um caminho mais criativo, ligado à imagem, ao multimédia, à fotografia. Algo que faça sentido com o que sou, não apenas com o que a vida me pôs à frente.",
-      "Imagino-me no Porto ou em Aveiro. Uma pela vida vibrante, a outra pela calma e beleza delicada.",
-      "Quero construir algo meu.\nQuero sentir orgulho no meu trabalho.\nQuero crescer.",
+      "Quero trabalho que faça sentido com o que sou — não apenas com o que aprendi.",
+      "Quero fotografar sem justificar porquê. Quero construir algo que seja completamente meu, feito com as mãos e com a atenção e com o tempo que as coisas precisam.",
+      "Imagino-me algures entre o Porto e o mar. Talvez Aveiro. Talvez um sítio que ainda não existe no meu mapa.",
+      "Não sei o caminho exacto. Sei a direcção.",
     ],
   },
   {
-    heading: "SOBRE ISTO TUDO",
+    heading: "VII — PARA QUEM CHEGOU ATÉ AQUI",
     body: [
-      "Tudo isto faz parte de mim.",
-      "As minhas dúvidas, os meus gostos, os meus medos, os meus sonhos.",
-      "No fundo sou alguém que quer ser vista sem pressas.\nAlguém que precisa de tempo para sentir e tempo para confiar.\nAlguém que acredita profundamente que a superfície nunca mostra o essencial.",
+      "Este é o arquivo dentro do arquivo.",
+      "Não há fotografias aqui. Há apenas palavras — a matéria-prima antes da imagem, o que existe antes de eu pegar na câmara.",
+      "Se chegaste até aqui foi porque prestas atenção. E eu aprendi, devagar, que a atenção é a forma mais rara e mais generosa de amar alguma coisa.",
+      "Obrigada por isso.",
+      "Obrigada por escreveres.",
     ],
   },
 ];
@@ -81,93 +83,105 @@ function RosemaryPage() {
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "oklch(0.09 0.020 35)", color: "oklch(0.84 0.016 68)" }}
+      style={{ backgroundColor: "oklch(0.08 0.018 30)", color: "oklch(0.84 0.016 68)" }}
     >
-      {/* Close button */}
+      {/* Top bar */}
       <div className="fixed top-0 inset-x-0 z-50 flex justify-between items-center px-8 md:px-16 py-7">
         <span
           className="font-mono-label text-[9px] uppercase tracking-[0.45em]"
-          style={{ color: "oklch(0.50 0.030 55)" }}
+          style={{ color: "oklch(0.45 0.025 50)" }}
         >
-          § — arquivo interior
+          § — interior
         </span>
         <button
           onClick={() => router.history.back()}
           className="font-mono-label text-[9px] uppercase tracking-[0.45em] transition-colors duration-300"
-          style={{ color: "oklch(0.50 0.030 55)" }}
+          style={{ color: "oklch(0.45 0.025 50)" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "oklch(0.66 0.115 55)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "oklch(0.50 0.030 55)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "oklch(0.45 0.025 50)")}
         >
           ← fechar
         </button>
       </div>
 
       {/* Content */}
-      <main className="flex-1 max-w-[680px] mx-auto px-8 md:px-12 pt-36 pb-40 w-full">
+      <main className="flex-1 max-w-[660px] mx-auto px-8 md:px-12 pt-36 pb-48 w-full">
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <p
-            className="font-mono-label text-[9px] uppercase tracking-[0.5em] mb-10"
+            className="font-mono-label text-[9px] uppercase tracking-[0.55em] mb-12"
             style={{ color: "oklch(0.66 0.115 55)" }}
           >
-            reservado · não indexado
+            reservado · não indexado · encontrado
           </p>
           <h1
-            className="font-display leading-[1.05] mb-12"
+            className="font-display leading-[1.02] mb-14"
             style={{
-              fontSize: "clamp(2rem, 6vw, 3.8rem)",
-              color: "oklch(0.88 0.018 70)",
+              fontSize: "clamp(2.4rem, 7vw, 4.5rem)",
+              color: "oklch(0.90 0.018 72)",
+              letterSpacing: "-0.02em",
             }}
           >
-            § — O QUE NÃO<br />CABE NUMA<br />FOTOGRAFIA
+            O QUE NÃO<br />
+            CABE NUMA<br />
+            <span style={{ color: "oklch(0.66 0.115 55)", fontStyle: "italic" }}>FOTOGRAFIA.</span>
           </h1>
           <div
-            className="w-12 h-px mb-12"
-            style={{ backgroundColor: "oklch(0.66 0.115 55)", opacity: 0.6 }}
+            className="w-10 h-px mb-14"
+            style={{ backgroundColor: "oklch(0.66 0.115 55)", opacity: 0.5 }}
           />
-          <p
-            className="font-italic-serif leading-[1.7] mb-4"
-            style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.35rem)", color: "oklch(0.80 0.016 68)" }}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2.2, delay: 0.6 }}
+            className="font-italic-serif leading-[1.75] mb-4"
+            style={{ fontSize: "clamp(1.15rem, 2.8vw, 1.42rem)", color: "oklch(0.78 0.015 65)" }}
           >
-            Há pensamentos que ficam.
-          </p>
-          <p
-            className="font-italic-serif leading-[1.7] mb-20"
-            style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.35rem)", color: "oklch(0.80 0.016 68)" }}
+            Há lugares que só existem em palavras.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2.2, delay: 1.1 }}
+            className="font-italic-serif leading-[1.75] mb-24"
+            style={{ fontSize: "clamp(1.15rem, 2.8vw, 1.42rem)", color: "oklch(0.78 0.015 65)" }}
           >
-            Hóspedes teimosos que se recusam a ir embora.
-          </p>
+            Este é um deles.
+          </motion.p>
         </motion.div>
 
         {/* Sections */}
         {SECTIONS.map((section, si) => (
           <motion.section
             key={section.heading}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.15 + si * 0.1, ease: "easeOut" }}
-            className="mb-20"
+            transition={{ duration: 1.4, delay: 0.8 + si * 0.14, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-24"
           >
             <p
-              className="font-mono-label text-[9px] uppercase tracking-[0.5em] mb-8"
+              className="font-mono-label text-[8px] uppercase tracking-[0.55em] mb-8"
               style={{ color: "oklch(0.66 0.115 55)" }}
             >
               {section.heading}
             </p>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-7">
               {section.body.map((paragraph, pi) => (
                 <p
                   key={pi}
-                  className="leading-[1.8]"
+                  className="leading-[1.9]"
                   style={{
-                    fontSize: "clamp(0.95rem, 2vw, 1.05rem)",
-                    color: "oklch(0.76 0.014 65)",
+                    fontSize: "clamp(0.96rem, 2vw, 1.08rem)",
+                    color: pi === 0 && si === 0
+                      ? "oklch(0.88 0.018 70)"
+                      : "oklch(0.70 0.013 62)",
                     whiteSpace: "pre-line",
+                    fontWeight: pi === 0 && si === 0 ? "500" : "normal",
                   }}
                 >
                   {paragraph}
@@ -177,25 +191,31 @@ function RosemaryPage() {
           </motion.section>
         ))}
 
-        {/* Footer mark */}
+        {/* Closing mark */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 1.2 }}
-          className="pt-16 border-t"
-          style={{ borderColor: "oklch(0.88 0.018 70 / 8%)" }}
+          transition={{ duration: 2, delay: 2.2 }}
+          className="pt-20 border-t"
+          style={{ borderColor: "oklch(0.88 0.018 70 / 6%)" }}
         >
           <p
-            className="font-italic-serif text-2xl mb-3"
+            className="font-italic-serif text-2xl md:text-3xl mb-4"
             style={{ color: "oklch(0.66 0.115 55)" }}
           >
             L. Rosmaninho
           </p>
           <p
             className="font-mono-label text-[9px] uppercase tracking-[0.45em]"
-            style={{ color: "oklch(0.40 0.020 50)" }}
+            style={{ color: "oklch(0.35 0.015 45)" }}
           >
-            Coimbra · Portugal · 40°12'N
+            Coimbra · 40°12′N · 8°25′O
+          </p>
+          <p
+            className="font-italic-serif text-[11px] mt-8 italic"
+            style={{ color: "oklch(0.30 0.012 45)" }}
+          >
+            rosmarinus officinalis — persistência, memória, retorno.
           </p>
         </motion.div>
       </main>
