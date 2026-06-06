@@ -172,9 +172,8 @@ function PrintCard({ photo, index, onOpen }: { photo: Photo; index: number; onOp
       onClick={() => onOpen(index)} className="relative cursor-zoom-in">
       <div className="bg-white pt-3 px-3 pb-8 shadow-[0_8px_32px_rgba(0,0,0,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.28)] transition-shadow duration-300">
         <img src={photo.src} alt={photo.title} loading="lazy" className="w-full aspect-[4/3] object-cover block" />
-        <div className="absolute bottom-2.5 left-4 flex items-center gap-3">
+        <div className="absolute bottom-2.5 left-4">
           <span className="font-mono text-[8px] text-neutral-400 tracking-[0.28em]">{String(index + 1).padStart(2, "0")}</span>
-          <span className="font-mono text-[8px] text-neutral-300 tracking-[0.18em] truncate max-w-[140px]">{photo.title.toUpperCase()}</span>
         </div>
       </div>
     </motion.div>

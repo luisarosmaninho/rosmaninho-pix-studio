@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { getJournalEntry } from "@/lib/journal";
 import { getJournal } from "@/lib/content-fns";
@@ -71,6 +72,7 @@ function EntryPage() {
   const { slug } = Route.useParams();
   const { journal } = Route.useLoaderData();
   const entry = journal.find((e) => e.slug === slug) ?? journal[0];
+  const [photoRevealed, setPhotoRevealed] = useState(false);
   const sorted = [...journal].sort((a, b) => b.date.localeCompare(a.date));
   const currentIdx = sorted.findIndex((e) => e.slug === slug);
   const olderEntry = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
@@ -147,15 +149,51 @@ function EntryPage() {
             </div>
           </Fade>
 
-          {/* Imagem */}
+          {/* Imagem — revelada ao clicar */}
           <Fade delay={0.1} className="mb-16">
             <figure>
-              <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-                <img src={entry.photoSrc} alt={entry.photoTitle} className="w-full h-full object-cover" />
+              <div className="aspect-[16/9] md:aspect-[21/9] relative overflow-hidden bg-foreground/[0.04] cursor-pointer group"
+                onClick={() => setPhotoRevealed(true)}>
+
+                {/* Placeholder — visível antes de clicar */}
+                <AnimatePresence>
+                  {!photoRevealed && (
+                    <motion.div
+                      key="placeholder"
+                      initial={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.6 }}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10"
+                    >
+                      <span className="font-mono-label text-[9px] uppercase tracking-[0.38em] text-foreground/25 group-hover:text-copper transition-colors duration-500">
+                        ver fotografia
+                      </span>
+                      <span className="block w-6 h-px bg-foreground/15 group-hover:bg-copper/40 transition-colors duration-500" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Foto — aparece ao clicar */}
+                <AnimatePresence>
+                  {photoRevealed && (
+                    <motion.img
+                      key="photo"
+                      src={entry.photoSrc}
+                      alt={entry.photoTitle}
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 1.1, ease: "easeOut" }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                </AnimatePresence>
               </div>
+
               <div className="max-w-6xl mx-auto px-6 md:px-12 mt-4 flex gap-6 md:gap-10">
                 <div className="shrink-0 w-16 md:w-24 border-r border-foreground/8" />
-                <figcaption className="font-mono-label text-foreground/22 text-[10px] italic">{entry.photoTitle}</figcaption>
+                <figcaption className="font-mono-label text-foreground/22 text-[10px] italic">
+                  {photoRevealed ? entry.photoTitle : <span className="text-foreground/12">——</span>}
+                </figcaption>
               </div>
             </figure>
           </Fade>
