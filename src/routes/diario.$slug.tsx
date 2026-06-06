@@ -117,7 +117,7 @@ function EntryPage() {
           className="max-w-6xl mx-auto px-6 md:px-12 pb-16">
           <div className="flex gap-6 md:gap-10">
             <div className="shrink-0 w-16 md:w-24 border-r border-foreground/8" />
-            <p className="font-italic-serif text-xl md:text-3xl leading-[1.6] text-foreground/55 max-w-2xl">
+            <p className="font-italic-serif text-2xl md:text-4xl leading-[1.45] text-foreground/55 max-w-2xl">
               {entry.excerpt}
             </p>
           </div>
@@ -139,9 +139,9 @@ function EntryPage() {
               <div className="shrink-0 w-16 md:w-24 border-r border-foreground/8 pr-4 text-right select-none pt-1">
                 <span className="font-mono-label text-[8px] text-foreground/15">p.1</span>
               </div>
-              <div className="flex-1 max-w-xl space-y-8">
+              <div className="flex-1 max-w-2xl space-y-8">
                 {entry.body.slice(0, 1).map((p, i) => (
-                  <p key={i} className="body-text text-base md:text-lg leading-[2.06] text-foreground/75">{p}</p>
+                  <p key={i} className="body-text text-xl md:text-2xl leading-[1.85] text-foreground/75">{p}</p>
                 ))}
               </div>
             </div>
@@ -181,10 +181,10 @@ function EntryPage() {
                   <span className="font-mono-label text-[8px] text-foreground/15">p.2</span>
                 )}
               </div>
-              <div className="flex-1 max-w-xl space-y-10 pb-24">
+              <div className="flex-1 max-w-2xl space-y-10 pb-24">
                 {entry.body.slice(1).map((p, i) => (
                   <Fade key={i}>
-                    <p className="body-text text-base md:text-lg leading-[2.06] text-foreground/75">{p}</p>
+                    <p className="body-text text-xl md:text-2xl leading-[1.85] text-foreground/75">{p}</p>
                   </Fade>
                 ))}
                 <Fade delay={0.1}>
