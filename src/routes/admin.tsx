@@ -5,11 +5,11 @@ import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/phot
 import { getNesteMomento, saveNesteMomento } from "@/lib/momento-fns";
 import {
   getCategories, saveCategoryTexts,
-  getPhotosWithMeta, savePhotoMeta,
+  getPhotosWithMeta, savePhotoMeta, getNewPhotos, addNewPhoto, deleteNewPhoto,
   getJournal, getNewJournalEntries, saveJournalEntry, addNewJournalEntry, deleteNewJournalEntry,
   getNotas, saveNotas,
   getSobreTexts, saveSobreTexts,
-  type SobreConfig,
+  type SobreConfig, type NewPhotoEntry,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -18,17 +18,18 @@ import type { Category } from "@/lib/photos";
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const [config, momento, categories, photosWithMeta, journalEntries, newJournalEntries, notasList, sobreTexts] = await Promise.all([
+    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts] = await Promise.all([
       getPhotoConfig(),
       getNesteMomento(),
       getCategories(),
       getPhotosWithMeta(),
+      getNewPhotos(),
       getJournal(),
       getNewJournalEntries(),
       getNotas(),
       getSobreTexts(),
     ]);
-    return { config, momento, categories, photosWithMeta, journalEntries, newJournalEntries, notasList, sobreTexts };
+    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts };
   },
   component: AdminPage,
 });
@@ -261,10 +262,18 @@ function SeriesSection({ password, initial }: { password: string; initial: Categ
 
 // ── Fotos section ─────────────────────────────────────────────────────────────
 
-function FotosSection({ password, initial }: { password: string; initial: Photo[] }) {
+type NewPhotoForm = { title: string; category: CategorySlug; orientation: "portrait" | "landscape" | "square"; src: string; description: string; conditions: string };
+const emptyPhotoForm = (): NewPhotoForm => ({ title: "", category: "urbanas", orientation: "landscape", src: "", description: "", conditions: "" });
+
+function FotosSection({ password, initial, initialNewPhotos }: {
+  password: string; initial: Photo[]; initialNewPhotos: NewPhotoEntry[];
+}) {
   const router = useRouter();
   const [filter, setFilter] = useState<CategorySlug | "all">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [showNewForm, setShowNewForm] = useState(false);
+  const [newForm, setNewForm] = useState<NewPhotoForm>(emptyPhotoForm());
+  const [newPhotoIds, setNewPhotoIds] = useState<Set<string>>(() => new Set(initialNewPhotos.map((p) => p.id)));
   const [edits, setEdits] = useState<Record<string, { title: string; description: string; conditions: string }>>(() => {
     const d: Record<string, { title: string; description: string; conditions: string }> = {};
     initial.forEach((p) => { d[p.id] = { title: p.title, description: p.meta.description, conditions: p.meta.conditions ?? "" }; });
@@ -272,9 +281,17 @@ function FotosSection({ password, initial }: { password: string; initial: Photo[
   });
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [addSaving, setAddSaving] = useState(false);
+  const [addErr, setAddErr] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const visible = filter === "all" ? initial : initial.filter((p) => p.category === filter);
   const catLabel: Record<CategorySlug, string> = { urbanas: "Urbanas", natureza: "Natureza", retratos: "Retratos", iguarias: "Iguarias" };
+
+  function updEdit(photoId: string, field: string, val: string) {
+    setEdits((prev) => ({ ...prev, [photoId]: { ...prev[photoId], [field]: val } }));
+    setSaved(null);
+  }
 
   async function save(photoId: string) {
     const e = edits[photoId];
@@ -286,10 +303,88 @@ function FotosSection({ password, initial }: { password: string; initial: Photo[
     finally { setSaving(null); }
   }
 
+  async function handleAddPhoto(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newForm.title.trim()) { setAddErr("O título é obrigatório."); return; }
+    if (!newForm.src.trim()) { setAddErr("O URL da imagem é obrigatório."); return; }
+    setAddSaving(true); setAddErr("");
+    const id = `foto-${Date.now()}`;
+    try {
+      await addNewPhoto({ data: { password, photo: { id, ...newForm } } });
+      setEdits((prev) => ({ ...prev, [id]: { title: newForm.title, description: newForm.description, conditions: newForm.conditions } }));
+      setNewPhotoIds((prev) => new Set([...prev, id]));
+      setNewForm(emptyPhotoForm());
+      setShowNewForm(false);
+      router.invalidate();
+    } catch (err: unknown) { setAddErr(err instanceof Error ? err.message : "Erro ao adicionar."); }
+    finally { setAddSaving(false); }
+  }
+
+  async function handleDelete(photoId: string) {
+    if (!confirm(`Apagar a foto "${edits[photoId]?.title}"?`)) return;
+    setDeleting(photoId);
+    try {
+      await deleteNewPhoto({ data: { password, photoId } });
+      setNewPhotoIds((prev) => { const s = new Set(prev); s.delete(photoId); return s; });
+      router.invalidate();
+    } catch { alert("Erro ao apagar."); }
+    finally { setDeleting(null); }
+  }
+
   return (
     <div className="max-w-4xl">
-      <SectionHeader label="Fotos — títulos e descrições" />
-      <div className="flex gap-2 mb-8 flex-wrap">
+      <SectionHeader label="Fotos — títulos e descrições">
+        <div className="flex items-center gap-4">
+          <p className="font-mono text-[9px] text-white/25 uppercase tracking-widest">{initial.length} fotos</p>
+          <button onClick={() => setShowNewForm(true)}
+            className="bg-white text-black text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 transition-colors">
+            + Nova foto
+          </button>
+        </div>
+      </SectionHeader>
+
+      {/* New photo form */}
+      {showNewForm && (
+        <div className="bg-white/4 border border-white/20 p-6 mb-6">
+          <div className="flex items-center justify-between mb-5">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-white/60">Nova foto</p>
+            <button onClick={() => { setShowNewForm(false); setAddErr(""); setNewForm(emptyPhotoForm()); }}
+              className="text-white/30 hover:text-white text-lg leading-none transition-colors">×</button>
+          </div>
+          <form onSubmit={handleAddPhoto} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Field label="Título *" value={newForm.title} onChange={(v) => setNewForm((p) => ({ ...p, title: v }))} />
+              <SelectField label="Categoria *" value={newForm.category} onChange={(v) => setNewForm((p) => ({ ...p, category: v as CategorySlug }))}
+                options={CAT_OPTIONS} />
+              <SelectField label="Orientação" value={newForm.orientation} onChange={(v) => setNewForm((p) => ({ ...p, orientation: v as NewPhotoForm["orientation"] }))}
+                options={[{ value: "landscape", label: "Horizontal" }, { value: "portrait", label: "Vertical" }, { value: "square", label: "Quadrada" }]} />
+            </div>
+            <Field label="URL da imagem * (endereço web da foto)" value={newForm.src} onChange={(v) => setNewForm((p) => ({ ...p, src: v }))}
+              hint="Ex: https://... ou um caminho relativo" />
+            <Field label="Descrição (texto revelado no hover)" value={newForm.description} onChange={(v) => setNewForm((p) => ({ ...p, description: v }))} rows={2} />
+            <Field label="Condições (ex: entardecer · luz rasante · inverno)" value={newForm.conditions} onChange={(v) => setNewForm((p) => ({ ...p, conditions: v }))} />
+            {newForm.src && (
+              <div className="space-y-1">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Pré-visualização</p>
+                <img src={newForm.src} alt="" className="h-32 object-cover grayscale" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+              </div>
+            )}
+            {addErr && <p className="text-red-400 text-xs">{addErr}</p>}
+            <div className="flex items-center justify-end gap-4 pt-2 border-t border-white/8">
+              <button type="button" onClick={() => { setShowNewForm(false); setAddErr(""); setNewForm(emptyPhotoForm()); }}
+                className="font-mono text-[10px] text-white/40 hover:text-white uppercase tracking-widest transition-colors">
+                Cancelar
+              </button>
+              <button type="submit" disabled={addSaving}
+                className="bg-white text-black text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 transition-colors disabled:opacity-50">
+                {addSaving ? "A adicionar…" : "Adicionar foto"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="flex gap-2 mb-6 flex-wrap">
         {([["all", "Todas"], ["urbanas", "Urbanas"], ["natureza", "Natureza"], ["retratos", "Retratos"], ["iguarias", "Iguarias"]] as [string, string][]).map(([v, l]) => (
           <button key={v} onClick={() => setFilter(v as CategorySlug | "all")}
             className={`font-mono text-[10px] uppercase tracking-widest border px-4 py-1.5 transition-colors ${filter === v ? "bg-white text-black border-white" : "border-white/20 text-white/50 hover:border-white/40"}`}>
@@ -304,13 +399,19 @@ function FotosSection({ password, initial }: { password: string; initial: Photo[
           const e = edits[photo.id];
           const isSaving = saving === photo.id;
           const isSaved = saved === photo.id;
+          const isNew = newPhotoIds.has(photo.id);
+          const isDeleting = deleting === photo.id;
+          if (!e) return null;
           return (
-            <div key={photo.id} className="bg-white/4 border border-white/6">
+            <div key={photo.id} className={`bg-white/4 border ${isNew ? "border-white/15" : "border-white/6"}`}>
               <button type="button" onClick={() => setExpanded(isOpen ? null : photo.id)}
                 className="w-full flex items-center gap-4 px-4 py-3 text-left hover:bg-white/6 transition-colors">
-                <img src={photo.src} alt="" className="w-14 h-10 object-cover shrink-0 grayscale" />
+                <img src={photo.src} alt="" className="w-14 h-10 object-cover shrink-0 grayscale" onError={(ev) => { (ev.target as HTMLImageElement).style.opacity = "0.2"; }} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-light truncate">{e.title}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-white text-sm font-light truncate">{e.title}</p>
+                    {isNew && <span className="font-mono text-[8px] uppercase tracking-widest border border-white/20 text-white/40 px-1.5 py-0.5 shrink-0">Nova</span>}
+                  </div>
                   <p className="font-mono text-[9px] text-white/30 uppercase tracking-widest">{catLabel[photo.category]} · {photo.id}</p>
                 </div>
                 <span className="text-white/30 text-xs">{isOpen ? "▲" : "▼"}</span>
@@ -318,16 +419,26 @@ function FotosSection({ password, initial }: { password: string; initial: Photo[
               {isOpen && (
                 <div className="px-4 pb-4 space-y-3 border-t border-white/8">
                   <div className="pt-3 space-y-3">
-                    <Field label="Título" value={e.title} onChange={(v) => { setEdits((prev) => ({ ...prev, [photo.id]: { ...prev[photo.id], title: v } })); setSaved(null); }} />
-                    <Field label="Descrição (texto revelado no hover)" value={e.description} onChange={(v) => { setEdits((prev) => ({ ...prev, [photo.id]: { ...prev[photo.id], description: v } })); setSaved(null); }} rows={2} />
-                    <Field label="Condições (opcional, ex: entardecer · luz rasante · inverno)" value={e.conditions} onChange={(v) => { setEdits((prev) => ({ ...prev, [photo.id]: { ...prev[photo.id], conditions: v } })); setSaved(null); }} />
+                    <Field label="Título" value={e.title} onChange={(v) => updEdit(photo.id, "title", v)} />
+                    <Field label="Descrição (texto revelado no hover)" value={e.description} onChange={(v) => updEdit(photo.id, "description", v)} rows={2} />
+                    <Field label="Condições (opcional, ex: entardecer · luz rasante · inverno)" value={e.conditions} onChange={(v) => updEdit(photo.id, "conditions", v)} />
                   </div>
-                  <div className="flex items-center justify-end gap-3 pt-1">
-                    {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
-                    <button onClick={() => save(photo.id)} disabled={isSaving}
-                      className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
-                      {isSaving ? "A guardar…" : "Guardar foto"}
-                    </button>
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <div>
+                      {isNew && (
+                        <button onClick={() => handleDelete(photo.id)} disabled={isDeleting}
+                          className="font-mono text-[10px] text-red-400/60 hover:text-red-400 uppercase tracking-widest transition-colors disabled:opacity-50">
+                          {isDeleting ? "A apagar…" : "Apagar foto"}
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+                      <button onClick={() => save(photo.id)} disabled={isSaving}
+                        className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
+                        {isSaving ? "A guardar…" : "Guardar foto"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1103,7 +1214,7 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const { config, momento, categories, photosWithMeta, journalEntries, newJournalEntries, notasList, sobreTexts } = Route.useLoaderData();
+  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts } = Route.useLoaderData();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<TabId>("momento");
@@ -1139,7 +1250,7 @@ function AdminPage() {
       <div className="max-w-6xl mx-auto px-6 py-10">
         {tab === "momento" && <MomentoSection password={password} initial={momento} />}
         {tab === "series" && <SeriesSection password={password} initial={categories} />}
-        {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} />}
+        {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} initialNewPhotos={newPhotos} />}
         {tab === "caderno" && (
           <CadernoSection
             password={password}

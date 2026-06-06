@@ -56,9 +56,29 @@ type PhotosMetaConfig = Record<string, PhotoMetaOverride>;
 
 const PHOTOS_META_CONFIG = path.join(process.cwd(), "photos-meta-config.json");
 
+export type NewPhotoEntry = {
+  id: string;
+  src: string;
+  title: string;
+  category: string;
+  orientation: "portrait" | "landscape" | "square";
+  description: string;
+  conditions: string;
+};
+
+const NEW_PHOTOS_CONFIG = path.join(process.cwd(), "new-photos-config.json");
+
+function readNewPhotos(): NewPhotoEntry[] {
+  try {
+    return JSON.parse(fs.readFileSync(NEW_PHOTOS_CONFIG, "utf-8")) as NewPhotoEntry[];
+  } catch {
+    return [];
+  }
+}
+
 export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): Photo[] => {
   const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
-  return staticPhotos.map((photo) => {
+  const staticWithMeta = staticPhotos.map((photo) => {
     const ov = overrides[photo.id];
     if (!ov) return photo;
     return {
@@ -70,15 +90,58 @@ export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): P
       },
     };
   });
+  const newPhotos = readNewPhotos().map((np) => ({
+    id: np.id,
+    src: np.src,
+    title: np.title,
+    category: np.category as Photo["category"],
+    orientation: (np.orientation ?? "landscape") as Photo["orientation"],
+    meta: { description: np.description, ...(np.conditions ? { conditions: np.conditions } : {}) },
+  }));
+  return [...staticWithMeta, ...newPhotos];
+});
+
+export const getNewPhotos = createServerFn({ method: "GET" }).handler((): NewPhotoEntry[] => {
+  return readNewPhotos();
 });
 
 export const savePhotoMeta = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string })
   .handler(({ data }) => {
     checkPassword(data.password);
-    const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
-    overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions };
-    writeJson(PHOTOS_META_CONFIG, overrides);
+    const staticIds = new Set(staticPhotos.map((p) => p.id));
+    if (staticIds.has(data.photoId)) {
+      const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
+      overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions };
+      writeJson(PHOTOS_META_CONFIG, overrides);
+    } else {
+      const newPhotos = readNewPhotos();
+      const idx = newPhotos.findIndex((p) => p.id === data.photoId);
+      if (idx !== -1) {
+        newPhotos[idx] = { ...newPhotos[idx], title: data.title, description: data.description, conditions: data.conditions };
+        writeJson(NEW_PHOTOS_CONFIG, newPhotos);
+      }
+    }
+    return { ok: true };
+  });
+
+export const addNewPhoto = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; photo: NewPhotoEntry })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const existing = readNewPhotos();
+    if (existing.find((p) => p.id === data.photo.id)) throw new Error("Já existe uma foto com este ID.");
+    existing.push(data.photo);
+    writeJson(NEW_PHOTOS_CONFIG, existing);
+    return { ok: true };
+  });
+
+export const deleteNewPhoto = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; photoId: string })
+  .handler(({ data }) => {
+    checkPassword(data.password);
+    const updated = readNewPhotos().filter((p) => p.id !== data.photoId);
+    writeJson(NEW_PHOTOS_CONFIG, updated);
     return { ok: true };
   });
 
