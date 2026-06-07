@@ -111,8 +111,8 @@ function NotaCard({ nota, index }: { nota: Nota; index: number }) {
 
         {/* Text */}
         <p
-          className={`font-italic-serif italic leading-[1.55] text-foreground/85 ${size.textSize} relative z-10`}
-          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          className={`font-italic-serif italic leading-[1.55] ${size.textSize} relative z-10`}
+          style={{ fontFamily: "var(--font-display), Georgia, serif", color: "rgba(28,22,18,0.85)" }}
         >
           {nota.text}
         </p>
