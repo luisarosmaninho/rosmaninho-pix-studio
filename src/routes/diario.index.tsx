@@ -64,7 +64,7 @@ function Rasura({ texto }: { texto: string }) {
       className="block font-italic-serif text-[0.8rem] leading-snug mb-1.5 select-none pointer-events-none"
       style={{
         textDecoration: "line-through",
-        textDecorationColor: "rgba(255,255,255,0.18)",
+        textDecorationColor: "currentColor",
         textDecorationThickness: "1px",
         opacity: 0.18,
         letterSpacing: "0.01em",
