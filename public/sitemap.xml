@@ -48,11 +48,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rosmaninhofotografia.pt/impressoes</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://rosmaninhofotografia.pt/contacto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
