@@ -268,7 +268,13 @@ function NotasPage() {
         </p>
         <p className="font-mono-label text-foreground/30 mt-10">L.R. · Coimbra</p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
-          algumas coisas neste sítio só existem para quem escreve — não para quem clica.
+          escreve. às vezes é assim que se chega a sítios novos.
+        </p>
+        <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
+          algumas notas não estão aqui. estão noutro sítio qualquer.
+        </p>
+        <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
+          há pensamentos que só aparecem quando os procuras pelo nome.
         </p>
       </motion.section>
 

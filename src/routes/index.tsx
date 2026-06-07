@@ -738,24 +738,15 @@ function HomePage() {
             só atenção ao que insiste em ficar."
           </p>
           <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 3.2, delay: 2.0, ease: "easeOut" }}
-            className="select-none pointer-events-none font-mono-label text-[9px] tracking-[0.42em] uppercase text-foreground/40 mt-6 text-center"
-          >
-            obrigada por ficares até aqui
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 3.2, delay: 4.0, ease: "easeOut" }}
-            className="select-none pointer-events-none font-italic-serif text-sm text-foreground/40 mt-3 text-center italic"
-          >
-            há portas neste sítio que se abrem escrevendo — não clicando.
-          </motion.p>
+          <p className="font-italic-serif text-sm text-foreground/38 mt-8 italic">
+            alguns arquivos só se revelam a quem sabe o nome certo.
+          </p>
+          <p className="font-mono-label text-[9px] text-foreground/28 mt-4 lowercase tracking-[0.3em]">
+            há mais do que aquilo que os olhos encontram à primeira vista.
+          </p>
+          <p className="font-italic-serif text-sm text-foreground/38 mt-3 italic">
+            este sítio tem camadas. como tudo o que vale a pena.
+          </p>
         </div>
       </Section>
 

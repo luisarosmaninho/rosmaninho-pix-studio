@@ -267,7 +267,13 @@ function JournalIndex() {
             Coimbra · caderno de matcha · L.R.
           </p>
           <p className="font-italic-serif text-sm text-foreground/35 mt-6 italic leading-relaxed max-w-xs">
-            nem tudo o que existe neste arquivo está numa página com link.
+            este caderno tem mais páginas do que as que aparecem.
+          </p>
+          <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em] max-w-xs">
+            alguns textos só existem para quem chega até eles.
+          </p>
+          <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic max-w-xs">
+            escrever abre coisas. sempre.
           </p>
         </div>
       </motion.section>

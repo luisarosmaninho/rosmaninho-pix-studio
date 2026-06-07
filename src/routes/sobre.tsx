@@ -87,6 +87,9 @@ function SobrePage() {
             <div className="flex justify-between font-mono-label text-foreground/32">
               <span>Quatro séries abertas</span><span>arquivo em aberto</span>
             </div>
+            <div className="flex justify-between font-mono-label text-foreground/20">
+              <span>nem tudo o que sou</span><span>cabe no menu</span>
+            </div>
             <div className="h-px bg-foreground/15 w-full" />
             <p className="font-italic-serif text-foreground/35 text-base mt-2">
               "só atenção ao que insiste em ficar"
@@ -366,7 +369,10 @@ function SobrePage() {
           Escrever
         </Link>
         <p className="font-italic-serif text-sm text-foreground/35 mt-12 italic">
-          há mais neste arquivo do que aquilo que está no menu — para quem souber onde procurar.
+          há palavras que abrem portas.
+        </p>
+        <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
+          algumas coisas ficam guardadas para quem procura de verdade.
         </p>
       </motion.section>
 

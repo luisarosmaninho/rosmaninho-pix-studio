@@ -220,6 +220,18 @@ function ContactoPage() {
                 </div>
               </div>
             )}
+
+            <div className="mt-16">
+              <p className="font-italic-serif text-sm text-foreground/35 italic">
+                não é só para contacto. é também para quem sabe o que procura.
+              </p>
+              <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
+                se souberes o nome certo, o arquivo abre-se.
+              </p>
+              <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
+                escrever aqui não é a única forma de entrar.
+              </p>
+            </div>
           </motion.div>
         </div>
 

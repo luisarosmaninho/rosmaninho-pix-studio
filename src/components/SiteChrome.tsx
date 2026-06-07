@@ -531,7 +531,13 @@ export function SiteFooter() {
           <p>Feito com luz, café e paciência</p>
         </div>
         <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/30 italic font-italic-serif lowercase text-center">
-          rosmarinus officinalis · algumas coisas encontram-se escrevendo, não procurando.
+          rosmarinus officinalis · a planta que dá nome a tudo isto.
+        </p>
+        <p className="mt-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase text-center">
+          algumas entradas não estão no menu. estão escondidas no nome.
+        </p>
+        <p className="mt-1 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase text-center">
+          este arquivo tem uma sala que não aparece na navegação.
         </p>
       </div>
     </footer>
