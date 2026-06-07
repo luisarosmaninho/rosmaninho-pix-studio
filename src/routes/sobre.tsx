@@ -365,6 +365,9 @@ function SobrePage() {
           className="mt-12 inline-block border border-foreground/30 text-foreground px-10 py-4 text-[11px] uppercase tracking-[0.28em] hover:bg-copper hover:border-copper hover:text-cream transition-all duration-500">
           Escrever
         </Link>
+        <p className="font-italic-serif text-sm text-foreground/35 mt-12 italic">
+          há mais neste arquivo do que aquilo que está no menu — para quem souber onde procurar.
+        </p>
       </motion.section>
 
       <SiteFooter />

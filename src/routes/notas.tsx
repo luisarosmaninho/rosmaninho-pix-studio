@@ -267,6 +267,9 @@ function NotasPage() {
           O campo não é apenas o lugar onde se fotografa. É o estado de atenção que se leva para qualquer sítio.
         </p>
         <p className="font-mono-label text-foreground/30 mt-10">L.R. · Coimbra</p>
+        <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
+          algumas coisas neste sítio só existem para quem escreve — não para quem clica.
+        </p>
       </motion.section>
 
       <SiteFooter />
