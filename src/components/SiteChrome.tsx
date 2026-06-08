@@ -430,7 +430,7 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
               href="https://instagram.com/luisarosmanih"
               target="_blank"
               rel="noreferrer"
-              className="opacity-45 hover:opacity-100 hover:text-copper transition-all duration-300"
+              className="opacity-65 hover:opacity-100 hover:text-copper transition-all duration-300"
               aria-label="Instagram"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
