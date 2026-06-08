@@ -585,6 +585,11 @@ function HomePage() {
             "Às vezes passo dez minutos à frente de uma esquina que mais ninguém olhou duas vezes. Não procuro nada em especial. Só espero que a luz mude, que alguém passe, que alguma coisa aconteça."
           </p>
           <Whisper text="observação contínua · sem destino fixo" delay={1.6} className="mt-8 justify-center" />
+          <p className="flex items-center justify-center gap-2.5 font-mono-label text-[9px] text-foreground/35 mt-10 lowercase tracking-[0.3em]">
+            <BotanicalMark size={11} className="text-foreground/60" />
+            há mais do que aquilo que os olhos encontram à primeira vista.
+            <BotanicalMark size={11} className="text-foreground/60" />
+          </p>
         </div>
       </Section>
 
@@ -712,6 +717,11 @@ function HomePage() {
               </div>
             ))}
           </div>
+          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/45 mt-10 italic">
+            <BotanicalMark size={12} className="text-foreground/65" />
+            alguns arquivos só se revelam a quem sabe o nome certo.
+            <BotanicalMark size={12} className="text-foreground/65" />
+          </p>
         </div>
       </Section>
 
@@ -743,17 +753,7 @@ function HomePage() {
             só atenção ao que insiste em ficar."
           </p>
           <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
-          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-8 italic">
-            <BotanicalMark size={12} className="text-foreground/65" />
-            alguns arquivos só se revelam a quem sabe o nome certo.
-            <BotanicalMark size={12} className="text-foreground/65" />
-          </p>
-          <p className="flex items-center justify-center gap-2.5 font-mono-label text-[9px] text-foreground/40 mt-5 lowercase tracking-[0.3em]">
-            <BotanicalMark size={11} className="text-foreground/60" />
-            há mais do que aquilo que os olhos encontram à primeira vista.
-            <BotanicalMark size={11} className="text-foreground/60" />
-          </p>
-          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-5 italic">
+          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-10 italic">
             <BotanicalMark size={12} className="text-foreground/65" />
             este sítio tem camadas. como tudo o que vale a pena.
             <BotanicalMark size={12} className="text-foreground/65" />
