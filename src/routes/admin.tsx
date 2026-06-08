@@ -1016,178 +1016,298 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
 
 // ── Autora section ────────────────────────────────────────────────────────────
 
+function FreeBlock({
+  label, hint, value, onChange, rows = 6, placeholder,
+}: {
+  label: string; hint?: string; value: string; onChange: (v: string) => void;
+  rows?: number; placeholder?: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline gap-3">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">{label}</p>
+        {hint && <p className="font-mono text-[9px] text-white/20 normal-case tracking-normal">{hint}</p>}
+      </div>
+      <textarea
+        value={value} onChange={(e) => onChange(e.target.value)} rows={rows}
+        placeholder={placeholder}
+        className="w-full bg-transparent text-white/85 text-sm leading-relaxed placeholder:text-white/15 outline-none resize-none font-light border-b border-white/8 pb-2 focus:border-white/20 transition-colors"
+      />
+    </div>
+  );
+}
+
+function SaveRow({ id, saving, saved, onSave }: { id: string; saving: string | null; saved: string | null; onSave: () => void }) {
+  return (
+    <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/8">
+      {saved === id && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+      <button onClick={onSave} disabled={saving === id}
+        className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
+        {saving === id ? "A guardar…" : "Guardar"}
+      </button>
+    </div>
+  );
+}
+
 function AutoraSection({ password, initial }: { password: string; initial: SobreConfig }) {
   const router = useRouter();
-  const [d, setD] = useState<SobreConfig>(initial);
+
+  const [introText, setIntroText] = useState(() => initial.introParagraphs.join("\n\n"));
+  const [introQuote, setIntroQuote] = useState(initial.introQuote);
+
+  const [guardarTitulo, setGuardarTitulo] = useState(initial.secaoGuardarTitulo);
+  const [guardarTexto, setGuardarTexto] = useState(initial.secaoGuardarTexto);
+  const [guardarCitacao, setGuardarCitacao] = useState(initial.secaoGuardarCitacao);
+
+  const [verdadeirasText, setVerdadeirasText] = useState(
+    () => [initial.secaoVerdadeirasTexto1, initial.secaoVerdadeirasTexto2].filter(Boolean).join("\n\n")
+  );
+  const [detalheText, setDetalheText] = useState(
+    () => [initial.secaoDetalheTexto1, initial.secaoDetalheTexto2].filter(Boolean).join("\n\n")
+  );
+
+  const [percurso, setPercurso] = useState(initial.percurso);
+  const [constancias, setConstancias] = useState(initial.pequenasConstancias);
+  const [ritmos, setRitmos] = useState(initial.ritmos);
+  const [visitadas, setVisitadas] = useState(initial.cartografiaVisitadas);
+  const [sonhadas, setSonhadas] = useState(initial.cartografiaSonhadas);
+
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
 
-  function upd(field: keyof SobreConfig, val: unknown) {
-    setD((prev) => ({ ...prev, [field]: val }));
-    setSaved(null);
-  }
-
-  async function save(section: string, payload: Partial<SobreConfig>) {
-    setSaving(section); setSaved(null);
+  async function save(id: string, payload: Partial<SobreConfig>) {
+    setSaving(id); setSaved(null);
     try {
       await saveSobreTexts({ data: { password, ...payload } });
-      setSaved(section); router.invalidate();
+      setSaved(id); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
 
-  function SubSave({ id, payload }: { id: string; payload: Partial<SobreConfig> }) {
-    return (
-      <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/8 mt-4">
-        {saved === id && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
-        <button onClick={() => save(id, payload)} disabled={saving === id}
-          className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
-          {saving === id ? "A guardar…" : "Guardar"}
-        </button>
-      </div>
-    );
-  }
-
-  function addPercurso() { upd("percurso", [...d.percurso, { ano: "", titulo: "", texto: "" }]); }
-  function removePercurso(i: number) { if (!confirm("Remover esta entrada do percurso?")) return; const arr = [...d.percurso]; arr.splice(i, 1); upd("percurso", arr); }
-  function addConstancia() { upd("pequenasConstancias", [...d.pequenasConstancias, { titulo: "", texto: "" }]); }
-  function removeConstancia(i: number) { if (!confirm("Remover esta constância?")) return; const arr = [...d.pequenasConstancias]; arr.splice(i, 1); upd("pequenasConstancias", arr); }
-  function addRitmo() { upd("ritmos", [...d.ritmos, { quando: "", recurso: "" }]); }
-  function removeRitmo(i: number) { const arr = [...d.ritmos]; arr.splice(i, 1); upd("ritmos", arr); }
-  function addVisitada() { upd("cartografiaVisitadas", [...d.cartografiaVisitadas, { cidade: "", nota: "" }]); }
-  function removeVisitada(i: number) { const arr = [...d.cartografiaVisitadas]; arr.splice(i, 1); upd("cartografiaVisitadas", arr); }
-  function addSonhada() { upd("cartografiaSonhadas", [...d.cartografiaSonhadas, { cidade: "", nota: "" }]); }
-  function removeSonhada(i: number) { const arr = [...d.cartografiaSonhadas]; arr.splice(i, 1); upd("cartografiaSonhadas", arr); }
-
   return (
-    <div className="max-w-3xl space-y-10">
+    <div className="max-w-3xl space-y-8">
       <SectionHeader label="Página da Autora" />
 
-      {/* Intro paragraphs */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">Parágrafos de abertura</p>
-        {d.introParagraphs.map((para, i) => (
-          <div key={i} className="space-y-1">
-            <p className="font-mono text-[9px] text-white/30">§ {i + 1}</p>
-            <textarea rows={2} value={para} onChange={(e) => { const arr = [...d.introParagraphs]; arr[i] = e.target.value; upd("introParagraphs", arr); }}
-              className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 resize-none" />
-          </div>
-        ))}
-        <SubSave id="intro" payload={{ introParagraphs: d.introParagraphs }} />
-      </div>
-
-      {/* Quote */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">Citação de abertura</p>
-        <Field label="Texto da citação" value={d.introQuote} onChange={(v) => upd("introQuote", v)} rows={3} />
-        <SubSave id="quote" payload={{ introQuote: d.introQuote }} />
+      {/* Intro */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Texto de abertura</p>
+        <FreeBlock
+          label="Parágrafos"
+          hint="escreve livremente — separa com Enter ou linha em branco"
+          value={introText}
+          onChange={(v) => { setIntroText(v); setSaved(null); }}
+          rows={8}
+          placeholder="Nem sempre sei explicar quem sou de forma direta…"
+        />
+        <FreeBlock
+          label="Citação em destaque"
+          hint="aparece em itálico abaixo dos parágrafos"
+          value={introQuote}
+          onChange={(v) => { setIntroQuote(v); setSaved(null); }}
+          rows={2}
+        />
+        <SaveRow id="intro" saving={saving} saved={saved}
+          onSave={() => save("intro", {
+            introParagraphs: splitIntoParagraphs(introText),
+            introQuote,
+          })}
+        />
       </div>
 
       {/* §01 Guardar */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 01 — Guardar</p>
-        <Field label="Título da secção" value={d.secaoGuardarTitulo} onChange={(v) => upd("secaoGuardarTitulo", v)} rows={2} />
-        <Field label="Texto principal" value={d.secaoGuardarTexto} onChange={(v) => upd("secaoGuardarTexto", v)} rows={5} />
-        <Field label="Citação em destaque" value={d.secaoGuardarCitacao} onChange={(v) => upd("secaoGuardarCitacao", v)} rows={3} />
-        <SubSave id="guardar" payload={{ secaoGuardarTitulo: d.secaoGuardarTitulo, secaoGuardarTexto: d.secaoGuardarTexto, secaoGuardarCitacao: d.secaoGuardarCitacao }} />
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 01 — Guardar</p>
+        <FreeBlock label="Título da secção" value={guardarTitulo}
+          onChange={(v) => { setGuardarTitulo(v); setSaved(null); }} rows={2}
+          placeholder="Guardar o que não espera." />
+        <FreeBlock label="Texto principal" hint="escreve à vontade"
+          value={guardarTexto} onChange={(v) => { setGuardarTexto(v); setSaved(null); }} rows={5}
+          placeholder="A fotografia é a forma que encontrei…" />
+        <FreeBlock label="Frase em destaque" hint="aparece em itálico, entre aspas"
+          value={guardarCitacao} onChange={(v) => { setGuardarCitacao(v); setSaved(null); }} rows={2} />
+        <SaveRow id="guardar" saving={saving} saved={saved}
+          onSave={() => save("guardar", {
+            secaoGuardarTitulo: guardarTitulo,
+            secaoGuardarTexto: guardarTexto,
+            secaoGuardarCitacao: guardarCitacao,
+          })}
+        />
       </div>
 
       {/* §02 Verdadeiras */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 02 — Verdadeiras</p>
-        <Field label="Parágrafo 1" value={d.secaoVerdadeirasTexto1} onChange={(v) => upd("secaoVerdadeirasTexto1", v)} rows={4} />
-        <Field label="Parágrafo 2" value={d.secaoVerdadeirasTexto2} onChange={(v) => upd("secaoVerdadeirasTexto2", v)} rows={4} />
-        <SubSave id="verdadeiras" payload={{ secaoVerdadeirasTexto1: d.secaoVerdadeirasTexto1, secaoVerdadeirasTexto2: d.secaoVerdadeirasTexto2 }} />
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 02 — Verdadeiras</p>
+        <FreeBlock
+          label="Texto"
+          hint="dois parágrafos — separa com linha em branco"
+          value={verdadeirasText}
+          onChange={(v) => { setVerdadeirasText(v); setSaved(null); }}
+          rows={7}
+          placeholder={"Não procuro o perfeito. Procuro o verdadeiro…\n\nAntes de pegar na câmara, observo…"}
+        />
+        <SaveRow id="verdadeiras" saving={saving} saved={saved}
+          onSave={() => {
+            const parts = splitIntoParagraphs(verdadeirasText);
+            save("verdadeiras", {
+              secaoVerdadeirasTexto1: parts[0] ?? "",
+              secaoVerdadeirasTexto2: parts[1] ?? "",
+            });
+          }}
+        />
       </div>
 
       {/* §03 O detalhe */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 03 — O detalhe</p>
-        <Field label="Parágrafo 1" value={d.secaoDetalheTexto1} onChange={(v) => upd("secaoDetalheTexto1", v)} rows={4} />
-        <Field label="Parágrafo 2" value={d.secaoDetalheTexto2} onChange={(v) => upd("secaoDetalheTexto2", v)} rows={3} />
-        <SubSave id="detalhe" payload={{ secaoDetalheTexto1: d.secaoDetalheTexto1, secaoDetalheTexto2: d.secaoDetalheTexto2 }} />
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 03 — O detalhe</p>
+        <FreeBlock
+          label="Texto"
+          hint="dois parágrafos — separa com linha em branco"
+          value={detalheText}
+          onChange={(v) => { setDetalheText(v); setSaved(null); }}
+          rows={7}
+          placeholder={"Passo tempo a pensar numa sombra…\n\nAo mesmo tempo, não quero que se note o esforço…"}
+        />
+        <SaveRow id="detalhe" saving={saving} saved={saved}
+          onSave={() => {
+            const parts = splitIntoParagraphs(detalheText);
+            save("detalhe", {
+              secaoDetalheTexto1: parts[0] ?? "",
+              secaoDetalheTexto2: parts[1] ?? "",
+            });
+          }}
+        />
       </div>
 
       {/* §04 Percurso */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 04 — Percurso</p>
-          <button onClick={addPercurso} className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">+ Adicionar</button>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 04 — Percurso</p>
+          <button onClick={() => setPercurso((p) => [...p, { ano: "", titulo: "", texto: "" }])}
+            className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">
+            + Adicionar
+          </button>
         </div>
-        {d.percurso.map((item, i) => (
-          <div key={i} className="border-t border-white/8 pt-4 space-y-2">
+        {percurso.map((item, i) => (
+          <div key={i} className="border-t border-white/8 pt-4 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="font-mono text-[9px] text-white/30">Entrada {i + 1}</p>
-              <button onClick={() => removePercurso(i)} className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
+              <p className="font-mono text-[9px] text-white/25">Entrada {i + 1}</p>
+              <button onClick={() => { if (!confirm("Remover?")) return; setPercurso((p) => p.filter((_, j) => j !== i)); setSaved(null); }}
+                className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Field label="Ano" value={item.ano} onChange={(v) => { const arr = [...d.percurso]; arr[i] = { ...arr[i], ano: v }; upd("percurso", arr); }} />
-              <Field label="Título" value={item.titulo} onChange={(v) => { const arr = [...d.percurso]; arr[i] = { ...arr[i], titulo: v }; upd("percurso", arr); }} />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Ano / Período</p>
+                <input value={item.ano} onChange={(e) => { const a = [...percurso]; a[i] = { ...a[i], ano: e.target.value }; setPercurso(a); setSaved(null); }}
+                  className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm font-mono outline-none focus:border-white/30 transition-colors" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Título</p>
+                <input value={item.titulo} onChange={(e) => { const a = [...percurso]; a[i] = { ...a[i], titulo: e.target.value }; setPercurso(a); setSaved(null); }}
+                  className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors" />
+              </div>
             </div>
-            <Field label="Texto" value={item.texto} onChange={(v) => { const arr = [...d.percurso]; arr[i] = { ...arr[i], texto: v }; upd("percurso", arr); }} rows={2} />
+            <FreeBlock label="Texto" value={item.texto} rows={3}
+              onChange={(v) => { const a = [...percurso]; a[i] = { ...a[i], texto: v }; setPercurso(a); setSaved(null); }} />
           </div>
         ))}
-        <SubSave id="percurso" payload={{ percurso: d.percurso }} />
+        <SaveRow id="percurso" saving={saving} saved={saved}
+          onSave={() => save("percurso", { percurso })} />
       </div>
 
       {/* §07 Pequenas constâncias */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 07 — Pequenas constâncias</p>
-          <button onClick={addConstancia} className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">+ Adicionar</button>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 07 — Pequenas constâncias</p>
+          <button onClick={() => setConstancias((p) => [...p, { titulo: "", texto: "" }])}
+            className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">
+            + Adicionar
+          </button>
         </div>
-        {d.pequenasConstancias.map((item, i) => (
-          <div key={i} className="border-t border-white/8 pt-4 space-y-2">
+        {constancias.map((item, i) => (
+          <div key={i} className="border-t border-white/8 pt-4 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="font-mono text-[9px] text-white/30">Constância {i + 1}</p>
-              <button onClick={() => removeConstancia(i)} className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
+              <p className="font-mono text-[9px] text-white/25">Constância {i + 1}</p>
+              <button onClick={() => { if (!confirm("Remover?")) return; setConstancias((p) => p.filter((_, j) => j !== i)); setSaved(null); }}
+                className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
             </div>
-            <Field label="Título" value={item.titulo} onChange={(v) => { const arr = [...d.pequenasConstancias]; arr[i] = { ...arr[i], titulo: v }; upd("pequenasConstancias", arr); }} />
-            <Field label="Texto" value={item.texto} onChange={(v) => { const arr = [...d.pequenasConstancias]; arr[i] = { ...arr[i], texto: v }; upd("pequenasConstancias", arr); }} rows={3} />
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Título</p>
+              <input value={item.titulo} onChange={(e) => { const a = [...constancias]; a[i] = { ...a[i], titulo: e.target.value }; setConstancias(a); setSaved(null); }}
+                className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors" />
+            </div>
+            <FreeBlock label="Texto" value={item.texto} rows={3}
+              onChange={(v) => { const a = [...constancias]; a[i] = { ...a[i], texto: v }; setConstancias(a); setSaved(null); }} />
           </div>
         ))}
-        <SubSave id="constancias" payload={{ pequenasConstancias: d.pequenasConstancias }} />
+        <SaveRow id="constancias" saving={saving} saved={saved}
+          onSave={() => save("constancias", { pequenasConstancias: constancias })} />
       </div>
 
       {/* §08 Ritmos */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-3">
+      <div className="bg-white/4 border border-white/6 p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 08 — Ritmos</p>
-          <button onClick={addRitmo} className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">+ Adicionar</button>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 08 — Ritmos</p>
+          <button onClick={() => setRitmos((p) => [...p, { quando: "", recurso: "" }])}
+            className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">
+            + Adicionar
+          </button>
         </div>
-        {d.ritmos.map((item, i) => (
+        {ritmos.map((item, i) => (
           <div key={i} className="border-t border-white/8 pt-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-mono text-[9px] text-white/30">Ritmo {i + 1}</span>
-              <button onClick={() => removeRitmo(i)} className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
+              <span className="font-mono text-[9px] text-white/25">Ritmo {i + 1}</span>
+              <button onClick={() => { setRitmos((p) => p.filter((_, j) => j !== i)); setSaved(null); }}
+                className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Field label="Quando" value={item.quando} onChange={(v) => { const arr = [...d.ritmos]; arr[i] = { ...arr[i], quando: v }; upd("ritmos", arr); }} />
-              <Field label="Recurso" value={item.recurso} onChange={(v) => { const arr = [...d.ritmos]; arr[i] = { ...arr[i], recurso: v }; upd("ritmos", arr); }} />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Quando</p>
+                <input value={item.quando} onChange={(e) => { const a = [...ritmos]; a[i] = { ...a[i], quando: e.target.value }; setRitmos(a); setSaved(null); }}
+                  placeholder="Quando preciso de começar:"
+                  className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Recurso</p>
+                <input value={item.recurso} onChange={(e) => { const a = [...ritmos]; a[i] = { ...a[i], recurso: e.target.value }; setRitmos(a); setSaved(null); }}
+                  placeholder="café."
+                  className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15" />
+              </div>
             </div>
           </div>
         ))}
-        <SubSave id="ritmos" payload={{ ritmos: d.ritmos }} />
+        <SaveRow id="ritmos" saving={saving} saved={saved}
+          onSave={() => save("ritmos", { ritmos })} />
       </div>
 
       {/* §09 Cartografia */}
-      <div className="bg-white/4 border border-white/6 p-6 space-y-4">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">§ 09 — Cartografia pessoal</p>
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 09 — Cartografia pessoal</p>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Visitadas</p>
-            <button onClick={addVisitada} className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">+ Adicionar</button>
+            <p className="font-mono text-[9px] text-white/25 uppercase tracking-widest">Visitadas</p>
+            <button onClick={() => setVisitadas((p) => [...p, { cidade: "", nota: "" }])}
+              className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">
+              + Adicionar
+            </button>
           </div>
-          {d.cartografiaVisitadas.map((item, i) => (
+          {visitadas.map((item, i) => (
             <div key={i} className="border-t border-white/8 pt-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[9px] text-white/30">Cidade {i + 1}</span>
-                <button onClick={() => removeVisitada(i)} className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
+                <span className="font-mono text-[9px] text-white/25">Cidade {i + 1}</span>
+                <button onClick={() => { setVisitadas((p) => p.filter((_, j) => j !== i)); setSaved(null); }}
+                  className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                <Field label="Cidade" value={item.cidade} onChange={(v) => { const arr = [...d.cartografiaVisitadas]; arr[i] = { ...arr[i], cidade: v }; upd("cartografiaVisitadas", arr); }} />
-                <div className="col-span-2"><Field label="Nota" value={item.nota} onChange={(v) => { const arr = [...d.cartografiaVisitadas]; arr[i] = { ...arr[i], nota: v }; upd("cartografiaVisitadas", arr); }} rows={2} /></div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cidade</p>
+                  <input value={item.cidade} onChange={(e) => { const a = [...visitadas]; a[i] = { ...a[i], cidade: e.target.value }; setVisitadas(a); setSaved(null); }}
+                    className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors" />
+                </div>
+                <div className="col-span-2">
+                  <FreeBlock label="Nota" value={item.nota} rows={2}
+                    onChange={(v) => { const a = [...visitadas]; a[i] = { ...a[i], nota: v }; setVisitadas(a); setSaved(null); }} />
+                </div>
               </div>
             </div>
           ))}
@@ -1195,24 +1315,36 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
 
         <div className="space-y-3 border-t border-white/8 pt-4">
           <div className="flex items-center justify-between">
-            <p className="font-mono text-[9px] text-white/40 uppercase tracking-widest">Sonhadas</p>
-            <button onClick={addSonhada} className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">+ Adicionar</button>
+            <p className="font-mono text-[9px] text-white/25 uppercase tracking-widest">Sonhadas</p>
+            <button onClick={() => setSonhadas((p) => [...p, { cidade: "", nota: "" }])}
+              className="font-mono text-[9px] uppercase tracking-widest border border-dashed border-white/20 text-white/40 hover:text-white hover:border-white/40 px-3 py-1 transition-colors">
+              + Adicionar
+            </button>
           </div>
-          {d.cartografiaSonhadas.map((item, i) => (
+          {sonhadas.map((item, i) => (
             <div key={i} className="border-t border-white/8 pt-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[9px] text-white/30">Cidade {i + 1}</span>
-                <button onClick={() => removeSonhada(i)} className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
+                <span className="font-mono text-[9px] text-white/25">Cidade {i + 1}</span>
+                <button onClick={() => { setSonhadas((p) => p.filter((_, j) => j !== i)); setSaved(null); }}
+                  className="text-white/20 hover:text-red-400 text-sm transition-colors">×</button>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                <Field label="Cidade" value={item.cidade} onChange={(v) => { const arr = [...d.cartografiaSonhadas]; arr[i] = { ...arr[i], cidade: v }; upd("cartografiaSonhadas", arr); }} />
-                <div className="col-span-2"><Field label="Nota" value={item.nota} onChange={(v) => { const arr = [...d.cartografiaSonhadas]; arr[i] = { ...arr[i], nota: v }; upd("cartografiaSonhadas", arr); }} rows={2} /></div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cidade</p>
+                  <input value={item.cidade} onChange={(e) => { const a = [...sonhadas]; a[i] = { ...a[i], cidade: e.target.value }; setSonhadas(a); setSaved(null); }}
+                    className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors" />
+                </div>
+                <div className="col-span-2">
+                  <FreeBlock label="Nota" value={item.nota} rows={2}
+                    onChange={(v) => { const a = [...sonhadas]; a[i] = { ...a[i], nota: v }; setSonhadas(a); setSaved(null); }} />
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        <SubSave id="cartografia" payload={{ cartografiaVisitadas: d.cartografiaVisitadas, cartografiaSonhadas: d.cartografiaSonhadas }} />
+        <SaveRow id="cartografia" saving={saving} saved={saved}
+          onSave={() => save("cartografia", { cartografiaVisitadas: visitadas, cartografiaSonhadas: sonhadas })} />
       </div>
     </div>
   );
