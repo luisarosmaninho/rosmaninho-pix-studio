@@ -325,12 +325,9 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
               style={{ color: "inherit" }}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="relative font-italic-serif text-3xl md:text-[34px] leading-none">
-                <BotanicalMark
-                  size={7}
-                  className="absolute left-1/2 -translate-x-1/2 -top-3.5 text-copper/55 pointer-events-none"
-                />
+              <span className="inline-flex items-center gap-1.5 font-italic-serif text-3xl md:text-[34px] leading-none">
                 Rosmaninho
+                <BotanicalMark size={7} className="text-copper/55 translate-y-0.5" />
               </span>
               <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
 
