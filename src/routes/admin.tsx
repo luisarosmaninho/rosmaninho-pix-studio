@@ -491,11 +491,24 @@ const emptyDraft = (): EntryDraft => ({
   relatedCategory: "urbanas",
 });
 
+function splitIntoParagraphs(text: string): string[] {
+  const byDouble = text.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  if (byDouble.length > 1) return byDouble;
+  return text.split(/\n/).map((s) => s.trim()).filter(Boolean);
+}
+
+function autoExcerpt(body: string): string {
+  const paras = splitIntoParagraphs(body);
+  const first = paras[0] ?? "";
+  return first.length > 180 ? first.slice(0, 177) + "…" : first;
+}
+
 function NewEntryForm({ password, onSaved, onCancel }: {
   password: string; onSaved: () => void; onCancel: () => void;
 }) {
   const [d, setD] = useState<EntryDraft>(emptyDraft());
   const [customSlug, setCustomSlug] = useState(false);
+  const [customExcerpt, setCustomExcerpt] = useState(false);
   const [slug, setSlug] = useState("");
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
@@ -504,6 +517,7 @@ function NewEntryForm({ password, onSaved, onCancel }: {
     setD((prev) => {
       const next = { ...prev, [field]: val };
       if (field === "title" && !customSlug) setSlug(slugify(val));
+      if (field === "body" && !customExcerpt) next.excerpt = autoExcerpt(val);
       return next;
     });
     setErr("");
@@ -512,17 +526,20 @@ function NewEntryForm({ password, onSaved, onCancel }: {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!d.title.trim()) { setErr("O título é obrigatório."); return; }
+    if (!d.body.trim()) { setErr("O texto é obrigatório."); return; }
     if (!slug.trim()) { setErr("O slug é obrigatório."); return; }
     if (!d.date.trim()) { setErr("A data é obrigatória."); return; }
     setSaving(true); setErr("");
     try {
+      const paragraphs = splitIntoParagraphs(d.body);
+      const excerpt = d.excerpt.trim() || autoExcerpt(d.body);
       const entry: JournalEntry = {
         slug: slug.trim(),
         date: d.date,
         ...(d.location.trim() ? { location: d.location.trim() } : {}),
         title: d.title,
-        excerpt: d.excerpt,
-        body: d.body.split("\n\n").map((s) => s.trim()).filter(Boolean),
+        excerpt,
+        body: paragraphs,
         photoSrc: d.photoSrc,
         photoTitle: d.photoTitle,
         relatedCategory: d.relatedCategory,
@@ -534,47 +551,128 @@ function NewEntryForm({ password, onSaved, onCancel }: {
     } finally { setSaving(false); }
   }
 
+  const wordCount = d.body.trim() ? d.body.trim().split(/\s+/).length : 0;
+
   return (
-    <div className="bg-white/4 border border-white/20 p-6 mb-4">
-      <div className="flex items-center justify-between mb-5">
+    <div className="bg-white/4 border border-white/20 mb-4">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
         <p className="font-mono text-[10px] uppercase tracking-widest text-white/60">Nova entrada do Caderno</p>
         <button onClick={onCancel} className="text-white/30 hover:text-white text-lg leading-none transition-colors">×</button>
       </div>
-      <form onSubmit={handleSave} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Field label="Título *" value={d.title} onChange={(v) => upd("title", v)} />
-          <Field label="Data * (AAAA-MM-DD)" value={d.date} onChange={(v) => upd("date", v)} mono />
-          <Field label="Local (ex: Coimbra · Porto)" value={d.location} onChange={(v) => upd("location", v)} />
+
+      <form onSubmit={handleSave}>
+        {/* Writing area */}
+        <div className="px-6 pt-6 pb-4 space-y-4">
+          <textarea
+            value={d.title}
+            onChange={(e) => upd("title", e.target.value)}
+            placeholder="Título da entrada…"
+            rows={2}
+            className="w-full bg-transparent text-white text-2xl font-light placeholder:text-white/20 outline-none resize-none leading-snug"
+          />
+          <textarea
+            value={d.body}
+            onChange={(e) => upd("body", e.target.value)}
+            placeholder="Escreve livremente. Não precisas de pensar em parágrafos — escreve como escreverias num diário. Podes separar ideias com uma linha em branco ou simplesmente com Enter."
+            rows={18}
+            className="w-full bg-transparent text-white/85 text-sm leading-relaxed placeholder:text-white/20 outline-none resize-none font-light"
+          />
+          <div className="flex items-center justify-between border-t border-white/6 pt-3">
+            <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
+              {wordCount > 0 ? `${wordCount} palavras` : ""}
+            </p>
+          </div>
         </div>
-        <div className="space-y-1">
-          <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Slug * (URL)</p>
-          <div className="flex gap-2">
-            <input
-              value={slug} onChange={(e) => { setSlug(e.target.value); setCustomSlug(true); }}
-              className="flex-1 bg-white/5 border border-white/10 text-white px-3 py-2 text-sm font-mono outline-none focus:border-white/30 transition-colors"
-              placeholder="gerado-automaticamente-do-titulo"
-            />
-            {customSlug && (
-              <button type="button" onClick={() => { setSlug(slugify(d.title)); setCustomSlug(false); }}
-                className="font-mono text-[10px] text-white/40 hover:text-white px-3 border border-white/10 transition-colors">
-                Reset
+
+        {/* Excerpt */}
+        <div className="px-6 pb-4 space-y-1">
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">
+              Resumo <span className="text-white/15 normal-case tracking-normal">(aparece no índice)</span>
+            </p>
+            {customExcerpt && (
+              <button type="button" onClick={() => { setCustomExcerpt(false); setD((p) => ({ ...p, excerpt: autoExcerpt(p.body) })); }}
+                className="font-mono text-[9px] text-white/30 hover:text-white transition-colors">
+                ← gerar do texto
               </button>
             )}
           </div>
-          <p className="font-mono text-[9px] text-white/20">rosmaninhofotografia.pt/diario/{slug || "…"}</p>
+          <textarea
+            value={d.excerpt}
+            onChange={(e) => { setCustomExcerpt(true); upd("excerpt", e.target.value); }}
+            rows={2}
+            placeholder="Gerado automaticamente do primeiro parágrafo…"
+            className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15 resize-none"
+          />
         </div>
-        <Field label="Excerto (resumo da entrada)" value={d.excerpt} onChange={(v) => upd("excerpt", v)} rows={3} />
-        <Field
-          label="Corpo do texto (parágrafos separados por linha em branco)"
-          value={d.body} onChange={(v) => upd("body", v)} rows={10}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <SelectField label="Série relacionada" value={d.relatedCategory} onChange={(v) => upd("relatedCategory", v)} options={CAT_OPTIONS} />
-          <Field label="URL da foto" value={d.photoSrc} onChange={(v) => upd("photoSrc", v)} hint="URL absoluto ou relativo" />
-          <Field label="Legenda da foto" value={d.photoTitle} onChange={(v) => upd("photoTitle", v)} />
+
+        {/* Metadata */}
+        <div className="px-6 pb-4 border-t border-white/6 pt-4 space-y-4">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-white/20">Detalhes</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Data *</p>
+              <input
+                value={d.date} onChange={(e) => upd("date", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm font-mono outline-none focus:border-white/30 transition-colors"
+              />
+            </div>
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Local</p>
+              <input
+                value={d.location} onChange={(e) => upd("location", e.target.value)}
+                placeholder="Coimbra · Porto"
+                className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15"
+              />
+            </div>
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Série</p>
+              <select value={d.relatedCategory} onChange={(e) => upd("relatedCategory", e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors">
+                {CAT_OPTIONS.map((o) => <option key={o.value} value={o.value} className="bg-[#1a1a18]">{o.label}</option>)}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">Legenda da foto</p>
+              <input
+                value={d.photoTitle} onChange={(e) => upd("photoTitle", e.target.value)}
+                placeholder="Opcional"
+                className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15"
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">URL da foto</p>
+            <input
+              value={d.photoSrc} onChange={(e) => upd("photoSrc", e.target.value)}
+              placeholder="https://… ou caminho relativo"
+              className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/15"
+            />
+          </div>
+          <div className="space-y-1">
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">
+              URL da entrada <span className="text-white/15 normal-case tracking-normal">(gerado do título)</span>
+            </p>
+            <div className="flex gap-2">
+              <input
+                value={slug} onChange={(e) => { setSlug(e.target.value); setCustomSlug(true); }}
+                className="flex-1 bg-white/5 border border-white/10 text-white px-3 py-2 text-sm font-mono outline-none focus:border-white/30 transition-colors"
+                placeholder="gerado-automaticamente"
+              />
+              {customSlug && (
+                <button type="button" onClick={() => { setSlug(slugify(d.title)); setCustomSlug(false); }}
+                  className="font-mono text-[10px] text-white/40 hover:text-white px-3 border border-white/10 transition-colors">
+                  Reset
+                </button>
+              )}
+            </div>
+            <p className="font-mono text-[9px] text-white/15">rosmaninhofotografia.pt/diario/{slug || "…"}</p>
+          </div>
         </div>
-        {err && <p className="text-red-400 text-xs">{err}</p>}
-        <div className="flex items-center justify-end gap-4 pt-2 border-t border-white/8">
+
+        {err && <p className="text-red-400 text-xs px-6 pb-3">{err}</p>}
+
+        <div className="flex items-center justify-end gap-4 px-6 py-4 border-t border-white/8">
           <button type="button" onClick={onCancel} className="font-mono text-[10px] text-white/40 hover:text-white uppercase tracking-widest transition-colors">
             Cancelar
           </button>
