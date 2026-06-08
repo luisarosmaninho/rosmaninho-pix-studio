@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { BotanicalMark } from "@/components/BotanicalMark";
 import { motion, AnimatePresence } from "framer-motion";
 import { isNightInPortugal, getSunTimes } from "@/lib/sun";
 import Lenis from "lenis";
@@ -533,11 +534,15 @@ export function SiteFooter() {
         <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/30 italic font-italic-serif lowercase text-center">
           rosmarinus officinalis · a planta que dá nome a tudo isto.
         </p>
-        <p className="mt-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase text-center">
+        <p className="mt-2 flex items-center justify-center gap-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase">
+          <BotanicalMark size={8} className="text-copper/20" />
           algumas entradas não estão no menu. estão escondidas no nome.
+          <BotanicalMark size={8} className="text-copper/20" />
         </p>
-        <p className="mt-1 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase text-center">
+        <p className="mt-1 flex items-center justify-center gap-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase">
+          <BotanicalMark size={8} className="text-copper/20" />
           este arquivo tem uma sala que não aparece na navegação.
+          <BotanicalMark size={8} className="text-copper/20" />
         </p>
       </div>
     </footer>

@@ -4,6 +4,7 @@ import type { Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
+import { BotanicalMark } from "@/components/BotanicalMark";
 import { photos, categories, photosByCategory } from "@/lib/photos";
 import { journal } from "@/lib/journal";
 import portoStreet from "@/assets/porto-street.jpg";
@@ -161,6 +162,7 @@ function DarkroomReveal() {
         className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 transition-opacity duration-1000"
         style={{ opacity: active ? 0 : 1 }}
       >
+        <BotanicalMark size={11} className="text-copper/25 mb-5" />
         <p className="font-mono-label text-white/20 text-[10px] uppercase tracking-[0.55em] mb-4">
           § — Sala de revelação
         </p>
