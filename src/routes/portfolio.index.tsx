@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photosByCategory } from "@/lib/photos";
 import type { Category } from "@/lib/photos";
-import { getCategories } from "@/lib/content-fns";
+import { getCategories, getPortfolioPageTexts } from "@/lib/content-fns";
 import { getVisitCounts } from "@/lib/visits-fns";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
@@ -27,11 +27,12 @@ export const Route = createFileRoute("/portfolio/")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/portfolio" }],
   }),
   loader: async () => {
-    const [categories, visitCounts] = await Promise.all([
+    const [categories, visitCounts, pageTexts] = await Promise.all([
       getCategories(),
       getVisitCounts(),
+      getPortfolioPageTexts(),
     ]);
-    return { categories, visitCounts };
+    return { categories, visitCounts, pageTexts };
   },
   component: FragmentosPage,
 });
@@ -116,7 +117,7 @@ function SeriesBlock({ cat, index, count, visits }: { cat: Category; index: numb
 }
 
 function FragmentosPage() {
-  const { categories, visitCounts } = Route.useLoaderData();
+  const { categories, visitCounts, pageTexts } = Route.useLoaderData();
   const seriesData = categories.map((cat) => ({
     cat,
     count: photosByCategory(cat.slug).length,
@@ -129,7 +130,7 @@ function FragmentosPage() {
 
       <header className="px-6 md:px-16 pt-36 pb-20 md:pt-48 md:pb-28">
         <motion.div variants={fadeUp} initial="hidden" animate="show" className="max-w-5xl">
-          <p className="font-mono-label text-copper/70 mb-6 text-[10px] uppercase tracking-[0.48em]">arquivo · quatro séries abertas</p>
+          <p className="font-mono-label text-copper/70 mb-6 text-[10px] uppercase tracking-[0.48em]">{pageTexts.headerTagline}</p>
           <h1 className="font-display text-[clamp(4.5rem,14vw,10rem)] leading-[0.88] tracking-tight">
             Fragmentos<span className="font-italic-serif text-copper">.</span>
           </h1>
@@ -137,7 +138,7 @@ function FragmentosPage() {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.35 }}
             className="mt-10 max-w-xl text-foreground/55 text-xl leading-relaxed font-italic-serif italic"
           >
-            "Algumas imagens ficaram por causa da luz. Outras por causa das pessoas. Outras simplesmente recusaram desaparecer."
+            {pageTexts.headerQuote}
           </motion.p>
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.65 }}
@@ -166,13 +167,13 @@ function FragmentosPage() {
           fim dos fragmentos · {seriesData.reduce((a, s) => a + s.count, 0)} imagens · {seriesData.length} séries
         </p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
-          fotografias são apenas metade do arquivo.
+          {pageTexts.closingLine1}
         </p>
         <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.32em]">
-          o que não está na imagem pode estar noutro sítio.
+          {pageTexts.closingLine2}
         </p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-          há um lado deste arquivo que não se vê — escreve-se.
+          {pageTexts.closingLine3}
         </p>
       </motion.div>
 

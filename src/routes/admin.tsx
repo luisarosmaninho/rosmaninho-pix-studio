@@ -10,7 +10,11 @@ import {
   getNotas, saveNotas,
   getSobreTexts, saveSobreTexts,
   getHomepageTexts, saveHomepageTexts,
+  getContactoTexts, saveContactoTexts,
+  getPortfolioPageTexts, savePortfolioPageTexts,
+  getNotasPageTexts, saveNotasPageTexts,
   type SobreConfig, type NewPhotoEntry, type HomepageConfig,
+  type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -19,7 +23,7 @@ import type { Category } from "@/lib/photos";
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts] = await Promise.all([
+    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts] = await Promise.all([
       getPhotoConfig(),
       getNesteMomento(),
       getCategories(),
@@ -30,22 +34,27 @@ export const Route = createFileRoute("/admin")({
       getNotas(),
       getSobreTexts(),
       getHomepageTexts(),
+      getContactoTexts(),
+      getPortfolioPageTexts(),
+      getNotasPageTexts(),
     ]);
-    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts };
+    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts };
   },
   component: AdminPage,
 });
 
-type TabId = "homepage" | "momento" | "series" | "fotos" | "caderno" | "notas" | "autora" | "ordem";
+type TabId = "homepage" | "momento" | "autora" | "contacto" | "portfolio" | "series" | "caderno" | "notas" | "fotos" | "ordem";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "homepage", label: "Homepage" },
   { id: "momento", label: "Neste Momento" },
-  { id: "series", label: "Séries" },
-  { id: "fotos", label: "Fotos" },
-  { id: "caderno", label: "Caderno" },
-  { id: "notas", label: "Notas & Fragmentos" },
   { id: "autora", label: "Autora" },
+  { id: "contacto", label: "Contacto" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "series", label: "Séries" },
+  { id: "caderno", label: "Caderno" },
+  { id: "notas", label: "Notas" },
+  { id: "fotos", label: "Fotos" },
   { id: "ordem", label: "Ordem" },
 ];
 
@@ -1544,10 +1553,189 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
   );
 }
 
+// ── Contacto section ──────────────────────────────────────────────────────────
+
+function ContactoSection({ password, initial }: { password: string; initial: ContactoConfig }) {
+  const router = useRouter();
+  const [tagline, setTagline] = useState(initial.tagline);
+  const [introText, setIntroText] = useState(initial.introText);
+  const [responseNote, setResponseNote] = useState(initial.responseNote);
+  const [notasPool, setNotasPool] = useState(initial.notasPool.join("\n"));
+  const [email, setEmail] = useState(initial.email);
+  const [instagram, setInstagram] = useState(initial.instagram);
+  const [sidebarQuote, setSidebarQuote] = useState(initial.sidebarQuote);
+  const [footerLine1, setFooterLine1] = useState(initial.footerLine1);
+  const [footerLine2, setFooterLine2] = useState(initial.footerLine2);
+  const [footerLine3, setFooterLine3] = useState(initial.footerLine3);
+  const [confirmTitle, setConfirmTitle] = useState(initial.confirmTitle);
+  const [confirmText, setConfirmText] = useState(initial.confirmText);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  async function save(id: string, payload: Partial<ContactoConfig>) {
+    setSaving(id); setSaved(null);
+    try {
+      await saveContactoTexts({ data: { password, ...payload } });
+      setSaved(id); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Contacto" />
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Abertura da página</p>
+        <FreeBlock label="Tagline" hint="ex: 'Diálogo · Coimbra'" value={tagline} onChange={(v) => { setTagline(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Texto de introdução" value={introText} onChange={(v) => { setIntroText(v); setSaved(null); }} rows={4} />
+        <FreeBlock label="Nota de resposta" hint="a linha pequena abaixo" value={responseNote} onChange={(v) => { setResponseNote(v); setSaved(null); }} rows={1} />
+        <SaveRow id="abertura" saving={saving} saved={saved} onSave={() => save("abertura", { tagline, introText, responseNote })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Frases pessoais (rotativas)</p>
+        <FreeBlock
+          label="Uma frase por linha"
+          hint="aparece aleatoriamente abaixo do texto de intro"
+          value={notasPool}
+          onChange={(v) => { setNotasPool(v); setSaved(null); }}
+          rows={6}
+          placeholder={"Respondo melhor à tarde...\nLeio cada mensagem duas vezes..."}
+        />
+        <SaveRow id="pool" saving={saving} saved={saved}
+          onSave={() => save("pool", { notasPool: notasPool.split("\n").map(s => s.trim()).filter(Boolean) })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Contactos directos</p>
+        <FreeBlock label="Email" value={email} onChange={(v) => { setEmail(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Instagram" hint="com ou sem @" value={instagram} onChange={(v) => { setInstagram(v); setSaved(null); }} rows={1} />
+        <SaveRow id="contactos" saving={saving} saved={saved} onSave={() => save("contactos", { email, instagram })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Coluna direita (imagem)</p>
+        <FreeBlock label="Frase na imagem" value={sidebarQuote} onChange={(v) => { setSidebarQuote(v); setSaved(null); }} rows={2} />
+        <SaveRow id="sidebar" saving={saving} saved={saved} onSave={() => save("sidebar", { sidebarQuote })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rodapé da página</p>
+        <FreeBlock label="Linha 1 (itálico)" value={footerLine1} onChange={(v) => { setFooterLine1(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 2 (mono, pequeno)" value={footerLine2} onChange={(v) => { setFooterLine2(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 3 (itálico)" value={footerLine3} onChange={(v) => { setFooterLine3(v); setSaved(null); }} rows={1} />
+        <SaveRow id="rodape" saving={saving} saved={saved} onSave={() => save("rodape", { footerLine1, footerLine2, footerLine3 })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Mensagem de confirmação (após envio)</p>
+        <FreeBlock label="Título" hint="ex: 'Recebido.'" value={confirmTitle} onChange={(v) => { setConfirmTitle(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Texto de confirmação" value={confirmText} onChange={(v) => { setConfirmText(v); setSaved(null); }} rows={3} />
+        <SaveRow id="confirm" saving={saving} saved={saved} onSave={() => save("confirm", { confirmTitle, confirmText })} />
+      </div>
+    </div>
+  );
+}
+
+// ── Portfolio page section ─────────────────────────────────────────────────────
+
+function PortfolioPageSection({ password, initial }: { password: string; initial: PortfolioPageConfig }) {
+  const router = useRouter();
+  const [headerTagline, setHeaderTagline] = useState(initial.headerTagline);
+  const [headerQuote, setHeaderQuote] = useState(initial.headerQuote);
+  const [closingLine1, setClosingLine1] = useState(initial.closingLine1);
+  const [closingLine2, setClosingLine2] = useState(initial.closingLine2);
+  const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  async function save(id: string, payload: Partial<PortfolioPageConfig>) {
+    setSaving(id); setSaved(null);
+    try {
+      await savePortfolioPageTexts({ data: { password, ...payload } });
+      setSaved(id); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Portfolio — textos da página" />
+      <p className="font-mono text-[9px] text-white/25 leading-relaxed -mt-4">
+        Estes textos aparecem na página /portfolio. Os títulos e detalhes de cada série editam-se no separador "Séries".
+      </p>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cabeçalho</p>
+        <FreeBlock label="Tagline" hint="ex: 'arquivo · quatro séries abertas'" value={headerTagline} onChange={(v) => { setHeaderTagline(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Frase em destaque" hint="a citação em itálico abaixo do título" value={headerQuote} onChange={(v) => { setHeaderQuote(v); setSaved(null); }} rows={3} />
+        <SaveRow id="header" saving={saving} saved={saved} onSave={() => save("header", { headerTagline, headerQuote })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Fecho (fundo da página)</p>
+        <FreeBlock label="Linha 1 (itálico)" value={closingLine1} onChange={(v) => { setClosingLine1(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 2 (mono, pequeno)" value={closingLine2} onChange={(v) => { setClosingLine2(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 3 (itálico)" value={closingLine3} onChange={(v) => { setClosingLine3(v); setSaved(null); }} rows={1} />
+        <SaveRow id="closing" saving={saving} saved={saved} onSave={() => save("closing", { closingLine1, closingLine2, closingLine3 })} />
+      </div>
+    </div>
+  );
+}
+
+// ── Notas page section ────────────────────────────────────────────────────────
+
+function NotasPageSection({ password, initial }: { password: string; initial: NotasPageConfig }) {
+  const router = useRouter();
+  const [introLabel, setIntroLabel] = useState(initial.introLabel);
+  const [introText, setIntroText] = useState(initial.introText);
+  const [closingQuote, setClosingQuote] = useState(initial.closingQuote);
+  const [closingLine1, setClosingLine1] = useState(initial.closingLine1);
+  const [closingLine2, setClosingLine2] = useState(initial.closingLine2);
+  const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  async function save(id: string, payload: Partial<NotasPageConfig>) {
+    setSaving(id); setSaved(null);
+    try {
+      await saveNotasPageTexts({ data: { password, ...payload } });
+      setSaved(id); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Notas — textos da página" />
+      <p className="font-mono text-[9px] text-white/25 leading-relaxed -mt-4">
+        Estes textos aparecem na página /notas. As notas individuais editam-se na aba "Notas".
+      </p>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cabeçalho da página</p>
+        <FreeBlock label="Label" hint="ex: 'campo' — aparece em itálico cobre acima do título" value={introLabel} onChange={(v) => { setIntroLabel(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Texto de intro" value={introText} onChange={(v) => { setIntroText(v); setSaved(null); }} rows={4} />
+        <SaveRow id="intro" saving={saving} saved={saved} onSave={() => save("intro", { introLabel, introText })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Fecho (fundo da página)</p>
+        <FreeBlock label="Citação principal" hint="frase grande em display" value={closingQuote} onChange={(v) => { setClosingQuote(v); setSaved(null); }} rows={3} />
+        <FreeBlock label="Linha 1 (itálico)" value={closingLine1} onChange={(v) => { setClosingLine1(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 2 (mono, pequeno)" value={closingLine2} onChange={(v) => { setClosingLine2(v); setSaved(null); }} rows={1} />
+        <FreeBlock label="Linha 3 (itálico)" value={closingLine3} onChange={(v) => { setClosingLine3(v); setSaved(null); }} rows={1} />
+        <SaveRow id="closing" saving={saving} saved={saved} onSave={() => save("closing", { closingQuote, closingLine1, closingLine2, closingLine3 })} />
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts } = Route.useLoaderData();
+  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts } = Route.useLoaderData();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<TabId>("momento");
@@ -1583,8 +1771,10 @@ function AdminPage() {
       <div className="max-w-6xl mx-auto px-6 py-10">
         {tab === "homepage" && <HomepageSection password={password} initial={homepageTexts} />}
         {tab === "momento" && <MomentoSection password={password} initial={momento} />}
+        {tab === "autora" && <AutoraSection password={password} initial={sobreTexts} />}
+        {tab === "contacto" && <ContactoSection password={password} initial={contactoTexts} />}
+        {tab === "portfolio" && <PortfolioPageSection password={password} initial={portfolioPageTexts} />}
         {tab === "series" && <SeriesSection password={password} initial={categories} />}
-        {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} initialNewPhotos={newPhotos} />}
         {tab === "caderno" && (
           <CadernoSection
             password={password}
@@ -1592,8 +1782,15 @@ function AdminPage() {
             initialNewSlugs={newJournalSlugs}
           />
         )}
-        {tab === "notas" && <NotasSection password={password} initial={notasList} />}
-        {tab === "autora" && <AutoraSection password={password} initial={sobreTexts} />}
+        {tab === "notas" && (
+          <div className="space-y-16">
+            <NotasPageSection password={password} initial={notasPageTexts} />
+            <div className="border-t border-white/8 pt-16">
+              <NotasSection password={password} initial={notasList} />
+            </div>
+          </div>
+        )}
+        {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} initialNewPhotos={newPhotos} />}
         {tab === "ordem" && <OrdemSection password={password} initialConfig={config} />}
       </div>
     </div>

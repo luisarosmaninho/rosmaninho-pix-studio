@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { z } from "zod";
 import { sendContactEmail } from "@/lib/contact-fn";
+import { getContactoTexts } from "@/lib/content-fns";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 
 const assuntoOpcoes = [
@@ -13,26 +14,6 @@ const assuntoOpcoes = [
   { value: "outra coisa",         label: "Outra coisa"         },
 ];
 
-const notasPool = [
-  "Respondo melhor à tarde. De manhã o silêncio ainda não acabou.",
-  "Leio cada mensagem duas vezes antes de responder.",
-  "As melhores conversas começaram com muito pouco.",
-  "Não tenho respostas automáticas. Tenho pausas.",
-  "Prefiro uma mensagem longa a uma curta — mas aceito as duas.",
-];
-
-function NotaPessoal() {
-  const [nota, setNota] = useState(notasPool[0]);
-  useEffect(() => {
-    setNota(notasPool[Math.floor(Math.random() * notasPool.length)]);
-  }, []);
-  return (
-    <p className="font-italic-serif text-foreground/30 text-sm mt-8 italic border-l border-copper/20 pl-4">
-      {nota}
-    </p>
-  );
-}
-
 export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
@@ -41,6 +22,10 @@ export const Route = createFileRoute("/contacto")({
     ],
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/contacto" }],
   }),
+  loader: async () => {
+    const texts = await getContactoTexts();
+    return { texts };
+  },
   component: ContactoPage,
 });
 
@@ -52,11 +37,21 @@ const schema = z.object({
 });
 
 function ContactoPage() {
+  const { texts } = Route.useLoaderData();
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState("");
   const [assunto, setAssunto] = useState<string | null>(null);
+
+  const [notaPessoal, setNotaPessoal] = useState(texts.notasPool[0] ?? "");
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+    const pool = texts.notasPool.filter(Boolean);
+    if (pool.length > 1) setNotaPessoal(pool[Math.floor(Math.random() * pool.length)]);
+  }, [texts.notasPool]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -98,18 +93,22 @@ function ContactoPage() {
             transition={{ duration: 1.1, ease: "easeOut" }}
             className="max-w-lg"
           >
-            <p className="font-mono-label text-copper mb-8">Diálogo · Coimbra</p>
+            <p className="font-mono-label text-copper mb-8">{texts.tagline}</p>
             <h1 className="font-display text-[clamp(3.5rem,8vw,6rem)] leading-[0.92]">
               Se algo ficou,<br />
               <span className="font-italic-serif text-copper">escreve</span>.
             </h1>
             <p className="mt-8 text-foreground/65 leading-relaxed max-w-sm text-lg">
-              Não há tabelas nem pacotes. Não há respostas automáticas. Há uma conversa possível — sobre uma imagem, um lugar, um momento, ou uma impressão que queiras ter à parede.
+              {texts.introText}
             </p>
             <p className="mt-4 text-foreground/65 leading-relaxed max-w-sm">
-              Respondo quando o tempo deixar, com calma.
+              {texts.responseNote}
             </p>
-            <NotaPessoal />
+            {notaPessoal && (
+              <p className="font-italic-serif text-foreground/30 text-sm mt-8 italic border-l border-copper/20 pl-4">
+                {notaPessoal}
+              </p>
+            )}
           </motion.div>
 
           {/* Formulário ou confirmação */}
@@ -129,9 +128,9 @@ function ContactoPage() {
                   transition={{ duration: 0.8 }}
                   className="py-12 border-t border-b border-foreground/15"
                 >
-                  <p className="font-italic-serif text-4xl text-copper mb-4">Recebido.</p>
+                  <p className="font-italic-serif text-4xl text-copper mb-4">{texts.confirmTitle}</p>
                   <p className="text-foreground/65 leading-relaxed">
-                    Fica descansado — li com atenção. Volto a ti em breve, por email, sem pressa.
+                    {texts.confirmText}
                   </p>
                   <p className="font-mono-label text-foreground/30 mt-8">L.R. · Rosmaninho</p>
                 </motion.div>
@@ -208,14 +207,14 @@ function ContactoPage() {
               <div className="mt-16 pt-8 border-t border-foreground/10 flex flex-wrap gap-x-12 gap-y-4 text-sm">
                 <div>
                   <p className="font-mono-label text-foreground/35 mb-1">Email directo</p>
-                  <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper transition-colors">
-                    ola@rosmaninhofotografia.pt
+                  <a href={`mailto:${texts.email}`} className="hover:text-copper transition-colors">
+                    {texts.email}
                   </a>
                 </div>
                 <div>
                   <p className="font-mono-label text-foreground/35 mb-1">Instagram</p>
-                  <a href="https://instagram.com/luisarosmanih" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">
-                    @luisarosmanih
+                  <a href={`https://instagram.com/${texts.instagram.replace(/^@/, "")}`} target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">
+                    {texts.instagram}
                   </a>
                 </div>
               </div>
@@ -223,13 +222,13 @@ function ContactoPage() {
 
             <div className="mt-16">
               <p className="font-italic-serif text-sm text-foreground/35 italic">
-                não é só para contacto. é também para quem sabe o que procura.
+                {texts.footerLine1}
               </p>
               <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
-                se souberes o nome certo, o arquivo abre-se.
+                {texts.footerLine2}
               </p>
               <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-                escrever aqui não é a única forma de entrar.
+                {texts.footerLine3}
               </p>
             </div>
           </motion.div>
@@ -252,7 +251,7 @@ function ContactoPage() {
           >
             <p className="font-italic-serif text-5xl text-copper mb-3">"</p>
             <p className="font-display text-3xl md:text-4xl leading-[1.15] max-w-sm">
-              Não há pressa. Há uma conversa, se quiseres tê-la.
+              {texts.sidebarQuote}
             </p>
             <div className="mt-8 h-px bg-cream/20 max-w-xs" />
             <p className="font-mono-label text-cream/35 mt-4">Coimbra · Portugal</p>

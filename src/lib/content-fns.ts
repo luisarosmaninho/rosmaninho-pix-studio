@@ -256,6 +256,133 @@ export const saveNotas = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ── Contacto ──────────────────────────────────────────────────────────────────
+
+export type ContactoConfig = {
+  tagline: string;
+  introText: string;
+  responseNote: string;
+  notasPool: string[];
+  email: string;
+  instagram: string;
+  sidebarQuote: string;
+  footerLine1: string;
+  footerLine2: string;
+  footerLine3: string;
+  confirmTitle: string;
+  confirmText: string;
+};
+
+export const CONTACTO_DEFAULTS: ContactoConfig = {
+  tagline: "Diálogo · Coimbra",
+  introText: "Não há tabelas nem pacotes. Não há respostas automáticas. Há uma conversa possível — sobre uma imagem, um lugar, um momento, ou uma impressão que queiras ter à parede.",
+  responseNote: "Respondo quando o tempo deixar, com calma.",
+  notasPool: [
+    "Respondo melhor à tarde. De manhã o silêncio ainda não acabou.",
+    "Leio cada mensagem duas vezes antes de responder.",
+    "As melhores conversas começaram com muito pouco.",
+    "Não tenho respostas automáticas. Tenho pausas.",
+    "Prefiro uma mensagem longa a uma curta — mas aceito as duas.",
+  ],
+  email: "ola@rosmaninhofotografia.pt",
+  instagram: "@luisarosmanih",
+  sidebarQuote: "Não há pressa. Há uma conversa, se quiseres tê-la.",
+  footerLine1: "não é só para contacto. é também para quem sabe o que procura.",
+  footerLine2: "se souberes o nome certo, o arquivo abre-se.",
+  footerLine3: "escrever aqui não é a única forma de entrar.",
+  confirmTitle: "Recebido.",
+  confirmText: "Fica descansado — li com atenção. Volto a ti em breve, por email, sem pressa.",
+};
+
+const CONTACTO_CONFIG = path.join(process.cwd(), "contacto-config.json");
+
+export const getContactoTexts = createServerFn({ method: "GET" }).handler((): ContactoConfig => {
+  const saved = readJson<Partial<ContactoConfig>>(CONTACTO_CONFIG, {});
+  return { ...CONTACTO_DEFAULTS, ...saved };
+});
+
+export const saveContactoTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<ContactoConfig>)
+  .handler(({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = readJson<Partial<ContactoConfig>>(CONTACTO_CONFIG, {});
+    writeJson(CONTACTO_CONFIG, { ...current, ...rest });
+    return { ok: true };
+  });
+
+// ── Portfolio Page ─────────────────────────────────────────────────────────────
+
+export type PortfolioPageConfig = {
+  headerTagline: string;
+  headerQuote: string;
+  closingLine1: string;
+  closingLine2: string;
+  closingLine3: string;
+};
+
+export const PORTFOLIO_PAGE_DEFAULTS: PortfolioPageConfig = {
+  headerTagline: "arquivo · quatro séries abertas",
+  headerQuote: "Algumas imagens ficaram por causa da luz. Outras por causa das pessoas. Outras simplesmente recusaram desaparecer.",
+  closingLine1: "fotografias são apenas metade do arquivo.",
+  closingLine2: "o que não está na imagem pode estar noutro sítio.",
+  closingLine3: "há um lado deste arquivo que não se vê — escreve-se.",
+};
+
+const PORTFOLIO_PAGE_CONFIG = path.join(process.cwd(), "portfolio-page-config.json");
+
+export const getPortfolioPageTexts = createServerFn({ method: "GET" }).handler((): PortfolioPageConfig => {
+  const saved = readJson<Partial<PortfolioPageConfig>>(PORTFOLIO_PAGE_CONFIG, {});
+  return { ...PORTFOLIO_PAGE_DEFAULTS, ...saved };
+});
+
+export const savePortfolioPageTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<PortfolioPageConfig>)
+  .handler(({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = readJson<Partial<PortfolioPageConfig>>(PORTFOLIO_PAGE_CONFIG, {});
+    writeJson(PORTFOLIO_PAGE_CONFIG, { ...current, ...rest });
+    return { ok: true };
+  });
+
+// ── Notas Page ────────────────────────────────────────────────────────────────
+
+export type NotasPageConfig = {
+  introLabel: string;
+  introText: string;
+  closingQuote: string;
+  closingLine1: string;
+  closingLine2: string;
+  closingLine3: string;
+};
+
+export const NOTAS_PAGE_DEFAULTS: NotasPageConfig = {
+  introLabel: "campo",
+  introText: "Pequenas observações arrancadas de um caderno — escritas no terreno, à mesa, algures entre uma fotografia e a próxima. Não cabem numa imagem, mas também não desaparecem.",
+  closingQuote: "O campo não é apenas o lugar onde se fotografa. É o estado de atenção que se leva para qualquer sítio.",
+  closingLine1: "escreve. às vezes é assim que se chega a sítios novos.",
+  closingLine2: "algumas notas não estão aqui. estão noutro sítio qualquer.",
+  closingLine3: "há pensamentos que só aparecem quando os procuras pelo nome.",
+};
+
+const NOTAS_PAGE_CONFIG = path.join(process.cwd(), "notas-page-config.json");
+
+export const getNotasPageTexts = createServerFn({ method: "GET" }).handler((): NotasPageConfig => {
+  const saved = readJson<Partial<NotasPageConfig>>(NOTAS_PAGE_CONFIG, {});
+  return { ...NOTAS_PAGE_DEFAULTS, ...saved };
+});
+
+export const saveNotasPageTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<NotasPageConfig>)
+  .handler(({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = readJson<Partial<NotasPageConfig>>(NOTAS_PAGE_CONFIG, {});
+    writeJson(NOTAS_PAGE_CONFIG, { ...current, ...rest });
+    return { ok: true };
+  });
+
 // ── Homepage ──────────────────────────────────────────────────────────────────
 
 export type HomepageConfig = {

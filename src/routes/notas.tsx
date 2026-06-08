@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import type { Nota, NotaSize } from "@/lib/notas";
-import { getNotas } from "@/lib/content-fns";
+import { getNotas, getNotasPageTexts } from "@/lib/content-fns";
 
 export const Route = createFileRoute("/notas")({
   head: () => ({
@@ -25,8 +25,8 @@ export const Route = createFileRoute("/notas")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/notas" }],
   }),
   loader: async () => {
-    const notas = await getNotas();
-    return { notas };
+    const [notas, pageTexts] = await Promise.all([getNotas(), getNotasPageTexts()]);
+    return { notas, pageTexts };
   },
   component: NotasPage,
 });
@@ -176,7 +176,7 @@ function TagButton({
 
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 function NotasPage() {
-  const { notas } = Route.useLoaderData();
+  const { notas, pageTexts } = Route.useLoaderData();
   const [activeTag, setActiveTag] = useState<Nota["tag"] | null>(null);
   const visible = activeTag ? notas.filter((n) => n.tag === activeTag) : notas;
   const tagCounts = notas.reduce<Record<string, number>>((acc, n) => {
@@ -195,10 +195,10 @@ function NotasPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: "easeOut" }}
         >
-          <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">campo</p>
+          <p className="font-italic-serif text-3xl md:text-4xl text-copper mb-4">{pageTexts.introLabel}</p>
           <h1 className="font-display text-5xl md:text-8xl leading-[0.95]">Notas de Campo.</h1>
           <p className="mt-8 max-w-xl text-foreground/55 leading-relaxed body-text">
-            Pequenas observações arrancadas de um caderno — escritas no terreno, à mesa, algures entre uma fotografia e a próxima. Não cabem numa imagem, mas também não desaparecem.
+            {pageTexts.introText}
           </p>
         </motion.div>
 
@@ -264,17 +264,17 @@ function NotasPage() {
       >
         <p className="font-italic-serif text-4xl text-copper mb-8">—</p>
         <p className="font-display text-2xl md:text-3xl leading-relaxed text-foreground/65">
-          O campo não é apenas o lugar onde se fotografa. É o estado de atenção que se leva para qualquer sítio.
+          {pageTexts.closingQuote}
         </p>
         <p className="font-mono-label text-foreground/30 mt-10">L.R. · Coimbra</p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
-          escreve. às vezes é assim que se chega a sítios novos.
+          {pageTexts.closingLine1}
         </p>
         <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
-          algumas notas não estão aqui. estão noutro sítio qualquer.
+          {pageTexts.closingLine2}
         </p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-          há pensamentos que só aparecem quando os procuras pelo nome.
+          {pageTexts.closingLine3}
         </p>
       </motion.section>
 

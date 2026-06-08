@@ -215,19 +215,19 @@ export function CustomCursor() {
 
 /* ---------------- Loading screen (only on first visit of session) ---------------- */
 export function LoadingScreen() {
-  const [done, setDone] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("rf_loaded") === "1";
-  });
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (done) return;
+    if (sessionStorage.getItem("rf_loaded") === "1") {
+      setDone(true);
+      return;
+    }
     const t = setTimeout(() => {
       setDone(true);
       sessionStorage.setItem("rf_loaded", "1");
     }, 2000);
     return () => clearTimeout(t);
-  }, [done]);
+  }, []);
 
   if (done) return null;
   return (
