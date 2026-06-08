@@ -149,6 +149,12 @@ function FragmentosPage() {
               {seriesData.reduce((a, s) => a + s.count, 0)} imagens · Coimbra · Portugal
             </span>
           </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.9 }}
+            className="font-mono-label text-[9px] text-foreground/18 mt-6 lowercase tracking-[0.3em]"
+          >
+            {pageTexts.closingLine2}
+          </motion.p>
         </motion.div>
       </header>
 
@@ -160,7 +166,16 @@ function FragmentosPage() {
 
       <motion.div
         variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-        className="px-6 md:px-16 py-32 md:py-44 text-center max-w-xl mx-auto"
+        className="px-6 md:px-16 py-16 text-center max-w-xl mx-auto"
+      >
+        <p className="font-italic-serif text-sm text-foreground/25 italic">
+          {pageTexts.closingLine3}
+        </p>
+      </motion.div>
+
+      <motion.div
+        variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
+        className="px-6 md:px-16 py-24 md:py-36 text-center max-w-xl mx-auto"
       >
         <p className="font-italic-serif text-foreground/20 text-3xl mb-10">—</p>
         <p className="font-mono-label text-foreground/18 text-[9px] uppercase tracking-[0.48em]">
@@ -168,12 +183,6 @@ function FragmentosPage() {
         </p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
           {pageTexts.closingLine1}
-        </p>
-        <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.32em]">
-          {pageTexts.closingLine2}
-        </p>
-        <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-          {pageTexts.closingLine3}
         </p>
       </motion.div>
 

@@ -200,6 +200,9 @@ function NotasPage() {
           <p className="mt-8 max-w-xl text-foreground/55 leading-relaxed body-text">
             {pageTexts.introText}
           </p>
+          <p className="font-mono-label text-[9px] text-foreground/20 mt-10 lowercase tracking-[0.3em]">
+            {pageTexts.closingLine2}
+          </p>
         </motion.div>
 
         {/* Filter tags */}
@@ -219,6 +222,16 @@ function NotasPage() {
           ))}
         </motion.div>
       </section>
+
+      <div className="hairline mx-6 md:mx-12" />
+
+      <motion.p
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        transition={{ duration: 1.2 }}
+        className="font-italic-serif text-sm text-foreground/20 italic text-center py-6 px-6"
+      >
+        {pageTexts.closingLine3}
+      </motion.p>
 
       <div className="hairline mx-6 md:mx-12" />
 
@@ -269,12 +282,6 @@ function NotasPage() {
         <p className="font-mono-label text-foreground/30 mt-10">L.R. · Coimbra</p>
         <p className="font-italic-serif text-sm text-foreground/35 mt-8 italic">
           {pageTexts.closingLine1}
-        </p>
-        <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
-          {pageTexts.closingLine2}
-        </p>
-        <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-          {pageTexts.closingLine3}
         </p>
       </motion.section>
 

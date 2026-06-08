@@ -357,6 +357,15 @@ function SobrePage() {
 
       <div className="hairline mx-6 md:mx-12" />
 
+      <motion.p
+        variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
+        className="font-mono-label text-[9px] text-foreground/20 lowercase tracking-[0.3em] text-center py-10 px-6"
+      >
+        algumas coisas ficam guardadas para quem procura de verdade.
+      </motion.p>
+
+      <div className="hairline mx-6 md:mx-12" />
+
       {/* ── Fecho ── */}
       <motion.section variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
         className="px-6 md:px-12 py-32 text-center max-w-2xl mx-auto">
@@ -370,9 +379,6 @@ function SobrePage() {
         </Link>
         <p className="font-italic-serif text-sm text-foreground/35 mt-12 italic">
           há palavras que abrem portas.
-        </p>
-        <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
-          algumas coisas ficam guardadas para quem procura de verdade.
         </p>
       </motion.section>
 

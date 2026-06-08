@@ -104,6 +104,9 @@ function ContactoPage() {
             <p className="mt-4 text-foreground/65 leading-relaxed max-w-sm">
               {texts.responseNote}
             </p>
+            <p className="font-mono-label text-[9px] text-foreground/20 mt-8 lowercase tracking-[0.3em]">
+              {texts.footerLine2}
+            </p>
             {notaPessoal && (
               <p className="font-italic-serif text-foreground/30 text-sm mt-8 italic border-l border-copper/20 pl-4">
                 {notaPessoal}
@@ -133,6 +136,9 @@ function ContactoPage() {
                     {texts.confirmText}
                   </p>
                   <p className="font-mono-label text-foreground/30 mt-8">L.R. · Rosmaninho</p>
+                  <p className="font-italic-serif text-xs text-foreground/20 mt-6 italic">
+                    {texts.footerLine3}
+                  </p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -223,12 +229,6 @@ function ContactoPage() {
             <div className="mt-16">
               <p className="font-italic-serif text-sm text-foreground/35 italic">
                 {texts.footerLine1}
-              </p>
-              <p className="font-mono-label text-[9px] text-foreground/25 mt-4 lowercase tracking-[0.3em]">
-                {texts.footerLine2}
-              </p>
-              <p className="font-italic-serif text-sm text-foreground/35 mt-3 italic">
-                {texts.footerLine3}
               </p>
             </div>
           </motion.div>
