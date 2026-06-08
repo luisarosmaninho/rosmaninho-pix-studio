@@ -426,19 +426,56 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
                 {l.label}
               </Link>
             ))}
-            <a
-              href="https://instagram.com/luisarosmanih"
-              target="_blank"
-              rel="noreferrer"
-              className="opacity-65 hover:opacity-100 hover:text-copper transition-all duration-300"
-              aria-label="Instagram"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/>
-              </svg>
-            </a>
+            <div className="relative group/ig hidden md:block">
+              <a
+                href="https://instagram.com/luisarosmanih"
+                target="_blank"
+                rel="noreferrer"
+                className="opacity-65 hover:opacity-100 hover:text-copper transition-all duration-300 block"
+                aria-label="Instagram"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/>
+                </svg>
+              </a>
+
+              {/* Tooltip Instagram */}
+              <div
+                className="
+                  absolute top-full right-0 mt-3 z-50
+                  pointer-events-none select-none
+                  opacity-0 translate-y-1.5
+                  group-hover/ig:opacity-100 group-hover/ig:translate-y-0
+                  transition-all duration-[380ms] ease-out
+                  delay-0 group-hover/ig:delay-[140ms]
+                "
+              >
+                <div
+                  className="px-5 py-4 text-cream"
+                  style={{
+                    backgroundColor: "oklch(0.14 0.026 36)",
+                    boxShadow: "0 12px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)",
+                  }}
+                >
+                  <p className="font-mono-label text-copper/55 text-[8px] uppercase tracking-[0.42em] mb-3 flex items-center gap-2">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-copper/60">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <circle cx="12" cy="12" r="4"/>
+                      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/>
+                    </svg>
+                    Instagram
+                  </p>
+                  <p className="font-mono-label text-cream/75 text-[10px] tracking-[0.2em]">
+                    @luisarosmanih
+                  </p>
+                  <p className="font-mono-label text-cream/22 text-[7.5px] tracking-[0.22em] mt-3">
+                    Coimbra · Portugal
+                  </p>
+                </div>
+              </div>
+            </div>
           </nav>
 
           {/* Hamburger — mobile only */}
