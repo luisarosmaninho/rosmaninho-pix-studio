@@ -97,6 +97,19 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5000,
     allowedHosts: true,
+    watch: {
+      ignored: [
+        "**/momento-config.json",
+        "**/journal-config.json",
+        "**/photos-config.json",
+        "**/categories-config.json",
+        "**/photos-meta-config.json",
+        "**/new-photos-config.json",
+        "**/notas-config.json",
+        "**/sobre-config.json",
+        "**/visits-config.json",
+      ],
+    },
   },
   preview: {
     host: "0.0.0.0",
