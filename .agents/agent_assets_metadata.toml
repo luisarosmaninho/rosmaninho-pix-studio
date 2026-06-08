@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "iqQmLhakVXZSfqEYA3tXw"
+uri = "file://public/images/darkroom-bg.png"
+type = "image"
+title = "darkroom atmospheric background"
+
+[[generated]]
+id = "aFBpangZTaWDfnV2J78x2"
+uri = "file://public/images/coimbra-bg.png"
+type = "image"
+title = "coimbra golden hour view"

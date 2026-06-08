@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VideoRouteImport } from './routes/video'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as RosemaryRouteImport } from './routes/rosemary'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
@@ -22,6 +23,11 @@ import { Route as DiarioIndexRouteImport } from './routes/diario.index'
 import { Route as PortfolioCategoryRouteImport } from './routes/portfolio.$category'
 import { Route as DiarioSlugRouteImport } from './routes/diario.$slug'
 
+const VideoRoute = VideoRouteImport.update({
+  id: '/video',
+  path: '/video',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/portfolio': typeof PortfolioRouteWithChildren
   '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
+  '/video': typeof VideoRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
   '/diario/': typeof DiarioIndexRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/notas': typeof NotasRoute
   '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
+  '/video': typeof VideoRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
   '/diario': typeof DiarioIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/portfolio': typeof PortfolioRouteWithChildren
   '/rosemary': typeof RosemaryRoute
   '/sobre': typeof SobreRoute
+  '/video': typeof VideoRoute
   '/diario/$slug': typeof DiarioSlugRoute
   '/portfolio/$category': typeof PortfolioCategoryRoute
   '/diario/': typeof DiarioIndexRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/rosemary'
     | '/sobre'
+    | '/video'
     | '/diario/$slug'
     | '/portfolio/$category'
     | '/diario/'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/notas'
     | '/rosemary'
     | '/sobre'
+    | '/video'
     | '/diario/$slug'
     | '/portfolio/$category'
     | '/diario'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/rosemary'
     | '/sobre'
+    | '/video'
     | '/diario/$slug'
     | '/portfolio/$category'
     | '/diario/'
@@ -176,10 +188,18 @@ export interface RootRouteChildren {
   PortfolioRoute: typeof PortfolioRouteWithChildren
   RosemaryRoute: typeof RosemaryRoute
   SobreRoute: typeof SobreRoute
+  VideoRoute: typeof VideoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/video': {
+      id: '/video'
+      path: '/video'
+      fullPath: '/video'
+      preLoaderRoute: typeof VideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sobre': {
       id: '/sobre'
       path: '/sobre'
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortfolioRoute: PortfolioRouteWithChildren,
   RosemaryRoute: RosemaryRoute,
   SobreRoute: SobreRoute,
+  VideoRoute: VideoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
