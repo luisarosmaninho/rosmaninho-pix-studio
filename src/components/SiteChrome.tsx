@@ -327,7 +327,7 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
             >
               <span className="inline-flex items-center gap-1.5 font-italic-serif text-3xl md:text-[34px] leading-none">
                 Rosmaninho
-                <BotanicalMark size={7} className="text-copper/55 translate-y-0.5" />
+                <BotanicalMark size={11} className="text-copper/80 translate-y-0.5" />
               </span>
               <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
 
@@ -575,14 +575,14 @@ export function SiteFooter() {
           rosmarinus officinalis · a planta que dá nome a tudo isto.
         </p>
         <p className="mt-5 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
-          <BotanicalMark size={9} className="text-copper/45" />
+          <BotanicalMark size={12} className="text-copper/70" />
           algumas entradas não estão no menu. estão escondidas no nome.
-          <BotanicalMark size={9} className="text-copper/45" />
+          <BotanicalMark size={12} className="text-copper/70" />
         </p>
         <p className="mt-4 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
-          <BotanicalMark size={9} className="text-copper/45" />
+          <BotanicalMark size={12} className="text-copper/70" />
           este arquivo tem uma sala que não aparece na navegação.
-          <BotanicalMark size={9} className="text-copper/45" />
+          <BotanicalMark size={12} className="text-copper/70" />
         </p>
       </div>
     </footer>

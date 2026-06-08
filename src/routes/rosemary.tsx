@@ -219,7 +219,7 @@ function RosemaryPage() {
             rosmarinus officinalis — persistência, memória, retorno.
           </p>
           <div className="mt-10 flex justify-center">
-            <BotanicalMark size={16} className="opacity-40" style={{ color: "oklch(0.66 0.115 55)" }} />
+            <BotanicalMark size={22} className="opacity-65" style={{ color: "oklch(0.66 0.115 55)" }} />
           </div>
         </motion.div>
       </main>
