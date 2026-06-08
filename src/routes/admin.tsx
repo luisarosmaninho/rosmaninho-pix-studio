@@ -9,7 +9,8 @@ import {
   getJournal, getNewJournalEntries, saveJournalEntry, addNewJournalEntry, deleteNewJournalEntry,
   getNotas, saveNotas,
   getSobreTexts, saveSobreTexts,
-  type SobreConfig, type NewPhotoEntry,
+  getHomepageTexts, saveHomepageTexts,
+  type SobreConfig, type NewPhotoEntry, type HomepageConfig,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -18,7 +19,7 @@ import type { Category } from "@/lib/photos";
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts] = await Promise.all([
+    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts] = await Promise.all([
       getPhotoConfig(),
       getNesteMomento(),
       getCategories(),
@@ -28,15 +29,17 @@ export const Route = createFileRoute("/admin")({
       getNewJournalEntries(),
       getNotas(),
       getSobreTexts(),
+      getHomepageTexts(),
     ]);
-    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts };
+    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts };
   },
   component: AdminPage,
 });
 
-type TabId = "momento" | "series" | "fotos" | "caderno" | "notas" | "autora" | "ordem";
+type TabId = "homepage" | "momento" | "series" | "fotos" | "caderno" | "notas" | "autora" | "ordem";
 
 const TABS: { id: TabId; label: string }[] = [
+  { id: "homepage", label: "Homepage" },
   { id: "momento", label: "Neste Momento" },
   { id: "series", label: "Séries" },
   { id: "fotos", label: "Fotos" },
@@ -1014,6 +1017,95 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
   );
 }
 
+// ── Homepage section ──────────────────────────────────────────────────────────
+
+function HomepageSection({ password, initial }: { password: string; initial: HomepageConfig }) {
+  const router = useRouter();
+  const [tagline, setTagline] = useState(initial.heroTagline);
+  const [subtitle, setSubtitle] = useState(initial.heroSubtitle);
+  const [manifesto, setManifesto] = useState(initial.manifestoText);
+  const [p1, setP1] = useState(initial.autoraP1);
+  const [p2, setP2] = useState(initial.autoraP2);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  async function save(id: string, payload: Partial<HomepageConfig>) {
+    setSaving(id); setSaved(null);
+    try {
+      await saveHomepageTexts({ data: { password, ...payload } });
+      setSaved(id); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Homepage" />
+
+      {/* Hero */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial</p>
+        <FreeBlock
+          label="Tagline"
+          hint="linha de cima, estilo 'Arquivo lento · Coimbra'"
+          value={tagline}
+          onChange={(v) => { setTagline(v); setSaved(null); }}
+          rows={1}
+        />
+        <FreeBlock
+          label="Subtítulo"
+          hint="parágrafo abaixo do título grande"
+          value={subtitle}
+          onChange={(v) => { setSubtitle(v); setSaved(null); }}
+          rows={3}
+        />
+        <SaveRow id="hero" saving={saving} saved={saved}
+          onSave={() => save("hero", { heroTagline: tagline, heroSubtitle: subtitle })} />
+      </div>
+
+      {/* Manifesto */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 01 — Manifesto</p>
+        <FreeBlock
+          label="Texto do manifesto"
+          hint="a frase grande que aparece logo a seguir ao hero"
+          value={manifesto}
+          onChange={(v) => { setManifesto(v); setSaved(null); }}
+          rows={5}
+          placeholder="Não fotografo para mostrar — fotografo para demorar…"
+        />
+        <SaveRow id="manifesto" saving={saving} saved={saved}
+          onSave={() => save("manifesto", { manifestoText: manifesto })} />
+      </div>
+
+      {/* Autora */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 02 — Autora (bloco creme)</p>
+        <FreeBlock
+          label="Parágrafo 1"
+          value={p1}
+          onChange={(v) => { setP1(v); setSaved(null); }}
+          rows={3}
+          placeholder="A fotografia tornou-se a minha forma de guardar emoções…"
+        />
+        <FreeBlock
+          label="Parágrafo 2"
+          value={p2}
+          onChange={(v) => { setP2(v); setSaved(null); }}
+          rows={3}
+          placeholder="Procuro criar fotografias que pareçam verdadeiras…"
+        />
+        <SaveRow id="autora-home" saving={saving} saved={saved}
+          onSave={() => save("autora-home", { autoraP1: p1, autoraP2: p2 })} />
+      </div>
+
+      <p className="font-mono text-[9px] text-white/20 leading-relaxed">
+        Os títulos grandes (como "Onde o tempo para, e a emoção fica.") são parte do design e não se alteram aqui.
+      </p>
+    </div>
+  );
+}
+
 // ── Autora section ────────────────────────────────────────────────────────────
 
 function FreeBlock({
@@ -1455,7 +1547,7 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts } = Route.useLoaderData();
+  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts } = Route.useLoaderData();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<TabId>("momento");
@@ -1489,6 +1581,7 @@ function AdminPage() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
+        {tab === "homepage" && <HomepageSection password={password} initial={homepageTexts} />}
         {tab === "momento" && <MomentoSection password={password} initial={momento} />}
         {tab === "series" && <SeriesSection password={password} initial={categories} />}
         {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} initialNewPhotos={newPhotos} />}

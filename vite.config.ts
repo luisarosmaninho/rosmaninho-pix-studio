@@ -108,6 +108,7 @@ export default defineConfig({
         "**/notas-config.json",
         "**/sobre-config.json",
         "**/visits-config.json",
+        "**/homepage-config.json",
       ],
     },
   },

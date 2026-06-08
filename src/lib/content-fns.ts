@@ -256,6 +256,41 @@ export const saveNotas = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ── Homepage ──────────────────────────────────────────────────────────────────
+
+export type HomepageConfig = {
+  heroTagline: string;
+  heroSubtitle: string;
+  manifestoText: string;
+  autoraP1: string;
+  autoraP2: string;
+};
+
+export const HOMEPAGE_DEFAULTS: HomepageConfig = {
+  heroTagline: "Arquivo lento · Coimbra",
+  heroSubtitle: "Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.",
+  manifestoText: "Não fotografo para mostrar — fotografo para demorar. Cada imagem é uma forma educada de pedir ao mundo que fique mais um momento.",
+  autoraP1: "A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa.",
+  autoraP2: "Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.",
+};
+
+const HOMEPAGE_CONFIG = path.join(process.cwd(), "homepage-config.json");
+
+export const getHomepageTexts = createServerFn({ method: "GET" }).handler((): HomepageConfig => {
+  const saved = readJson<Partial<HomepageConfig>>(HOMEPAGE_CONFIG, {});
+  return { ...HOMEPAGE_DEFAULTS, ...saved };
+});
+
+export const saveHomepageTexts = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<HomepageConfig>)
+  .handler(({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = readJson<Partial<HomepageConfig>>(HOMEPAGE_CONFIG, {});
+    writeJson(HOMEPAGE_CONFIG, { ...current, ...rest });
+    return { ok: true };
+  });
+
 // ── Sobre ─────────────────────────────────────────────────────────────────────
 
 export type SobreConfig = {

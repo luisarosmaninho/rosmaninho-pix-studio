@@ -40,8 +40,9 @@ export const Route = createFileRoute("/")({
   }),
   loader: async () => {
     const { getNesteMomento } = await import("@/lib/momento-fns");
-    const momento = await getNesteMomento();
-    return { momento };
+    const { getHomepageTexts } = await import("@/lib/content-fns");
+    const [momento, homepageTexts] = await Promise.all([getNesteMomento(), getHomepageTexts()]);
+    return { momento, homepageTexts };
   },
   component: HomePage,
 });
@@ -346,7 +347,7 @@ function FilmLightbox({ index, onClose, onPrev, onNext }: {
 }
 
 function HomePage() {
-  const { momento } = Route.useLoaderData();
+  const { momento, homepageTexts } = Route.useLoaderData();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   function openLightbox(i: number) { setLightboxIndex(i); }
@@ -392,7 +393,7 @@ function HomePage() {
             transition={{ duration: 1, delay: 1.4 }}
             className="font-mono-label text-copper mb-6"
           >
-            Arquivo lento · Coimbra
+            {homepageTexts.heroTagline}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -411,7 +412,7 @@ function HomePage() {
             className="mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
           >
             <p className="max-w-md text-cream/75 text-base leading-relaxed">
-              Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.
+              {homepageTexts.heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/portfolio" className="btn-ghost-light">Fragmentos</Link>
@@ -435,7 +436,7 @@ function HomePage() {
         <div className="max-w-5xl mx-auto relative">
           <p className="font-mono-label text-copper mb-8">§ 01 — Manifesto</p>
           <p className="font-display text-3xl md:text-5xl lg:text-6xl leading-[1.08] tracking-tight">
-            Não fotografo para mostrar — fotografo para <span className="font-italic-serif text-copper">demorar</span>. Cada imagem é uma forma educada de pedir ao mundo que <span className="font-italic-serif">fique</span> mais um momento.
+            {homepageTexts.manifestoText}
           </p>
           <div className="mt-12 flex justify-between items-end">
             <Whisper text="arquivo lento · Coimbra · MMXX —" delay={1.4} />
@@ -455,12 +456,8 @@ function HomePage() {
               fotografias.
             </h2>
             <div className="mt-10 space-y-5 text-foreground/75 max-w-md leading-relaxed">
-              <p>
-                A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa.
-              </p>
-              <p>
-                Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.
-              </p>
+              <p>{homepageTexts.autoraP1}</p>
+              <p>{homepageTexts.autoraP2}</p>
             </div>
 
             <div className="mt-12 grid grid-cols-2 gap-6 border-t border-foreground/15 pt-8 max-w-md">
