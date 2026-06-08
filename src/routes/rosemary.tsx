@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { BotanicalMark } from "@/components/BotanicalMark";
 
 export const Route = createFileRoute("/rosemary")({
   head: () => ({
@@ -217,6 +218,9 @@ function RosemaryPage() {
           >
             rosmarinus officinalis — persistência, memória, retorno.
           </p>
+          <div className="mt-10 flex justify-center">
+            <BotanicalMark size={16} className="opacity-20" style={{ color: "oklch(0.66 0.115 55)" }} />
+          </div>
         </motion.div>
       </main>
     </div>

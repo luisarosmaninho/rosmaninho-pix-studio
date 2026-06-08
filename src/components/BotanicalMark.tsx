@@ -1,9 +1,12 @@
+import type React from "react";
+
 type BotanicalMarkProps = {
   className?: string;
   size?: number;
+  style?: React.CSSProperties;
 };
 
-export function BotanicalMark({ className = "", size = 10 }: BotanicalMarkProps) {
+export function BotanicalMark({ className = "", size = 10, style }: BotanicalMarkProps) {
   return (
     <svg
       viewBox="0 0 8 18"
@@ -11,6 +14,7 @@ export function BotanicalMark({ className = "", size = 10 }: BotanicalMarkProps)
       height={size * 1.8}
       aria-hidden="true"
       className={`shrink-0 select-none pointer-events-none ${className}`}
+      style={style}
     >
       <line x1="4" y1="17" x2="4" y2="1" stroke="currentColor" strokeWidth="0.65" strokeLinecap="round" />
       <line x1="4" y1="14" x2="1.2" y2="11.2" stroke="currentColor" strokeWidth="0.55" strokeLinecap="round" />
