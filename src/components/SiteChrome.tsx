@@ -325,7 +325,13 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
               style={{ color: "inherit" }}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="font-italic-serif text-3xl md:text-[34px] leading-none">Rosmaninho</span>
+              <span className="relative font-italic-serif text-3xl md:text-[34px] leading-none">
+                <BotanicalMark
+                  size={7}
+                  className="absolute left-1/2 -translate-x-1/2 -top-3.5 text-copper/55 pointer-events-none"
+                />
+                Rosmaninho
+              </span>
               <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
 
               {/* Ícone lunar/solar — aparece subtilmente ao hover */}
