@@ -162,7 +162,13 @@ function DarkroomReveal() {
         className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 transition-opacity duration-1000"
         style={{ opacity: active ? 0 : 1 }}
       >
-        <BotanicalMark size={11} className="text-copper/50 mb-5" />
+        <motion.div
+          className="mb-5"
+          animate={{ opacity: [0.35, 0.7, 0.35], scale: [0.94, 1, 0.94] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <BotanicalMark size={11} className="text-copper" />
+        </motion.div>
         <p className="font-mono-label text-white/20 text-[10px] uppercase tracking-[0.55em] mb-4">
           § — Sala de revelação
         </p>
