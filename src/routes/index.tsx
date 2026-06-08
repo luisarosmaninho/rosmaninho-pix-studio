@@ -162,7 +162,7 @@ function DarkroomReveal() {
         className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 transition-opacity duration-1000"
         style={{ opacity: active ? 0 : 1 }}
       >
-        <BotanicalMark size={11} className="text-copper/25 mb-5" />
+        <BotanicalMark size={11} className="text-copper/50 mb-5" />
         <p className="font-mono-label text-white/20 text-[10px] uppercase tracking-[0.55em] mb-4">
           § — Sala de revelação
         </p>
@@ -737,20 +737,20 @@ function HomePage() {
             só atenção ao que insiste em ficar."
           </p>
           <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
-          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/38 mt-8 italic">
-            <BotanicalMark size={9} className="text-foreground/20" />
+          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-8 italic">
+            <BotanicalMark size={9} className="text-foreground/40" />
             alguns arquivos só se revelam a quem sabe o nome certo.
-            <BotanicalMark size={9} className="text-foreground/20" />
+            <BotanicalMark size={9} className="text-foreground/40" />
           </p>
-          <p className="flex items-center justify-center gap-2.5 font-mono-label text-[9px] text-foreground/28 mt-4 lowercase tracking-[0.3em]">
-            <BotanicalMark size={8} className="text-foreground/18" />
+          <p className="flex items-center justify-center gap-2.5 font-mono-label text-[9px] text-foreground/40 mt-5 lowercase tracking-[0.3em]">
+            <BotanicalMark size={8} className="text-foreground/35" />
             há mais do que aquilo que os olhos encontram à primeira vista.
-            <BotanicalMark size={8} className="text-foreground/18" />
+            <BotanicalMark size={8} className="text-foreground/35" />
           </p>
-          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/38 mt-3 italic">
-            <BotanicalMark size={9} className="text-foreground/20" />
+          <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-5 italic">
+            <BotanicalMark size={9} className="text-foreground/40" />
             este sítio tem camadas. como tudo o que vale a pena.
-            <BotanicalMark size={9} className="text-foreground/20" />
+            <BotanicalMark size={9} className="text-foreground/40" />
           </p>
         </div>
       </Section>

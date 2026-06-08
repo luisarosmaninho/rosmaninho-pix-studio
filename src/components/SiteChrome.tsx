@@ -534,15 +534,15 @@ export function SiteFooter() {
         <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/30 italic font-italic-serif lowercase text-center">
           rosmarinus officinalis · a planta que dá nome a tudo isto.
         </p>
-        <p className="mt-2 flex items-center justify-center gap-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase">
-          <BotanicalMark size={8} className="text-copper/20" />
+        <p className="mt-5 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
+          <BotanicalMark size={9} className="text-copper/45" />
           algumas entradas não estão no menu. estão escondidas no nome.
-          <BotanicalMark size={8} className="text-copper/20" />
+          <BotanicalMark size={9} className="text-copper/45" />
         </p>
-        <p className="mt-1 flex items-center justify-center gap-2 text-[9px] tracking-[0.18em] text-cream/20 font-mono-label lowercase">
-          <BotanicalMark size={8} className="text-copper/20" />
+        <p className="mt-4 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
+          <BotanicalMark size={9} className="text-copper/45" />
           este arquivo tem uma sala que não aparece na navegação.
-          <BotanicalMark size={8} className="text-copper/20" />
+          <BotanicalMark size={9} className="text-copper/45" />
         </p>
       </div>
     </footer>
