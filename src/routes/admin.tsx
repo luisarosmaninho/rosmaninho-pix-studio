@@ -106,7 +106,7 @@ function SaveBtn({ saving, ok, label = "Guardar" }: { saving: boolean; ok?: bool
   return (
     <button type="submit" disabled={saving}
       className="bg-white text-black text-[11px] uppercase tracking-[0.28em] px-5 py-2 hover:bg-white/90 transition-colors disabled:opacity-50">
-      {saving ? "A guardar…" : ok ? "Guardado ✓" : label}
+      {saving ? "A guardar…" : label}
     </button>
   );
 }
@@ -1025,7 +1025,7 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
         <div className="mt-6 flex justify-end">
           <button onClick={handleSave} disabled={saving}
             className="bg-white text-black text-[11px] uppercase tracking-widest px-6 py-2.5 hover:bg-white/90 transition-colors disabled:opacity-50">
-            {saving ? "A guardar…" : ok ? "Guardado ✓" : "Guardar todas as notas"}
+            {saving ? "A guardar…" : "Guardar todas as notas"}
           </button>
         </div>
       )}
