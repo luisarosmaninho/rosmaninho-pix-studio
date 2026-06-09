@@ -100,6 +100,8 @@ function PasswordGate({ onAuth }: { onAuth: (pw: string) => void }) {
 
 // ── Shared helpers ───────────────────────────────────────────────────────────
 
+const now = () => new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+
 function SaveBtn({ saving, ok, label = "Guardar" }: { saving: boolean; ok?: boolean; label?: string }) {
   return (
     <button type="submit" disabled={saving}
@@ -149,8 +151,8 @@ function SectionHeader({ label, children }: { label: string; children?: React.Re
   );
 }
 
-function StatusMsg({ ok, err }: { ok?: boolean; err?: string }) {
-  if (ok) return <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>;
+function StatusMsg({ ok, err, at }: { ok?: boolean; err?: string; at?: string }) {
+  if (ok) return <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">✓ {at ? `guardado às ${at}` : "Guardado"}</span>;
   if (err) return <span className="text-red-400 text-xs">{err}</span>;
   return null;
 }
@@ -171,13 +173,14 @@ function MomentoSection({ password, initial }: {
   const [saving, setSaving] = useState(false);
   const [ok, setOk] = useState(false);
   const [err, setErr] = useState("");
+  const [savedAt, setSavedAt] = useState("");
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true); setErr(""); setOk(false);
     try {
       await saveNesteMomento({ data: { password, aLer, aLerUrl, aEscutar, aEscutarUrl, aFotografar, aPensarEm } });
-      setOk(true); router.invalidate();
+      setOk(true); setSavedAt(now()); router.invalidate();
     } catch { setErr("Erro ao guardar."); }
     finally { setSaving(false); }
   }
@@ -186,7 +189,7 @@ function MomentoSection({ password, initial }: {
     <form onSubmit={handleSave} className="max-w-2xl space-y-6">
       <SectionHeader label="Neste momento">
         <div className="flex items-center gap-4">
-          <StatusMsg ok={ok} err={err} />
+          <StatusMsg ok={ok} err={err} at={savedAt} />
           <SaveBtn saving={saving} />
         </div>
       </SectionHeader>
@@ -215,6 +218,7 @@ function SeriesSection({ password, initial }: { password: string; initial: Categ
   const [saving, setSaving] = useState(false);
   const [ok, setOk] = useState(false);
   const [err, setErr] = useState("");
+  const [savedAt, setSavedAt] = useState("");
 
   const cat = data[activeCat];
 
@@ -228,7 +232,7 @@ function SeriesSection({ password, initial }: { password: string; initial: Categ
     setSaving(true); setErr(""); setOk(false);
     try {
       await saveCategoryTexts({ data: { password, slug: activeCat, data: data[activeCat] } });
-      setOk(true); router.invalidate();
+      setOk(true); setSavedAt(now()); router.invalidate();
     } catch { setErr("Erro ao guardar."); }
     finally { setSaving(false); }
   }
@@ -237,7 +241,7 @@ function SeriesSection({ password, initial }: { password: string; initial: Categ
     <div className="max-w-3xl">
       <SectionHeader label="Séries">
         <div className="flex items-center gap-4">
-          <StatusMsg ok={ok} err={err} />
+          <StatusMsg ok={ok} err={err} at={savedAt} />
         </div>
       </SectionHeader>
 
@@ -293,6 +297,7 @@ function FotosSection({ password, initial, initialNewPhotos }: {
   });
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTimes, setSavedTimes] = useState<Record<string, string>>({});
   const [addSaving, setAddSaving] = useState(false);
   const [addErr, setAddErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -310,7 +315,7 @@ function FotosSection({ password, initial, initialNewPhotos }: {
     setSaving(photoId); setSaved(null);
     try {
       await savePhotoMeta({ data: { password, photoId, ...e } });
-      setSaved(photoId); router.invalidate();
+      setSaved(photoId); setSavedTimes((prev) => ({ ...prev, [photoId]: now() })); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -453,7 +458,7 @@ function FotosSection({ password, initial, initialNewPhotos }: {
                       )}
                     </div>
                     <div className="flex items-center gap-3">
-                      {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+                      {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">✓ {savedTimes[photo.id] ? `guardado às ${savedTimes[photo.id]}` : "Guardado"}</span>}
                       <button onClick={() => save(photo.id)} disabled={isSaving}
                         className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
                         {isSaving ? "A guardar…" : "Guardar foto"}
@@ -719,6 +724,7 @@ function CadernoSection({ password, initial, initialNewSlugs }: {
   });
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTimes, setSavedTimes] = useState<Record<string, string>>({});
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const sorted = [...initial].sort((a, b) => b.date.localeCompare(a.date));
@@ -728,7 +734,7 @@ function CadernoSection({ password, initial, initialNewSlugs }: {
     setSaving(slug); setSaved(null);
     try {
       await saveJournalEntry({ data: { password, slug, data: { ...e, body: e.body.split("\n\n").map((s) => s.trim()).filter(Boolean) } } });
-      setSaved(slug); router.invalidate();
+      setSaved(slug); setSavedTimes((prev) => ({ ...prev, [slug]: now() })); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -817,7 +823,7 @@ function CadernoSection({ password, initial, initialNewSlugs }: {
                       )}
                     </div>
                     <div className="flex items-center gap-3">
-                      {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+                      {isSaved && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">✓ {savedTimes[entry.slug] ? `guardado às ${savedTimes[entry.slug]}` : "Guardado"}</span>}
                       <button onClick={() => save(entry.slug)} disabled={isSaving}
                         className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
                         {isSaving ? "A guardar…" : "Guardar entrada"}
@@ -848,6 +854,7 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
   const [list, setList] = useState<Nota[]>(initial);
   const [saving, setSaving] = useState(false);
   const [ok, setOk] = useState(false);
+  const [savedAt, setSavedAt] = useState("");
   const [filterTag, setFilterTag] = useState<string>("todas");
   const [filterSize, setFilterSize] = useState<string>("todos");
 
@@ -886,7 +893,7 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
     setSaving(true); setOk(false);
     try {
       await saveNotas({ data: { password, notas: list } });
-      setOk(true); router.invalidate();
+      setOk(true); setSavedAt(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(false); }
   }
@@ -904,7 +911,7 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
     <div className="max-w-4xl">
       <SectionHeader label="Notas de Campo & Fragmentos">
         <div className="flex items-center gap-3">
-          {ok && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+          {ok && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">✓ {savedAt ? `guardado às ${savedAt}` : "Guardado"}</span>}
           <button onClick={handleSave} disabled={saving}
             className="bg-white text-black text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 transition-colors disabled:opacity-50">
             {saving ? "A guardar…" : "Guardar tudo"}
@@ -1037,12 +1044,13 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
   const [p2, setP2] = useState(initial.autoraP2);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
 
   async function save(id: string, payload: Partial<HomepageConfig>) {
     setSaving(id); setSaved(null);
     try {
       await saveHomepageTexts({ data: { password, ...payload } });
-      setSaved(id); router.invalidate();
+      setSaved(id); setSavedTime(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -1068,7 +1076,7 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
           onChange={(v) => { setSubtitle(v); setSaved(null); }}
           rows={3}
         />
-        <SaveRow id="hero" saving={saving} saved={saved}
+        <SaveRow id="hero" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("hero", { heroTagline: tagline, heroSubtitle: subtitle })} />
       </div>
 
@@ -1083,7 +1091,7 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
           rows={5}
           placeholder="Não fotografo para mostrar — fotografo para demorar…"
         />
-        <SaveRow id="manifesto" saving={saving} saved={saved}
+        <SaveRow id="manifesto" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("manifesto", { manifestoText: manifesto })} />
       </div>
 
@@ -1104,7 +1112,7 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
           rows={3}
           placeholder="Procuro criar fotografias que pareçam verdadeiras…"
         />
-        <SaveRow id="autora-home" saving={saving} saved={saved}
+        <SaveRow id="autora-home" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("autora-home", { autoraP1: p1, autoraP2: p2 })} />
       </div>
 
@@ -1138,10 +1146,14 @@ function FreeBlock({
   );
 }
 
-function SaveRow({ id, saving, saved, onSave }: { id: string; saving: string | null; saved: string | null; onSave: () => void }) {
+function SaveRow({ id, saving, saved, onSave, savedTime }: { id: string; saving: string | null; saved: string | null; onSave: () => void; savedTime?: string }) {
   return (
     <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/8">
-      {saved === id && <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">Guardado ✓</span>}
+      {saved === id && (
+        <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">
+          ✓ {savedTime ? `guardado às ${savedTime}` : "Guardado"}
+        </span>
+      )}
       <button onClick={onSave} disabled={saving === id}
         className="bg-white text-black text-[11px] uppercase tracking-widest px-4 py-1.5 hover:bg-white/90 transition-colors disabled:opacity-50">
         {saving === id ? "A guardar…" : "Guardar"}
@@ -1175,12 +1187,13 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
 
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
 
   async function save(id: string, payload: Partial<SobreConfig>) {
     setSaving(id); setSaved(null);
     try {
       await saveSobreTexts({ data: { password, ...payload } });
-      setSaved(id); router.invalidate();
+      setSaved(id); setSavedTime(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -1207,7 +1220,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           onChange={(v) => { setIntroQuote(v); setSaved(null); }}
           rows={2}
         />
-        <SaveRow id="intro" saving={saving} saved={saved}
+        <SaveRow id="intro" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("intro", {
             introParagraphs: splitIntoParagraphs(introText),
             introQuote,
@@ -1226,7 +1239,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           placeholder="A fotografia é a forma que encontrei…" />
         <FreeBlock label="Frase em destaque" hint="aparece em itálico, entre aspas"
           value={guardarCitacao} onChange={(v) => { setGuardarCitacao(v); setSaved(null); }} rows={2} />
-        <SaveRow id="guardar" saving={saving} saved={saved}
+        <SaveRow id="guardar" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("guardar", {
             secaoGuardarTitulo: guardarTitulo,
             secaoGuardarTexto: guardarTexto,
@@ -1246,7 +1259,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           rows={7}
           placeholder={"Não procuro o perfeito. Procuro o verdadeiro…\n\nAntes de pegar na câmara, observo…"}
         />
-        <SaveRow id="verdadeiras" saving={saving} saved={saved}
+        <SaveRow id="verdadeiras" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => {
             const parts = splitIntoParagraphs(verdadeirasText);
             save("verdadeiras", {
@@ -1268,7 +1281,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           rows={7}
           placeholder={"Passo tempo a pensar numa sombra…\n\nAo mesmo tempo, não quero que se note o esforço…"}
         />
-        <SaveRow id="detalhe" saving={saving} saved={saved}
+        <SaveRow id="detalhe" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => {
             const parts = splitIntoParagraphs(detalheText);
             save("detalhe", {
@@ -1311,7 +1324,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
               onChange={(v) => { const a = [...percurso]; a[i] = { ...a[i], texto: v }; setPercurso(a); setSaved(null); }} />
           </div>
         ))}
-        <SaveRow id="percurso" saving={saving} saved={saved}
+        <SaveRow id="percurso" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("percurso", { percurso })} />
       </div>
 
@@ -1340,7 +1353,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
               onChange={(v) => { const a = [...constancias]; a[i] = { ...a[i], texto: v }; setConstancias(a); setSaved(null); }} />
           </div>
         ))}
-        <SaveRow id="constancias" saving={saving} saved={saved}
+        <SaveRow id="constancias" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("constancias", { pequenasConstancias: constancias })} />
       </div>
 
@@ -1376,7 +1389,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
             </div>
           </div>
         ))}
-        <SaveRow id="ritmos" saving={saving} saved={saved}
+        <SaveRow id="ritmos" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("ritmos", { ritmos })} />
       </div>
 
@@ -1444,7 +1457,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           ))}
         </div>
 
-        <SaveRow id="cartografia" saving={saving} saved={saved}
+        <SaveRow id="cartografia" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("cartografia", { cartografiaVisitadas: visitadas, cartografiaSonhadas: sonhadas })} />
       </div>
     </div>
@@ -1473,6 +1486,7 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
   const [saving, setSaving] = useState(false);
   const [ok, setOk] = useState(false);
   const [err, setErr] = useState("");
+  const [savedAt, setSavedAt] = useState("");
 
   const visible = useMemo(() => filter === "all" ? list : list.filter((p) => p.category === filter), [list, filter]);
   const catLabel: Record<CategorySlug, string> = { urbanas: "Urbanas", natureza: "Natureza", retratos: "Retratos", iguarias: "Iguarias" };
@@ -1486,7 +1500,7 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
     setSaving(true); setErr(""); setOk(false);
     try {
       await savePhotoConfig({ data: { password, hidden: list.filter((p) => p.hidden).map((p) => p.id), order: list.map((p) => p.id) } });
-      setOk(true); router.invalidate();
+      setOk(true); setSavedAt(now()); router.invalidate();
     } catch (e: unknown) { setErr(e instanceof Error ? e.message : "Erro ao guardar."); }
     finally { setSaving(false); }
   }
@@ -1495,7 +1509,7 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
     <div className="max-w-4xl">
       <SectionHeader label="Ordem & Visibilidade">
         <div className="flex items-center gap-4">
-          <StatusMsg ok={ok} err={err} />
+          <StatusMsg ok={ok} err={err} at={savedAt} />
           <button onClick={handleSave} disabled={saving}
             className="bg-white text-black text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 transition-colors disabled:opacity-50">
             {saving ? "A guardar…" : "Guardar"}
@@ -1571,12 +1585,13 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
   const [confirmText, setConfirmText] = useState(initial.confirmText);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
 
   async function save(id: string, payload: Partial<ContactoConfig>) {
     setSaving(id); setSaved(null);
     try {
       await saveContactoTexts({ data: { password, ...payload } });
-      setSaved(id); router.invalidate();
+      setSaved(id); setSavedTime(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -1590,7 +1605,7 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
         <FreeBlock label="Tagline" hint="ex: 'Diálogo · Coimbra'" value={tagline} onChange={(v) => { setTagline(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Texto de introdução" value={introText} onChange={(v) => { setIntroText(v); setSaved(null); }} rows={4} />
         <FreeBlock label="Nota de resposta" hint="a linha pequena abaixo" value={responseNote} onChange={(v) => { setResponseNote(v); setSaved(null); }} rows={1} />
-        <SaveRow id="abertura" saving={saving} saved={saved} onSave={() => save("abertura", { tagline, introText, responseNote })} />
+        <SaveRow id="abertura" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("abertura", { tagline, introText, responseNote })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1603,7 +1618,7 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
           rows={6}
           placeholder={"Respondo melhor à tarde...\nLeio cada mensagem duas vezes..."}
         />
-        <SaveRow id="pool" saving={saving} saved={saved}
+        <SaveRow id="pool" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("pool", { notasPool: notasPool.split("\n").map(s => s.trim()).filter(Boolean) })} />
       </div>
 
@@ -1611,13 +1626,13 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Contactos directos</p>
         <FreeBlock label="Email" value={email} onChange={(v) => { setEmail(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Instagram" hint="com ou sem @" value={instagram} onChange={(v) => { setInstagram(v); setSaved(null); }} rows={1} />
-        <SaveRow id="contactos" saving={saving} saved={saved} onSave={() => save("contactos", { email, instagram })} />
+        <SaveRow id="contactos" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("contactos", { email, instagram })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Coluna direita (imagem)</p>
         <FreeBlock label="Frase na imagem" value={sidebarQuote} onChange={(v) => { setSidebarQuote(v); setSaved(null); }} rows={2} />
-        <SaveRow id="sidebar" saving={saving} saved={saved} onSave={() => save("sidebar", { sidebarQuote })} />
+        <SaveRow id="sidebar" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("sidebar", { sidebarQuote })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1625,14 +1640,14 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
         <FreeBlock label="Linha 1 (itálico)" value={footerLine1} onChange={(v) => { setFooterLine1(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 2 (mono, pequeno)" value={footerLine2} onChange={(v) => { setFooterLine2(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 3 (itálico)" value={footerLine3} onChange={(v) => { setFooterLine3(v); setSaved(null); }} rows={1} />
-        <SaveRow id="rodape" saving={saving} saved={saved} onSave={() => save("rodape", { footerLine1, footerLine2, footerLine3 })} />
+        <SaveRow id="rodape" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("rodape", { footerLine1, footerLine2, footerLine3 })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Mensagem de confirmação (após envio)</p>
         <FreeBlock label="Título" hint="ex: 'Recebido.'" value={confirmTitle} onChange={(v) => { setConfirmTitle(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Texto de confirmação" value={confirmText} onChange={(v) => { setConfirmText(v); setSaved(null); }} rows={3} />
-        <SaveRow id="confirm" saving={saving} saved={saved} onSave={() => save("confirm", { confirmTitle, confirmText })} />
+        <SaveRow id="confirm" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("confirm", { confirmTitle, confirmText })} />
       </div>
     </div>
   );
@@ -1649,12 +1664,13 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
   const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
 
   async function save(id: string, payload: Partial<PortfolioPageConfig>) {
     setSaving(id); setSaved(null);
     try {
       await savePortfolioPageTexts({ data: { password, ...payload } });
-      setSaved(id); router.invalidate();
+      setSaved(id); setSavedTime(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -1670,7 +1686,7 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cabeçalho</p>
         <FreeBlock label="Tagline" hint="ex: 'arquivo · quatro séries abertas'" value={headerTagline} onChange={(v) => { setHeaderTagline(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Frase em destaque" hint="a citação em itálico abaixo do título" value={headerQuote} onChange={(v) => { setHeaderQuote(v); setSaved(null); }} rows={3} />
-        <SaveRow id="header" saving={saving} saved={saved} onSave={() => save("header", { headerTagline, headerQuote })} />
+        <SaveRow id="header" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("header", { headerTagline, headerQuote })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1678,7 +1694,7 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
         <FreeBlock label="Linha 1 (itálico)" value={closingLine1} onChange={(v) => { setClosingLine1(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 2 (mono, pequeno)" value={closingLine2} onChange={(v) => { setClosingLine2(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 3 (itálico)" value={closingLine3} onChange={(v) => { setClosingLine3(v); setSaved(null); }} rows={1} />
-        <SaveRow id="closing" saving={saving} saved={saved} onSave={() => save("closing", { closingLine1, closingLine2, closingLine3 })} />
+        <SaveRow id="closing" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("closing", { closingLine1, closingLine2, closingLine3 })} />
       </div>
     </div>
   );
@@ -1696,12 +1712,13 @@ function NotasPageSection({ password, initial }: { password: string; initial: No
   const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
 
   async function save(id: string, payload: Partial<NotasPageConfig>) {
     setSaving(id); setSaved(null);
     try {
       await saveNotasPageTexts({ data: { password, ...payload } });
-      setSaved(id); router.invalidate();
+      setSaved(id); setSavedTime(now()); router.invalidate();
     } catch { alert("Erro ao guardar."); }
     finally { setSaving(null); }
   }
@@ -1717,7 +1734,7 @@ function NotasPageSection({ password, initial }: { password: string; initial: No
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Cabeçalho da página</p>
         <FreeBlock label="Label" hint="ex: 'campo' — aparece em itálico cobre acima do título" value={introLabel} onChange={(v) => { setIntroLabel(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Texto de intro" value={introText} onChange={(v) => { setIntroText(v); setSaved(null); }} rows={4} />
-        <SaveRow id="intro" saving={saving} saved={saved} onSave={() => save("intro", { introLabel, introText })} />
+        <SaveRow id="intro" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("intro", { introLabel, introText })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1726,7 +1743,7 @@ function NotasPageSection({ password, initial }: { password: string; initial: No
         <FreeBlock label="Linha 1 (itálico)" value={closingLine1} onChange={(v) => { setClosingLine1(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 2 (mono, pequeno)" value={closingLine2} onChange={(v) => { setClosingLine2(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 3 (itálico)" value={closingLine3} onChange={(v) => { setClosingLine3(v); setSaved(null); }} rows={1} />
-        <SaveRow id="closing" saving={saving} saved={saved} onSave={() => save("closing", { closingQuote, closingLine1, closingLine2, closingLine3 })} />
+        <SaveRow id="closing" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("closing", { closingQuote, closingLine1, closingLine2, closingLine3 })} />
       </div>
     </div>
   );
