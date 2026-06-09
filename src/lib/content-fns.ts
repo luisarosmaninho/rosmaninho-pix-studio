@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
+import { readConfig, writeConfig } from "./db";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
 import { journal as staticJournal } from "./journal";
@@ -10,21 +11,28 @@ import type { Nota } from "./notas";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function readJson<T>(filepath: string, fallback: T): T {
-  try {
-    return JSON.parse(fs.readFileSync(filepath, "utf-8")) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(filepath: string, data: unknown) {
-  fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
-}
-
 function checkPassword(password: string) {
   const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
   if (password !== expected) throw new Error("Password incorrecta.");
+}
+
+/**
+ * Read a config from DB. If not in DB, migrate from legacy JSON file and write
+ * it to DB so future reads skip the file. Falls back to codeDefault if neither
+ * DB nor file has data.
+ */
+async function cfg<T>(key: string, legacyPath: string, codeDefault: T): Promise<T> {
+  const fromDb = await readConfig<T | null>(key, null);
+  if (fromDb !== null) return fromDb;
+
+  // Migration: try to pull existing JSON file into DB
+  try {
+    const raw = JSON.parse(fs.readFileSync(legacyPath, "utf-8")) as T;
+    await writeConfig(key, raw);
+    return raw;
+  } catch {
+    return codeDefault;
+  }
 }
 
 // ── Categories ────────────────────────────────────────────────────────────────
@@ -32,20 +40,20 @@ function checkPassword(password: string) {
 export type CategoryOverrides = Partial<Omit<Category, "slug" | "cover">>;
 type CategoriesConfig = Record<string, CategoryOverrides>;
 
-const CATEGORIES_CONFIG = path.join(process.cwd(), "categories-config.json");
+const CATEGORIES_JSON = path.join(process.cwd(), "categories-config.json");
 
-export const getCategories = createServerFn({ method: "GET" }).handler((): Category[] => {
-  const overrides = readJson<CategoriesConfig>(CATEGORIES_CONFIG, {});
+export const getCategories = createServerFn({ method: "GET" }).handler(async (): Promise<Category[]> => {
+  const overrides = await cfg<CategoriesConfig>("categories", CATEGORIES_JSON, {});
   return staticCategories.map((cat) => ({ ...cat, ...overrides[cat.slug] }));
 });
 
 export const saveCategoryTexts = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; slug: string; data: CategoryOverrides })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const overrides = readJson<CategoriesConfig>(CATEGORIES_CONFIG, {});
+    const overrides = await cfg<CategoriesConfig>("categories", CATEGORIES_JSON, {});
     overrides[data.slug] = data.data;
-    writeJson(CATEGORIES_CONFIG, overrides);
+    await writeConfig("categories", overrides);
     return { ok: true };
   });
 
@@ -54,7 +62,8 @@ export const saveCategoryTexts = createServerFn({ method: "POST" })
 export type PhotoMetaOverride = { title: string; description: string; conditions: string; date: string; location: string };
 type PhotosMetaConfig = Record<string, Partial<PhotoMetaOverride>>;
 
-const PHOTOS_META_CONFIG = path.join(process.cwd(), "photos-meta-config.json");
+const PHOTOS_META_JSON = path.join(process.cwd(), "photos-meta-config.json");
+const NEW_PHOTOS_JSON = path.join(process.cwd(), "new-photos-config.json");
 
 export type NewPhotoEntry = {
   id: string;
@@ -68,18 +77,12 @@ export type NewPhotoEntry = {
   location: string;
 };
 
-const NEW_PHOTOS_CONFIG = path.join(process.cwd(), "new-photos-config.json");
-
-function readNewPhotos(): NewPhotoEntry[] {
-  try {
-    return JSON.parse(fs.readFileSync(NEW_PHOTOS_CONFIG, "utf-8")) as NewPhotoEntry[];
-  } catch {
-    return [];
-  }
+async function readNewPhotos(): Promise<NewPhotoEntry[]> {
+  return cfg<NewPhotoEntry[]>("new_photos", NEW_PHOTOS_JSON, []);
 }
 
-export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): Photo[] => {
-  const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
+export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler(async (): Promise<Photo[]> => {
+  const overrides = await cfg<PhotosMetaConfig>("photos_meta", PHOTOS_META_JSON, {});
   const staticWithMeta = staticPhotos.map((photo) => {
     const ov = overrides[photo.id];
     if (!ov) return photo;
@@ -94,7 +97,7 @@ export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): P
       },
     };
   });
-  const newPhotos = readNewPhotos().map((np) => ({
+  const newPhotos = (await readNewPhotos()).map((np) => ({
     id: np.id,
     src: np.src,
     title: np.title,
@@ -110,25 +113,25 @@ export const getPhotosWithMeta = createServerFn({ method: "GET" }).handler((): P
   return [...staticWithMeta, ...newPhotos];
 });
 
-export const getNewPhotos = createServerFn({ method: "GET" }).handler((): NewPhotoEntry[] => {
+export const getNewPhotos = createServerFn({ method: "GET" }).handler(async (): Promise<NewPhotoEntry[]> => {
   return readNewPhotos();
 });
 
 export const savePhotoMeta = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string; date: string; location: string })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
     const staticIds = new Set(staticPhotos.map((p) => p.id));
     if (staticIds.has(data.photoId)) {
-      const overrides = readJson<PhotosMetaConfig>(PHOTOS_META_CONFIG, {});
+      const overrides = await cfg<PhotosMetaConfig>("photos_meta", PHOTOS_META_JSON, {});
       overrides[data.photoId] = { title: data.title, description: data.description, conditions: data.conditions, date: data.date, location: data.location };
-      writeJson(PHOTOS_META_CONFIG, overrides);
+      await writeConfig("photos_meta", overrides);
     } else {
-      const newPhotos = readNewPhotos();
+      const newPhotos = await readNewPhotos();
       const idx = newPhotos.findIndex((p) => p.id === data.photoId);
       if (idx !== -1) {
         newPhotos[idx] = { ...newPhotos[idx], title: data.title, description: data.description, conditions: data.conditions, date: data.date, location: data.location };
-        writeJson(NEW_PHOTOS_CONFIG, newPhotos);
+        await writeConfig("new_photos", newPhotos);
       }
     }
     return { ok: true };
@@ -136,21 +139,21 @@ export const savePhotoMeta = createServerFn({ method: "POST" })
 
 export const addNewPhoto = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; photo: NewPhotoEntry })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const existing = readNewPhotos();
+    const existing = await readNewPhotos();
     if (existing.find((p) => p.id === data.photo.id)) throw new Error("Já existe uma foto com este ID.");
     existing.push(data.photo);
-    writeJson(NEW_PHOTOS_CONFIG, existing);
+    await writeConfig("new_photos", existing);
     return { ok: true };
   });
 
 export const deleteNewPhoto = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; photoId: string })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const updated = readNewPhotos().filter((p) => p.id !== data.photoId);
-    writeJson(NEW_PHOTOS_CONFIG, updated);
+    const updated = (await readNewPhotos()).filter((p) => p.id !== data.photoId);
+    await writeConfig("new_photos", updated);
     return { ok: true };
   });
 
@@ -163,28 +166,35 @@ type JournalFileConfig = {
   newEntries: JournalEntry[];
 };
 
-const JOURNAL_CONFIG = path.join(process.cwd(), "journal-config.json");
+const JOURNAL_JSON = path.join(process.cwd(), "journal-config.json");
 
-function readJournalConfig(): JournalFileConfig {
+function legacyJournalFallback(): JournalFileConfig {
   try {
-    const raw = JSON.parse(fs.readFileSync(JOURNAL_CONFIG, "utf-8")) as Record<string, unknown>;
+    const raw = JSON.parse(fs.readFileSync(JOURNAL_JSON, "utf-8")) as Record<string, unknown>;
     if (raw && typeof raw.overrides === "object" && !Array.isArray(raw.overrides)) {
       return {
         overrides: (raw.overrides ?? {}) as Record<string, Partial<JournalEntryEditable>>,
         newEntries: Array.isArray(raw.newEntries) ? (raw.newEntries as JournalEntry[]) : [],
       };
     }
-    // Migrate old flat format
     return { overrides: raw as Record<string, Partial<JournalEntryEditable>>, newEntries: [] };
   } catch {
     return { overrides: {}, newEntries: [] };
   }
 }
 
+async function readJournalConfig(): Promise<JournalFileConfig> {
+  const fromDb = await readConfig<JournalFileConfig | null>("journal", null);
+  if (fromDb !== null) return fromDb;
+  const legacy = legacyJournalFallback();
+  await writeConfig("journal", legacy);
+  return legacy;
+}
+
 const STATIC_SLUGS = new Set(staticJournal.map((e) => e.slug));
 
-export const getJournal = createServerFn({ method: "GET" }).handler((): JournalEntry[] => {
-  const { overrides, newEntries } = readJournalConfig();
+export const getJournal = createServerFn({ method: "GET" }).handler(async (): Promise<JournalEntry[]> => {
+  const { overrides, newEntries } = await readJournalConfig();
   const withOverrides = staticJournal.map((entry) => {
     const ov = overrides[entry.slug];
     return ov ? { ...entry, ...ov } : entry;
@@ -192,15 +202,15 @@ export const getJournal = createServerFn({ method: "GET" }).handler((): JournalE
   return [...withOverrides, ...newEntries].sort((a, b) => b.date.localeCompare(a.date));
 });
 
-export const getNewJournalEntries = createServerFn({ method: "GET" }).handler((): JournalEntry[] => {
-  return readJournalConfig().newEntries;
+export const getNewJournalEntries = createServerFn({ method: "GET" }).handler(async (): Promise<JournalEntry[]> => {
+  return (await readJournalConfig()).newEntries;
 });
 
 export const saveJournalEntry = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; slug: string; data: Partial<JournalEntryEditable> })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const cfg = readJournalConfig();
+    const cfg = await readJournalConfig();
     if (STATIC_SLUGS.has(data.slug)) {
       cfg.overrides[data.slug] = data.data;
     } else {
@@ -209,50 +219,46 @@ export const saveJournalEntry = createServerFn({ method: "POST" })
         cfg.newEntries[idx] = { ...cfg.newEntries[idx], ...data.data, slug: data.slug };
       }
     }
-    writeJson(JOURNAL_CONFIG, cfg);
+    await writeConfig("journal", cfg);
     return { ok: true };
   });
 
 export const addNewJournalEntry = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; entry: JournalEntry })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const cfg = readJournalConfig();
-    const existing = cfg.newEntries.findIndex((e) => e.slug === data.entry.slug);
+    const config = await readJournalConfig();
+    const existing = config.newEntries.findIndex((e) => e.slug === data.entry.slug);
     if (existing !== -1) throw new Error("Já existe uma entrada com este slug.");
     if (STATIC_SLUGS.has(data.entry.slug)) throw new Error("Este slug já está em uso.");
-    cfg.newEntries.push(data.entry);
-    writeJson(JOURNAL_CONFIG, cfg);
+    config.newEntries.push(data.entry);
+    await writeConfig("journal", config);
     return { ok: true };
   });
 
 export const deleteNewJournalEntry = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; slug: string })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    const cfg = readJournalConfig();
-    cfg.newEntries = cfg.newEntries.filter((e) => e.slug !== data.slug);
-    writeJson(JOURNAL_CONFIG, cfg);
+    const config = await readJournalConfig();
+    config.newEntries = config.newEntries.filter((e) => e.slug !== data.slug);
+    await writeConfig("journal", config);
     return { ok: true };
   });
 
 // ── Notas ─────────────────────────────────────────────────────────────────────
 
-const NOTAS_CONFIG = path.join(process.cwd(), "notas-config.json");
+const NOTAS_JSON = path.join(process.cwd(), "notas-config.json");
 
-export const getNotas = createServerFn({ method: "GET" }).handler((): Nota[] => {
-  try {
-    return JSON.parse(fs.readFileSync(NOTAS_CONFIG, "utf-8")) as Nota[];
-  } catch {
-    return staticNotas;
-  }
+export const getNotas = createServerFn({ method: "GET" }).handler(async (): Promise<Nota[]> => {
+  return cfg<Nota[]>("notas", NOTAS_JSON, staticNotas);
 });
 
 export const saveNotas = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string; notas: Nota[] })
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     checkPassword(data.password);
-    writeJson(NOTAS_CONFIG, data.notas);
+    await writeConfig("notas", data.notas);
     return { ok: true };
   });
 
@@ -294,20 +300,20 @@ export const CONTACTO_DEFAULTS: ContactoConfig = {
   confirmText: "Fica descansado — li com atenção. Volto a ti em breve, por email, sem pressa.",
 };
 
-const CONTACTO_CONFIG = path.join(process.cwd(), "contacto-config.json");
+const CONTACTO_JSON = path.join(process.cwd(), "contacto-config.json");
 
-export const getContactoTexts = createServerFn({ method: "GET" }).handler((): ContactoConfig => {
-  const saved = readJson<Partial<ContactoConfig>>(CONTACTO_CONFIG, {});
+export const getContactoTexts = createServerFn({ method: "GET" }).handler(async (): Promise<ContactoConfig> => {
+  const saved = await cfg<Partial<ContactoConfig>>("contacto", CONTACTO_JSON, {});
   return { ...CONTACTO_DEFAULTS, ...saved };
 });
 
 export const saveContactoTexts = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string } & Partial<ContactoConfig>)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
-    const current = readJson<Partial<ContactoConfig>>(CONTACTO_CONFIG, {});
-    writeJson(CONTACTO_CONFIG, { ...current, ...rest });
+    const current = await cfg<Partial<ContactoConfig>>("contacto", CONTACTO_JSON, {});
+    await writeConfig("contacto", { ...current, ...rest });
     return { ok: true };
   });
 
@@ -329,20 +335,20 @@ export const PORTFOLIO_PAGE_DEFAULTS: PortfolioPageConfig = {
   closingLine3: "há um lado deste arquivo que não se vê — escreve-se.",
 };
 
-const PORTFOLIO_PAGE_CONFIG = path.join(process.cwd(), "portfolio-page-config.json");
+const PORTFOLIO_PAGE_JSON = path.join(process.cwd(), "portfolio-page-config.json");
 
-export const getPortfolioPageTexts = createServerFn({ method: "GET" }).handler((): PortfolioPageConfig => {
-  const saved = readJson<Partial<PortfolioPageConfig>>(PORTFOLIO_PAGE_CONFIG, {});
+export const getPortfolioPageTexts = createServerFn({ method: "GET" }).handler(async (): Promise<PortfolioPageConfig> => {
+  const saved = await cfg<Partial<PortfolioPageConfig>>("portfolio_page", PORTFOLIO_PAGE_JSON, {});
   return { ...PORTFOLIO_PAGE_DEFAULTS, ...saved };
 });
 
 export const savePortfolioPageTexts = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string } & Partial<PortfolioPageConfig>)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
-    const current = readJson<Partial<PortfolioPageConfig>>(PORTFOLIO_PAGE_CONFIG, {});
-    writeJson(PORTFOLIO_PAGE_CONFIG, { ...current, ...rest });
+    const current = await cfg<Partial<PortfolioPageConfig>>("portfolio_page", PORTFOLIO_PAGE_JSON, {});
+    await writeConfig("portfolio_page", { ...current, ...rest });
     return { ok: true };
   });
 
@@ -366,20 +372,20 @@ export const NOTAS_PAGE_DEFAULTS: NotasPageConfig = {
   closingLine3: "há pensamentos que só aparecem quando os procuras pelo nome.",
 };
 
-const NOTAS_PAGE_CONFIG = path.join(process.cwd(), "notas-page-config.json");
+const NOTAS_PAGE_JSON = path.join(process.cwd(), "notas-page-config.json");
 
-export const getNotasPageTexts = createServerFn({ method: "GET" }).handler((): NotasPageConfig => {
-  const saved = readJson<Partial<NotasPageConfig>>(NOTAS_PAGE_CONFIG, {});
+export const getNotasPageTexts = createServerFn({ method: "GET" }).handler(async (): Promise<NotasPageConfig> => {
+  const saved = await cfg<Partial<NotasPageConfig>>("notas_page", NOTAS_PAGE_JSON, {});
   return { ...NOTAS_PAGE_DEFAULTS, ...saved };
 });
 
 export const saveNotasPageTexts = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string } & Partial<NotasPageConfig>)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
-    const current = readJson<Partial<NotasPageConfig>>(NOTAS_PAGE_CONFIG, {});
-    writeJson(NOTAS_PAGE_CONFIG, { ...current, ...rest });
+    const current = await cfg<Partial<NotasPageConfig>>("notas_page", NOTAS_PAGE_JSON, {});
+    await writeConfig("notas_page", { ...current, ...rest });
     return { ok: true };
   });
 
@@ -401,20 +407,20 @@ export const HOMEPAGE_DEFAULTS: HomepageConfig = {
   autoraP2: "Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.",
 };
 
-const HOMEPAGE_CONFIG = path.join(process.cwd(), "homepage-config.json");
+const HOMEPAGE_JSON = path.join(process.cwd(), "homepage-config.json");
 
-export const getHomepageTexts = createServerFn({ method: "GET" }).handler((): HomepageConfig => {
-  const saved = readJson<Partial<HomepageConfig>>(HOMEPAGE_CONFIG, {});
+export const getHomepageTexts = createServerFn({ method: "GET" }).handler(async (): Promise<HomepageConfig> => {
+  const saved = await cfg<Partial<HomepageConfig>>("homepage", HOMEPAGE_JSON, {});
   return { ...HOMEPAGE_DEFAULTS, ...saved };
 });
 
 export const saveHomepageTexts = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string } & Partial<HomepageConfig>)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
-    const current = readJson<Partial<HomepageConfig>>(HOMEPAGE_CONFIG, {});
-    writeJson(HOMEPAGE_CONFIG, { ...current, ...rest });
+    const current = await cfg<Partial<HomepageConfig>>("homepage", HOMEPAGE_JSON, {});
+    await writeConfig("homepage", { ...current, ...rest });
     return { ok: true };
   });
 
@@ -479,30 +485,105 @@ export const SOBRE_DEFAULTS: SobreConfig = {
   cartografiaVisitadas: [
     { cidade: "Coimbra.", nota: "Onde tudo começa. As ruas antigas, o Mondego, a luz de tarde que não muda. O sítio a que sempre volto." },
     { cidade: "Porto.", nota: "O azulejo, a chuva de janeiro, a Ribeira às seis da manhã quando não há ninguém. Um segundo laboratório." },
-    { cidade: "Aveiro.", nota: "Canal, bicicleta, silêncio. Uma escala perfeita que não precisa de justificação para existir." },
+    { cidade: "Lisboa.", nota: "Luz diferente. Mais horizontal, mais directa. Ainda a aprender a vê-la." },
   ],
   cartografiaSonhadas: [
-    { cidade: "Irlanda.", nota: "A neblina sobre os campos, uma cor de verde que não existe mais em lado nenhum. Ainda não fui. Mas já ando a imaginá-la há tempo suficiente para ter saudades." },
-    { cidade: "Escócia.", nota: "Highlands, pedra, silêncio. Um sítio para onde se vai quando se precisa de muito espaço e poucas palavras. Ainda apenas sonhado." },
-    { cidade: "Bruges.", nota: "Já conheço os canais das fotografias de outras pessoas. Quando for — e há de ser — vai parecer um regresso a algum lugar que não sei que conhecia." },
-    { cidade: "Verona.", nota: "A luz italiana ao entardecer, o granito rosado, as pontes. Um lugar que habita o pensamento antes de habitar o mapa." },
-    { cidade: "Noruega.", nota: "Os fiordes, os faróis, o sol da meia-noite. Ainda só imaginada — e talvez seja por isso que continua tão nítida." },
+    { cidade: "Bergen.", nota: "Casas de madeira colorida, água por todo o lado, luz do norte. Já conheço algumas ruas através de fotografias." },
+    { cidade: "Bruges.", nota: "Canais, reflexos, pedra antiga. Uma cidade que parece existir fora do tempo." },
+    { cidade: "Verona.", nota: "Arena, ruelas, a luz de Itália que é diferente de todas as outras." },
   ],
 };
 
-const SOBRE_CONFIG = path.join(process.cwd(), "sobre-config.json");
+const SOBRE_JSON = path.join(process.cwd(), "sobre-config.json");
 
-export const getSobreTexts = createServerFn({ method: "GET" }).handler((): SobreConfig => {
-  const saved = readJson<Partial<SobreConfig>>(SOBRE_CONFIG, {});
+export const getSobre = createServerFn({ method: "GET" }).handler(async (): Promise<SobreConfig> => {
+  const saved = await cfg<Partial<SobreConfig>>("sobre", SOBRE_JSON, {});
   return { ...SOBRE_DEFAULTS, ...saved };
 });
 
-export const saveSobreTexts = createServerFn({ method: "POST" })
+export const saveSobre = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { password: string } & Partial<SobreConfig>)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
-    const current = readJson<Partial<SobreConfig>>(SOBRE_CONFIG, {});
-    writeJson(SOBRE_CONFIG, { ...current, ...rest });
+    const current = await cfg<Partial<SobreConfig>>("sobre", SOBRE_JSON, {});
+    await writeConfig("sobre", { ...current, ...rest });
+    return { ok: true };
+  });
+
+// ── Neste Momento ─────────────────────────────────────────────────────────────
+
+export type NestesMomentoItem = { label: string; value: string };
+export type NesteMomentoConfig = { items: NestesMomentoItem[] };
+
+export const NESTE_MOMENTO_DEFAULTS: NesteMomentoConfig = {
+  items: [
+    { label: "a fotografar", value: "Coimbra ao final da tarde" },
+    { label: "a ler", value: "um livro que não termina" },
+    { label: "a beber", value: "café, como sempre" },
+    { label: "a pensar em", value: "luz de inverno" },
+  ],
+};
+
+const NESTE_MOMENTO_JSON = path.join(process.cwd(), "momento-config.json");
+
+export const getNesteMomento = createServerFn({ method: "GET" }).handler(async (): Promise<NesteMomentoConfig> => {
+  const saved = await cfg<Partial<NesteMomentoConfig>>("neste_momento", NESTE_MOMENTO_JSON, {});
+  return { ...NESTE_MOMENTO_DEFAULTS, ...saved };
+});
+
+export const saveNesteMomento = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string } & Partial<NesteMomentoConfig>)
+  .handler(async ({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    await writeConfig("neste_momento", rest);
+    return { ok: true };
+  });
+
+// ── Visits ────────────────────────────────────────────────────────────────────
+
+export type VisitsConfig = { count: number; lastReset: string };
+
+const VISITS_JSON = path.join(process.cwd(), "visits-config.json");
+
+export const getVisits = createServerFn({ method: "GET" }).handler(async (): Promise<VisitsConfig> => {
+  return cfg<VisitsConfig>("visits", VISITS_JSON, { count: 0, lastReset: new Date().toISOString() });
+});
+
+export const incrementVisit = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as Record<string, never>)
+  .handler(async () => {
+    const current = await cfg<VisitsConfig>("visits", VISITS_JSON, { count: 0, lastReset: new Date().toISOString() });
+    const updated = { ...current, count: current.count + 1 };
+    await writeConfig("visits", updated);
+    return updated;
+  });
+
+export const resetVisits = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string })
+  .handler(async ({ data }) => {
+    checkPassword(data.password);
+    const reset: VisitsConfig = { count: 0, lastReset: new Date().toISOString() };
+    await writeConfig("visits", reset);
+    return reset;
+  });
+
+// ── Photos config (ordering / visibility) ────────────────────────────────────
+
+export type PhotoConfig = { id: string; hidden?: boolean; order?: number };
+type PhotosConfig = PhotoConfig[];
+
+const PHOTOS_CONFIG_JSON = path.join(process.cwd(), "photos-config.json");
+
+export const getPhotoConfig = createServerFn({ method: "GET" }).handler(async (): Promise<PhotosConfig> => {
+  return cfg<PhotosConfig>("photos_config", PHOTOS_CONFIG_JSON, []);
+});
+
+export const savePhotoConfig = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { password: string; config: PhotosConfig })
+  .handler(async ({ data }) => {
+    checkPassword(data.password);
+    await writeConfig("photos_config", data.config);
     return { ok: true };
   });

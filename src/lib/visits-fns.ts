@@ -1,26 +1,32 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
+import { readConfig, writeConfig } from "./db";
 
-const VISITS_PATH = path.join(process.cwd(), "visits-config.json");
+const VISITS_JSON = path.join(process.cwd(), "visits-config.json");
 
-function readVisits(): Record<string, number> {
+async function readVisits(): Promise<Record<string, number>> {
+  const fromDb = await readConfig<Record<string, number> | null>("visit_counts", null);
+  if (fromDb !== null) return fromDb;
+  // Migration from legacy JSON file
   try {
-    return JSON.parse(fs.readFileSync(VISITS_PATH, "utf-8"));
+    const legacy = JSON.parse(fs.readFileSync(VISITS_JSON, "utf-8")) as Record<string, number>;
+    await writeConfig("visit_counts", legacy);
+    return legacy;
   } catch {
     return {};
   }
 }
 
 export const getVisitCounts = createServerFn({ method: "GET" }).handler(
-  () => readVisits()
+  async () => readVisits()
 );
 
 export const incrementVisit = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => d as { slug: string })
-  .handler(({ data }) => {
-    const visits = readVisits();
+  .handler(async ({ data }) => {
+    const visits = await readVisits();
     visits[data.slug] = (visits[data.slug] ?? 0) + 1;
-    fs.writeFileSync(VISITS_PATH, JSON.stringify(visits, null, 2));
+    await writeConfig("visit_counts", visits);
     return { count: visits[data.slug] };
   });

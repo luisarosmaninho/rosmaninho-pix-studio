@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
+import { readConfig, writeConfig } from "./db";
 
 export type NesteMomento = {
   aLer: string;
@@ -11,7 +12,7 @@ export type NesteMomento = {
   aPensarEm: string;
 };
 
-const MOMENTO_PATH = path.join(process.cwd(), "momento-config.json");
+const MOMENTO_JSON = path.join(process.cwd(), "momento-config.json");
 
 const DEFAULT: NesteMomento = {
   aLer: "Central Park, de Guillaume Musso — comecei numa tarde e ainda não consegui parar.",
@@ -22,22 +23,27 @@ const DEFAULT: NesteMomento = {
   aPensarEm: "Bruges. e numa caminhada de novembro que ainda não aconteceu mas que já tem rota definida na cabeça.",
 };
 
-function readMomento(): NesteMomento {
+async function readMomento(): Promise<NesteMomento> {
+  const fromDb = await readConfig<Partial<NesteMomento> | null>("momento", null);
+  if (fromDb !== null) return { ...DEFAULT, ...fromDb };
+  // Migration from legacy JSON file
   try {
-    const raw = fs.readFileSync(MOMENTO_PATH, "utf-8");
-    return { ...DEFAULT, ...JSON.parse(raw) };
+    const legacy = JSON.parse(fs.readFileSync(MOMENTO_JSON, "utf-8")) as Partial<NesteMomento>;
+    const merged = { ...DEFAULT, ...legacy };
+    await writeConfig("momento", merged);
+    return merged;
   } catch {
     return DEFAULT;
   }
 }
 
 export const getNesteMomento = createServerFn({ method: "GET" }).handler(
-  () => readMomento()
+  async () => readMomento()
 );
 
 export const saveNesteMomento = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => data as { password: string } & NesteMomento)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
     if (data.password !== expected) {
       throw new Error("Password incorrecta.");
@@ -50,6 +56,6 @@ export const saveNesteMomento = createServerFn({ method: "POST" })
       aFotografar: data.aFotografar,
       aPensarEm: data.aPensarEm,
     };
-    fs.writeFileSync(MOMENTO_PATH, JSON.stringify(momento, null, 2));
+    await writeConfig("momento", momento);
     return { ok: true };
   });
