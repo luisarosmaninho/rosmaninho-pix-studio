@@ -737,27 +737,58 @@ export const saveRosemary = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ── Git — Commit & Push ───────────────────────────────────────────────────────
+// ── Git Info & Push ───────────────────────────────────────────────────────────
+
+export type GitCommitInfo = { hash: string; message: string; date: string };
+export type GitInfo = {
+  branch: string;
+  remote: string;
+  lastCommits: GitCommitInfo[];
+  dirty: boolean;
+  dirtyCount: number;
+};
+
+export const getGitInfo = createServerFn({ method: "GET" }).handler(async (): Promise<GitInfo> => {
+  const { spawnSync } = await import("child_process");
+  const opts = { cwd: process.cwd(), stdio: "pipe" as const };
+  const read = (cmd: string, args: string[]): string =>
+    (spawnSync(cmd, args, opts).stdout?.toString() ?? "").trim();
+  try {
+    const branch = read("git", ["rev-parse", "--abbrev-ref", "HEAD"]);
+    const remote = read("git", ["remote", "get-url", "origin"]);
+    const logRaw = read("git", ["log", "--format=%H\x1f%s\x1f%cr", "-5"]);
+    const statusRaw = read("git", ["status", "--porcelain"]);
+    const lastCommits: GitCommitInfo[] = logRaw
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        const [hash = "", message = "", date = ""] = line.split("\x1f");
+        return { hash: hash.slice(0, 7), message, date };
+      });
+    const dirtyLines = statusRaw.split("\n").filter(Boolean);
+    return { branch, remote, lastCommits, dirty: dirtyLines.length > 0, dirtyCount: dirtyLines.length };
+  } catch {
+    return { branch: "—", remote: "—", lastCommits: [], dirty: false, dirtyCount: 0 };
+  }
+});
 
 export const gitCommitAndPush = createServerFn({ method: "POST" })
   .validator((d: unknown) => d as { password: string; message?: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
-    const { execSync } = await import("child_process");
+    const { spawnSync } = await import("child_process");
     const msg = data.message?.trim()
       || `Atualização de conteúdo — ${new Date().toLocaleDateString("pt-PT")}`;
-    const { spawnSync } = await import("child_process");
     const opts = { cwd: process.cwd(), stdio: "pipe" as const };
     const run = (cmd: string, args: string[]) => {
       const r = spawnSync(cmd, args, opts);
-      if (r.status !== 0) throw new Error((r.stderr?.toString() ?? "").slice(0, 300) || `${cmd} failed`);
+      if (r.status !== 0) throw new Error((r.stderr?.toString() ?? "").slice(0, 400) || `${cmd} failed`);
+      return (r.stdout?.toString() ?? "").trim();
     };
-    try {
-      run("git", ["add", "-A"]);
-      run("git", ["commit", "--allow-empty", "-m", msg]);
-      run("git", ["push", "origin"]);
-      return { ok: true, message: "Publicado no GitHub com sucesso." };
-    } catch (err) {
-      throw new Error(err instanceof Error ? err.message : String(err));
-    }
+    run("git", ["add", "-A"]);
+    run("git", ["commit", "--allow-empty", "-m", msg]);
+    run("git", ["push", "origin"]);
+    const logLine = run("git", ["log", "--format=%H\x1f%s", "-1"]);
+    const [fullHash = "", subject = ""] = logLine.split("\x1f");
+    return { ok: true, message: "Publicado no GitHub com sucesso.", commitHash: fullHash.slice(0, 7), commitMessage: subject };
   });

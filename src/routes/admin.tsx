@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { photos as staticPhotos, categories as staticCategories, type Photo, type CategorySlug } from "@/lib/photos";
 import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/photo-config-fns";
 import { getNesteMomento, saveNesteMomento } from "@/lib/momento-fns";
@@ -15,10 +15,10 @@ import {
   getNotasPageTexts, saveNotasPageTexts,
   getDiarioConfig, saveDiarioConfig,
   getRosemary, saveRosemary,
-  gitCommitAndPush,
+  gitCommitAndPush, getGitInfo,
   type SobreConfig, type NewPhotoEntry, type HomepageConfig,
   type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
-  type DiarioConfig, type RosemaryConfig,
+  type DiarioConfig, type RosemaryConfig, type GitInfo,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -1876,42 +1876,132 @@ function RosemaryAdminSection({ password, initial }: { password: string; initial
 
 function GitHubSection({ password }: { password: string }) {
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "pushing" | "ok" | "error">("idle");
-  const [detail, setDetail] = useState("");
+  const [pushStatus, setPushStatus] = useState<"idle" | "pushing" | "ok" | "error">("idle");
+  const [pushDetail, setPushDetail] = useState("");
+  const [lastPushedHash, setLastPushedHash] = useState<string | null>(null);
+  const [gitInfo, setGitInfo] = useState<GitInfo | null>(null);
+  const [loadingInfo, setLoadingInfo] = useState(true);
+
+  async function fetchInfo() {
+    setLoadingInfo(true);
+    try { setGitInfo(await getGitInfo()); }
+    finally { setLoadingInfo(false); }
+  }
+
+  useEffect(() => { fetchInfo(); }, []);
 
   async function push() {
-    setStatus("pushing"); setDetail("");
+    setPushStatus("pushing"); setPushDetail("");
     try {
       const result = await gitCommitAndPush({ data: { password, message: message.trim() || undefined } });
-      setStatus("ok"); setDetail(result.message ?? "Publicado com sucesso.");
+      setPushStatus("ok");
+      setPushDetail(result.message ?? "Publicado com sucesso.");
+      if (result.commitHash) setLastPushedHash(result.commitHash);
+      await fetchInfo();
     } catch (e) {
-      setStatus("error"); setDetail(e instanceof Error ? e.message : "Erro desconhecido.");
+      setPushStatus("error");
+      setPushDetail(e instanceof Error ? e.message : "Erro desconhecido.");
     }
   }
 
   return (
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Publicar no GitHub" />
+
+      {/* Estado actual do repo */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Estado do repositório</p>
+          <button onClick={fetchInfo} disabled={loadingInfo}
+            className="font-mono text-[9px] text-white/25 hover:text-white/50 transition-colors disabled:opacity-30 select-none">
+            {loadingInfo ? "…" : "↻ atualizar"}
+          </button>
+        </div>
+
+        {loadingInfo && !gitInfo && (
+          <p className="font-mono text-[10px] text-white/20 animate-pulse">A carregar estado…</p>
+        )}
+
+        {gitInfo && (
+          <div className="space-y-4">
+            {/* Branch / Remote / Dirty */}
+            <div className="flex flex-wrap gap-x-8 gap-y-2">
+              <div>
+                <p className="font-mono text-[8px] uppercase tracking-widest text-white/20 mb-0.5">Ramo</p>
+                <p className="font-mono text-[11px] text-white/70">{gitInfo.branch}</p>
+              </div>
+              <div className="min-w-0">
+                <p className="font-mono text-[8px] uppercase tracking-widest text-white/20 mb-0.5">Remoto</p>
+                <p className="font-mono text-[10px] text-white/45 truncate max-w-xs">{gitInfo.remote}</p>
+              </div>
+              <div>
+                <p className="font-mono text-[8px] uppercase tracking-widest text-white/20 mb-0.5">Por commit</p>
+                <p className={`font-mono text-[11px] ${gitInfo.dirty ? "text-amber-400/80" : "text-white/25"}`}>
+                  {gitInfo.dirty ? `${gitInfo.dirtyCount} ficheiro${gitInfo.dirtyCount !== 1 ? "s" : ""}` : "limpo"}
+                </p>
+              </div>
+            </div>
+
+            {/* Commits list */}
+            {gitInfo.lastCommits.length > 0 && (
+              <div className="border-t border-white/8 pt-4 space-y-1">
+                <p className="font-mono text-[8px] uppercase tracking-widest text-white/20 mb-2">Últimos commits</p>
+                {gitInfo.lastCommits.map((c, i) => {
+                  const isNew = c.hash === lastPushedHash;
+                  return (
+                    <div key={c.hash}
+                      className={`flex items-baseline gap-3 px-2 py-1.5 rounded text-[11px] transition-colors ${isNew ? "bg-emerald-500/10 border border-emerald-500/15" : ""}`}>
+                      <code className={`font-mono text-[9px] shrink-0 tabular-nums ${isNew ? "text-emerald-400" : "text-white/20"}`}>
+                        {c.hash}{isNew && " ✓"}
+                      </code>
+                      <span className={`font-mono truncate flex-1 min-w-0 ${i === 0 && !isNew ? "text-white/60" : isNew ? "text-emerald-200/80" : "text-white/30"}`}>
+                        {c.message}
+                      </span>
+                      <span className="font-mono text-[9px] text-white/18 shrink-0">{c.date}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Commit & Push */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Mensagem de commit</p>
         <input
           className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors"
-          placeholder="Atualização de conteúdo (opcional)"
+          placeholder={`Atualização de conteúdo — ${new Date().toLocaleDateString("pt-PT")}`}
           value={message}
-          onChange={(e) => { setMessage(e.target.value); setStatus("idle"); }}
+          onChange={(e) => { setMessage(e.target.value); setPushStatus("idle"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") push(); }}
         />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <button
             onClick={push}
-            disabled={status === "pushing"}
-            className="bg-white text-black font-mono text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 disabled:opacity-40 transition-colors"
+            disabled={pushStatus === "pushing"}
+            className="bg-white text-black font-mono text-[11px] uppercase tracking-widest px-5 py-2.5 hover:bg-white/90 disabled:opacity-40 transition-colors"
           >
-            {status === "pushing" ? "A publicar…" : "Commit & Push →"}
+            {pushStatus === "pushing" ? "A publicar…" : "Commit & Push →"}
           </button>
-          {status === "ok" && <span className="font-mono text-[10px] text-emerald-400">{detail}</span>}
-          {status === "error" && <span className="font-mono text-[10px] text-red-400 max-w-sm">{detail}</span>}
+          {pushStatus === "ok" && (
+            <span className="font-mono text-[10px] text-emerald-400 flex items-center gap-2">
+              ✓ {pushDetail}
+              {lastPushedHash && (
+                <code className="text-emerald-300/50 text-[9px] border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                  {lastPushedHash}
+                </code>
+              )}
+            </span>
+          )}
+          {pushStatus === "error" && (
+            <span className="font-mono text-[10px] text-red-400 max-w-sm leading-relaxed">{pushDetail}</span>
+          )}
         </div>
-        <p className="text-white/25 text-[10px] leading-relaxed">Faz <code className="text-white/40">git add -A &amp;&amp; git commit &amp;&amp; git push origin</code> a partir do servidor. Certifica-te de que o repositório está configurado com as credenciais correctas.</p>
+        <p className="text-white/18 text-[10px] leading-relaxed">
+          Corre <code className="text-white/30">git add -A → commit → push origin</code> no servidor e confirma com o hash do commit acima.
+        </p>
       </div>
     </div>
   );
