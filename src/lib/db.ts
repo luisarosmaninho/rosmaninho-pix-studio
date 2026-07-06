@@ -3,12 +3,29 @@ import pg from "pg";
 const { Pool } = pg;
 
 let pool: pg.Pool | null = null;
+let schemaInitialized = false;
 
 export function getPool(): pg.Pool {
   if (!pool) {
     pool = new Pool({ connectionString: process.env.DATABASE_URL });
   }
   return pool;
+}
+
+export async function ensureSchema(): Promise<void> {
+  if (schemaInitialized) return;
+  schemaInitialized = true;
+  try {
+    await getPool().query(`
+      CREATE TABLE IF NOT EXISTS admin_config (
+        key TEXT PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+  } catch (err) {
+    console.error("[db] Failed to ensure schema:", err);
+  }
 }
 
 export async function readConfig<T>(key: string, fallback: T): Promise<T> {

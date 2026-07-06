@@ -6,6 +6,10 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { journal as staticJournal } from "./lib/journal";
 import type { JournalEntry } from "./lib/journal";
+import { ensureSchema } from "./lib/db";
+
+// Create admin_config table if it doesn't exist yet (dev and production).
+ensureSchema().catch((err) => console.error("[server] ensureSchema failed:", err));
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;

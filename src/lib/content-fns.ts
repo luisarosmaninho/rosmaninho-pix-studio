@@ -512,6 +512,10 @@ export const saveSobre = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// Aliases used by admin.tsx
+export const getSobreTexts = getSobre;
+export const saveSobreTexts = saveSobre;
+
 // ── Neste Momento ─────────────────────────────────────────────────────────────
 
 export type NestesMomentoItem = { label: string; value: string };
