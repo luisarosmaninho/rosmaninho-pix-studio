@@ -3,57 +3,9 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
-import { getJournal } from "@/lib/content-fns";
+import { getJournal, getDiarioConfig } from "@/lib/content-fns";
 
-const aberturasPool = [
-  "às vezes escrevo antes de saber o que quero dizer.",
-  "o caderno não tem ordem — assim como os dias.",
-  "algumas notas ficam. outras desaparecem como a espuma do matcha.",
-  "escrevo devagar. leio mais devagar ainda.",
-  "nem todas as entradas têm fotografia. nem todas as fotografias têm entrada.",
-  "começo sempre com uma chávena. raramente termino antes de ela arrefecer.",
-  "há dias em que o silêncio é a única coisa que vale a pena guardar.",
-  "um pensamento que não cabe numa fotografia acaba aqui.",
-  "o caderno tem manchas de café. assim deve ser.",
-  "não sei se escrevo para mim ou para quem um dia vier aqui.",
-  "às vezes a entrada mais curta é a que diz mais.",
-  "guardo o que não fotografei também — às vezes é o que fica mais.",
-  "o tempo demora mais quando se escreve devagar.",
-  "alguns dias não têm título. ficam assim.",
-];
-
-const rasurasPorSlug: Record<string, string[]> = {
-  "o-cafe-antes-de-tudo": [
-    "o ritual antes da fotografia",
-    "esperar antes de começar",
-  ],
-  "figura-no-mondego": [
-    "havia alguém no rio essa manhã",
-    "não estava à espera de encontrar ninguém",
-  ],
-  "telhados-com-nevoa": [
-    "acordei e a cidade tinha mudado",
-    "a névoa chegou durante a noite",
-  ],
-  "matcha-da-manha": [
-    "havia um verde que não esperava",
-    "a cor dentro da chávena",
-  ],
-  "retrato-na-esplanada": [
-    "a luz mudou e eu peguei na câmara",
-    "ela não reparou",
-  ],
-  "ribeiro-e-musgo": [
-    "encontrei água onde não esperava",
-    "o bosque que não estava no mapa",
-  ],
-  "barco-no-douro": [
-    "o porto em fevereiro tem frio de pedra",
-    "fui antes dos turistas",
-  ],
-};
-
-function rasuraParaEntrada(slug: string, seed: number): string {
+function rasuraParaEntrada(slug: string, seed: number, rasurasPorSlug: Record<string, string[]>): string {
   const pool = rasurasPorSlug[slug] ?? ["uma tentativa que não ficou"];
   return pool[seed % pool.length];
 }
@@ -77,11 +29,11 @@ function Rasura({ texto }: { texto: string }) {
   );
 }
 
-function AberturaDoDia() {
-  const [frase, setFrase] = useState(aberturasPool[0]);
+function AberturaDoDia({ pool }: { pool: string[] }) {
+  const [frase, setFrase] = useState(pool[0] ?? "");
   useEffect(() => {
-    setFrase(aberturasPool[Math.floor(Math.random() * aberturasPool.length)]);
-  }, []);
+    if (pool.length > 0) setFrase(pool[Math.floor(Math.random() * pool.length)]);
+  }, [pool]);
   return (
     <p className="font-italic-serif text-foreground/25 text-sm mt-8 italic">
       {frase}
@@ -109,8 +61,8 @@ export const Route = createFileRoute("/diario/")({
     ],
   }),
   loader: async () => {
-    const journal = await getJournal();
-    return { journal };
+    const [journal, diarioConfig] = await Promise.all([getJournal(), getDiarioConfig()]);
+    return { journal, diarioConfig };
   },
   component: JournalIndex,
 });
@@ -125,7 +77,7 @@ function mesAbrev(iso: string) {
 }
 
 function JournalIndex() {
-  const { journal } = Route.useLoaderData();
+  const { journal, diarioConfig } = Route.useLoaderData();
   const sorted = [...journal].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
@@ -151,7 +103,7 @@ function JournalIndex() {
             <p>este caderno é o intermédio — entre a fotografia e a palavra certa.</p>
             <p className="text-foreground/28 italic">nem todas as entradas ficam prontas.</p>
           </div>
-          <AberturaDoDia />
+          <AberturaDoDia pool={diarioConfig.aberturasPool} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4, delay: 0.7 }}
@@ -184,12 +136,11 @@ function JournalIndex() {
 
       {/* ── Lista de entradas — caderno ── */}
       <section className="px-6 md:px-12 max-w-4xl mx-auto pb-10">
-
         {sorted.map((entry, i) => {
           const d = new Date(entry.date);
           const dia = d.getDate();
           const mes = mesAbrev(entry.date);
-          const rasura = rasuraParaEntrada(entry.slug, i);
+          const rasura = rasuraParaEntrada(entry.slug, i, diarioConfig.rasurasPorSlug);
 
           return (
             <motion.div
@@ -205,9 +156,7 @@ function JournalIndex() {
                 params={{ slug: entry.slug }}
                 className="group relative block py-7 border-b border-foreground/6 overflow-hidden"
               >
-                {/* Data — pequena, no canto superior, sem linha lateral */}
                 <div className="flex items-start gap-5 md:gap-8">
-
                   {/* Coluna data */}
                   <div className="shrink-0 w-14 md:w-20 pt-0.5 select-none flex flex-col items-start gap-0.5">
                     <span className="font-mono-label text-[9px] text-foreground/25 tabular-nums leading-tight">
@@ -223,19 +172,13 @@ function JournalIndex() {
 
                   {/* Conteúdo com rasura */}
                   <div className="flex-1 min-w-0">
-
-                    {/* Rasura — tentativa descartada */}
                     <Rasura texto={rasura} />
-
-                    {/* Título real */}
                     <h2 className="font-display text-xl md:text-[1.85rem] leading-[1.1] group-hover:text-copper transition-colors duration-500">
                       {entry.title}
                     </h2>
-
                     <p className="mt-3 text-foreground/42 leading-relaxed body-text text-sm max-w-xl">
                       {entry.excerpt}
                     </p>
-
                     <span className="font-mono-label mt-5 inline-block text-foreground/20 group-hover:text-copper transition-colors duration-500 text-[9px] uppercase tracking-widest">
                       ler →
                     </span>

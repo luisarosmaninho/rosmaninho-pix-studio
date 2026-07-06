@@ -23,7 +23,7 @@ export const getVisitCounts = createServerFn({ method: "GET" }).handler(
 );
 
 export const incrementVisit = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { slug: string })
+  .validator((d: unknown) => d as { slug: string })
   .handler(async ({ data }) => {
     const visits = await readVisits();
     visits[data.slug] = (visits[data.slug] ?? 0) + 1;

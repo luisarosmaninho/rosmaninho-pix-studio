@@ -42,7 +42,7 @@ export const getNesteMomento = createServerFn({ method: "GET" }).handler(
 );
 
 export const saveNesteMomento = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => data as { password: string } & NesteMomento)
+  .validator((data: unknown) => data as { password: string } & NesteMomento)
   .handler(async ({ data }) => {
     const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
     if (data.password !== expected) {

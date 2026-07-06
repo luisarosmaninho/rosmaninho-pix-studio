@@ -13,8 +13,12 @@ import {
   getContactoTexts, saveContactoTexts,
   getPortfolioPageTexts, savePortfolioPageTexts,
   getNotasPageTexts, saveNotasPageTexts,
+  getDiarioConfig, saveDiarioConfig,
+  getRosemary, saveRosemary,
+  gitCommitAndPush,
   type SobreConfig, type NewPhotoEntry, type HomepageConfig,
   type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
+  type DiarioConfig, type RosemaryConfig,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -23,7 +27,7 @@ import type { Category } from "@/lib/photos";
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts] = await Promise.all([
+    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig] = await Promise.all([
       getPhotoConfig(),
       getNesteMomento(),
       getCategories(),
@@ -37,13 +41,15 @@ export const Route = createFileRoute("/admin")({
       getContactoTexts(),
       getPortfolioPageTexts(),
       getNotasPageTexts(),
+      getDiarioConfig(),
+      getRosemary(),
     ]);
-    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts };
+    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig };
   },
   component: AdminPage,
 });
 
-type TabId = "homepage" | "momento" | "autora" | "contacto" | "portfolio" | "series" | "caderno" | "notas" | "fotos" | "ordem";
+type TabId = "homepage" | "momento" | "autora" | "contacto" | "portfolio" | "series" | "caderno" | "notas" | "fotos" | "ordem" | "caderno-intro" | "rosemary" | "github";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "homepage", label: "Homepage" },
@@ -53,9 +59,12 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "portfolio", label: "Portfolio" },
   { id: "series", label: "Séries" },
   { id: "caderno", label: "Caderno" },
+  { id: "caderno-intro", label: "Caderno Intro" },
   { id: "notas", label: "Notas" },
   { id: "fotos", label: "Fotos" },
   { id: "ordem", label: "Ordem" },
+  { id: "rosemary", label: "§ Interior" },
+  { id: "github", label: "↑ GitHub" },
 ];
 
 // ── Password gate ────────────────────────────────────────────────────────────
@@ -1749,10 +1758,169 @@ function NotasPageSection({ password, initial }: { password: string; initial: No
   );
 }
 
+// ── Caderno Intro section ─────────────────────────────────────────────────────
+
+function DiarioIntroSection({ password, initial }: { password: string; initial: DiarioConfig }) {
+  const router = useRouter();
+  const [aberturasText, setAberturasText] = useState(() => initial.aberturasPool.join("\n"));
+  const [rasuras, setRasuras] = useState<Record<string, string>>(() =>
+    Object.fromEntries(Object.entries(initial.rasurasPorSlug).map(([k, v]) => [k, v.join("\n")]))
+  );
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
+
+  const journalSlugs = [
+    { slug: "o-cafe-antes-de-tudo", label: "Café antes de tudo" },
+    { slug: "figura-no-mondego", label: "Figura no Mondego" },
+    { slug: "telhados-com-nevoa", label: "Telhados com névoa" },
+    { slug: "matcha-da-manha", label: "Matcha da manhã" },
+    { slug: "retrato-na-esplanada", label: "Retrato na esplanada" },
+    { slug: "ribeiro-e-musgo", label: "Ribeiro e musgo" },
+    { slug: "barco-no-douro", label: "Barco no Douro" },
+  ];
+
+  async function saveAberturas() {
+    setSaving("aberturas"); setSaved(null);
+    try {
+      await saveDiarioConfig({ data: { password, aberturasPool: aberturasText.split("\n").map((s) => s.trim()).filter(Boolean) } });
+      setSaved("aberturas"); setSavedTime(now()); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  async function saveRasura(slug: string) {
+    setSaving(slug); setSaved(null);
+    try {
+      // Build from ALL current rasuras state so we never overwrite other slugs with stale data
+      const rasurasPorSlug = Object.fromEntries(
+        Object.entries(rasuras).map(([k, v]) => [k, v.split("\n").map((s) => s.trim()).filter(Boolean)])
+      );
+      await saveDiarioConfig({ data: { password, rasurasPorSlug } });
+      setSaved(slug); setSavedTime(now()); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-10">
+      <SectionHeader label="Caderno — Abertura e Rasuras" />
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Frases de abertura (aleatórias)</p>
+        <p className="text-white/40 text-[11px]">Uma por linha. Aparecem aleatoriamente no topo do Caderno.</p>
+        <FreeBlock label="Pool de aberturas" value={aberturasText} rows={14}
+          onChange={(v) => { setAberturasText(v); setSaved(null); }}
+          placeholder="às vezes escrevo antes de saber o que quero dizer." />
+        <SaveRow id="aberturas" saving={saving} saved={saved} savedTime={savedTime} onSave={saveAberturas} />
+      </div>
+      <div className="space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rasuras por entrada do caderno</p>
+        <p className="text-white/40 text-[11px]">Cada linha é uma opção de rasura. Aparecem riscadas por cima do título real de cada entrada.</p>
+        {journalSlugs.map(({ slug, label }) => (
+          <div key={slug} className="bg-white/4 border border-white/6 p-6 space-y-4">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-white/50">{label}</p>
+            <FreeBlock label="Rasuras (uma por linha)" value={rasuras[slug] ?? ""} rows={3}
+              onChange={(v) => { setRasuras((prev) => ({ ...prev, [slug]: v })); setSaved(null); }} />
+            <SaveRow id={slug} saving={saving} saved={saved} savedTime={savedTime} onSave={() => saveRasura(slug)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Rosemary (página interior) section ───────────────────────────────────────
+
+function RosemaryAdminSection({ password, initial }: { password: string; initial: RosemaryConfig }) {
+  const router = useRouter();
+  const [sections, setSections] = useState(() =>
+    initial.sections.map((s) => ({ heading: s.heading, bodyText: s.body.join("\n\n") }))
+  );
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
+
+  async function saveSection(idx: number) {
+    const id = `section-${idx}`;
+    setSaving(id); setSaved(null);
+    try {
+      const newSections = sections.map((s) => ({ heading: s.heading.replace(/\n+/g, " ").trim(), body: splitIntoParagraphs(s.bodyText) }));
+      await saveRosemary({ data: { password, sections: newSections } });
+      setSaved(id); setSavedTime(now()); router.invalidate();
+    } catch { alert("Erro ao guardar."); }
+    finally { setSaving(null); }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-10">
+      <SectionHeader label="Página Interior (§ Rosemary)" />
+      <p className="text-white/40 text-[11px] -mt-6">Página secreta — não indexada. Acessível apenas por quem conhece o caminho.</p>
+      {sections.map((section, idx) => {
+        const id = `section-${idx}`;
+        return (
+          <div key={idx} className="bg-white/4 border border-white/6 p-6 space-y-5">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Secção {idx + 1}</p>
+            <FreeBlock label="Título da secção" value={section.heading} rows={1}
+              onChange={(v) => { setSections((prev) => prev.map((s, i) => i === idx ? { ...s, heading: v } : s)); setSaved(null); }} />
+            <FreeBlock label="Texto (parágrafos separados por linha em branco)" value={section.bodyText} rows={8}
+              onChange={(v) => { setSections((prev) => prev.map((s, i) => i === idx ? { ...s, bodyText: v } : s)); setSaved(null); }} />
+            <SaveRow id={id} saving={saving} saved={saved} savedTime={savedTime} onSave={() => saveSection(idx)} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── GitHub section ────────────────────────────────────────────────────────────
+
+function GitHubSection({ password }: { password: string }) {
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "pushing" | "ok" | "error">("idle");
+  const [detail, setDetail] = useState("");
+
+  async function push() {
+    setStatus("pushing"); setDetail("");
+    try {
+      const result = await gitCommitAndPush({ data: { password, message: message.trim() || undefined } });
+      setStatus("ok"); setDetail(result.message ?? "Publicado com sucesso.");
+    } catch (e) {
+      setStatus("error"); setDetail(e instanceof Error ? e.message : "Erro desconhecido.");
+    }
+  }
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Publicar no GitHub" />
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Mensagem de commit</p>
+        <input
+          className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors"
+          placeholder="Atualização de conteúdo (opcional)"
+          value={message}
+          onChange={(e) => { setMessage(e.target.value); setStatus("idle"); }}
+        />
+        <div className="flex items-center gap-4">
+          <button
+            onClick={push}
+            disabled={status === "pushing"}
+            className="bg-white text-black font-mono text-[11px] uppercase tracking-widest px-5 py-2 hover:bg-white/90 disabled:opacity-40 transition-colors"
+          >
+            {status === "pushing" ? "A publicar…" : "Commit & Push →"}
+          </button>
+          {status === "ok" && <span className="font-mono text-[10px] text-emerald-400">{detail}</span>}
+          {status === "error" && <span className="font-mono text-[10px] text-red-400 max-w-sm">{detail}</span>}
+        </div>
+        <p className="text-white/25 text-[10px] leading-relaxed">Faz <code className="text-white/40">git add -A &amp;&amp; git commit &amp;&amp; git push origin</code> a partir do servidor. Certifica-te de que o repositório está configurado com as credenciais correctas.</p>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts } = Route.useLoaderData();
+  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig } = Route.useLoaderData();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<TabId>("momento");
@@ -1809,6 +1977,9 @@ function AdminPage() {
         )}
         {tab === "fotos" && <FotosSection password={password} initial={photosWithMeta} initialNewPhotos={newPhotos} />}
         {tab === "ordem" && <OrdemSection password={password} initialConfig={config} />}
+        {tab === "caderno-intro" && <DiarioIntroSection password={password} initial={diarioConfig} />}
+        {tab === "rosemary" && <RosemaryAdminSection password={password} initial={rosemaryConfig} />}
+        {tab === "github" && <GitHubSection password={password} />}
       </div>
     </div>
   );

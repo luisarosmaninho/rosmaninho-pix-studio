@@ -49,7 +49,7 @@ export const getCategories = createServerFn({ method: "GET" }).handler(async ():
 });
 
 export const saveCategoryTexts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; slug: string; data: CategoryOverrides })
+  .validator((d: unknown) => d as { password: string; slug: string; data: CategoryOverrides })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const overrides = await cfg<CategoriesConfig>("categories", CATEGORIES_JSON, {});
@@ -119,7 +119,7 @@ export const getNewPhotos = createServerFn({ method: "GET" }).handler(async (): 
 });
 
 export const savePhotoMeta = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string; date: string; location: string })
+  .validator((d: unknown) => d as { password: string; photoId: string; title: string; description: string; conditions: string; date: string; location: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const staticIds = new Set(staticPhotos.map((p) => p.id));
@@ -139,7 +139,7 @@ export const savePhotoMeta = createServerFn({ method: "POST" })
   });
 
 export const addNewPhoto = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; photo: NewPhotoEntry })
+  .validator((d: unknown) => d as { password: string; photo: NewPhotoEntry })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const existing = await readNewPhotos();
@@ -150,7 +150,7 @@ export const addNewPhoto = createServerFn({ method: "POST" })
   });
 
 export const deleteNewPhoto = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; photoId: string })
+  .validator((d: unknown) => d as { password: string; photoId: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const updated = (await readNewPhotos()).filter((p) => p.id !== data.photoId);
@@ -208,7 +208,7 @@ export const getNewJournalEntries = createServerFn({ method: "GET" }).handler(as
 });
 
 export const saveJournalEntry = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; slug: string; data: Partial<JournalEntryEditable> })
+  .validator((d: unknown) => d as { password: string; slug: string; data: Partial<JournalEntryEditable> })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const cfg = await readJournalConfig();
@@ -225,7 +225,7 @@ export const saveJournalEntry = createServerFn({ method: "POST" })
   });
 
 export const addNewJournalEntry = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; entry: JournalEntry })
+  .validator((d: unknown) => d as { password: string; entry: JournalEntry })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const config = await readJournalConfig();
@@ -238,7 +238,7 @@ export const addNewJournalEntry = createServerFn({ method: "POST" })
   });
 
 export const deleteNewJournalEntry = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; slug: string })
+  .validator((d: unknown) => d as { password: string; slug: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const config = await readJournalConfig();
@@ -256,7 +256,7 @@ export const getNotas = createServerFn({ method: "GET" }).handler(async (): Prom
 });
 
 export const saveNotas = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; notas: Nota[] })
+  .validator((d: unknown) => d as { password: string; notas: Nota[] })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     await writeConfig("notas", data.notas);
@@ -309,7 +309,7 @@ export const getContactoTexts = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const saveContactoTexts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<ContactoConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<ContactoConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -344,7 +344,7 @@ export const getPortfolioPageTexts = createServerFn({ method: "GET" }).handler(a
 });
 
 export const savePortfolioPageTexts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<PortfolioPageConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<PortfolioPageConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -381,7 +381,7 @@ export const getNotasPageTexts = createServerFn({ method: "GET" }).handler(async
 });
 
 export const saveNotasPageTexts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<NotasPageConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<NotasPageConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -416,7 +416,7 @@ export const getHomepageTexts = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const saveHomepageTexts = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<HomepageConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<HomepageConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -503,7 +503,7 @@ export const getSobre = createServerFn({ method: "GET" }).handler(async (): Prom
 });
 
 export const saveSobre = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<SobreConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<SobreConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -538,7 +538,7 @@ export const getNesteMomento = createServerFn({ method: "GET" }).handler(async (
 });
 
 export const saveNesteMomento = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string } & Partial<NesteMomentoConfig>)
+  .validator((d: unknown) => d as { password: string } & Partial<NesteMomentoConfig>)
   .handler(async ({ data }) => {
     const { password, ...rest } = data;
     checkPassword(password);
@@ -557,7 +557,7 @@ export const getVisits = createServerFn({ method: "GET" }).handler(async (): Pro
 });
 
 export const incrementVisit = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as Record<string, never>)
+  .validator((d: unknown) => d as Record<string, never>)
   .handler(async () => {
     const current = await cfg<VisitsConfig>("visits", VISITS_JSON, { count: 0, lastReset: new Date().toISOString() });
     const updated = { ...current, count: current.count + 1 };
@@ -566,7 +566,7 @@ export const incrementVisit = createServerFn({ method: "POST" })
   });
 
 export const resetVisits = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string })
+  .validator((d: unknown) => d as { password: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     const reset: VisitsConfig = { count: 0, lastReset: new Date().toISOString() };
@@ -586,9 +586,178 @@ export const getPhotoConfig = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const savePhotoConfig = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => d as { password: string; config: PhotosConfig })
+  .validator((d: unknown) => d as { password: string; config: PhotosConfig })
   .handler(async ({ data }) => {
     checkPassword(data.password);
     await writeConfig("photos_config", data.config);
     return { ok: true };
+  });
+
+// ── Diário Config (aberturas + rasuras) ───────────────────────────────────────
+
+export type DiarioConfig = {
+  aberturasPool: string[];
+  rasurasPorSlug: Record<string, string[]>;
+};
+
+const DIARIO_CONFIG_DEFAULTS: DiarioConfig = {
+  aberturasPool: [
+    "às vezes escrevo antes de saber o que quero dizer.",
+    "o caderno não tem ordem — assim como os dias.",
+    "algumas notas ficam. outras desaparecem como a espuma do matcha.",
+    "escrevo devagar. leio mais devagar ainda.",
+    "nem todas as entradas têm fotografia. nem todas as fotografias têm entrada.",
+    "começo sempre com uma chávena. raramente termino antes de ela arrefecer.",
+    "há dias em que o silêncio é a única coisa que vale a pena guardar.",
+    "um pensamento que não cabe numa fotografia acaba aqui.",
+    "o caderno tem manchas de café. assim deve ser.",
+    "não sei se escrevo para mim ou para quem um dia vier aqui.",
+    "às vezes a entrada mais curta é a que diz mais.",
+    "guardo o que não fotografei também — às vezes é o que fica mais.",
+    "o tempo demora mais quando se escreve devagar.",
+    "alguns dias não têm título. ficam assim.",
+  ],
+  rasurasPorSlug: {
+    "o-cafe-antes-de-tudo": ["o ritual antes da fotografia", "esperar antes de começar"],
+    "figura-no-mondego": ["havia alguém no rio essa manhã", "não estava à espera de encontrar ninguém"],
+    "telhados-com-nevoa": ["acordei e a cidade tinha mudado", "a névoa chegou durante a noite"],
+    "matcha-da-manha": ["havia um verde que não esperava", "a cor dentro da chávena"],
+    "retrato-na-esplanada": ["a luz mudou e eu peguei na câmara", "ela não reparou"],
+    "ribeiro-e-musgo": ["encontrei água onde não esperava", "o bosque que não estava no mapa"],
+    "barco-no-douro": ["o porto em fevereiro tem frio de pedra", "fui antes dos turistas"],
+  },
+};
+
+const DIARIO_CONFIG_JSON = path.join(process.cwd(), "diario-config.json");
+
+export const getDiarioConfig = createServerFn({ method: "GET" }).handler(async (): Promise<DiarioConfig> => {
+  const saved = await cfg<Partial<DiarioConfig>>("diario_config", DIARIO_CONFIG_JSON, {});
+  return {
+    aberturasPool: saved.aberturasPool ?? DIARIO_CONFIG_DEFAULTS.aberturasPool,
+    rasurasPorSlug: saved.rasurasPorSlug ?? DIARIO_CONFIG_DEFAULTS.rasurasPorSlug,
+  };
+});
+
+export const saveDiarioConfig = createServerFn({ method: "POST" })
+  .validator((d: unknown) => d as { password: string } & Partial<DiarioConfig>)
+  .handler(async ({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = await cfg<Partial<DiarioConfig>>("diario_config", DIARIO_CONFIG_JSON, {});
+    await writeConfig("diario_config", { ...current, ...rest });
+    return { ok: true };
+  });
+
+// ── Rosemary (página interior) ────────────────────────────────────────────────
+
+export type RosemarySection = { heading: string; body: string[] };
+export type RosemaryConfig = { sections: RosemarySection[] };
+
+export const ROSEMARY_DEFAULTS: RosemaryConfig = {
+  sections: [
+    {
+      heading: "I — O QUE FICOU POR DIZER",
+      body: [
+        "Encontraste isto. Isso já diz algo de ti.",
+        "Há pessoas que passam pelo arquivo inteiro e não param para escutar o silêncio entre as imagens. Tu ficaste. Procuraste. Escreveste.",
+        "Por isso mereces o que está aqui dentro.",
+      ],
+    },
+    {
+      heading: "II — SOBRE O RITMO",
+      body: [
+        "Não sou rápida. Nunca fui.",
+        "Sinto devagar, como quem deixa a fotografia revelar em câmara escura — sem pressa, sem certezas, esperando que a imagem apareça quando estiver pronta.",
+        "Durante muito tempo achei que isso era uma falha. Agora sei que é a única forma que conheço de fazer as coisas com verdade.",
+        "O mundo apressado não sabe o que perde por não esperar.",
+      ],
+    },
+    {
+      heading: "III — SOBRE OS LUGARES QUE AINDA NÃO VI",
+      body: [
+        "A Irlanda existe dentro de mim em verde e chuva fina.\nA Escócia em pedra e nevoeiro que não se dissipa.\nVerona em varandas e cartas não enviadas.\nBruges em canais que reflectem uma luz que imagino dourada.",
+        "Já percorri estas cidades nas fotografias de outras pessoas, nas páginas de livros que ficaram dobrados em lugares errados, nas músicas que soam a chegada.",
+        "Quando for — e vou — vai parecer um regresso.",
+        "Guardar um lugar dentro de mim antes de o visitar é a coisa mais estranha e mais minha que faço.",
+      ],
+    },
+    {
+      heading: "IV — SOBRE O QUE A LENTE NÃO ALCANÇA",
+      body: [
+        "Há uma tensão antes do clique que não cabe em nenhuma imagem.",
+        "É a respiração suspensa. A decisão de ficar quieta mais um segundo. A consciência de que este momento específico — esta luz, esta sombra, este ar — nunca vai voltar exactamente assim.",
+        "Fotografo porque não confio na memória. Ela romanticiza, apaga, reescreve sem avisar.",
+        "A imagem não deixa. Fica onde a pus.",
+      ],
+    },
+    {
+      heading: "V — SOBRE OS LIVROS E A MÚSICA",
+      body: [
+        "Tom Walker canta como se soubesse de algo que eu ainda não disse em voz alta. Há artistas assim — que chegam antes das palavras.",
+        "Os livros são o sítio onde me escondo quando o mundo fica barulhento demais. Guillaume Musso, Tolkien, Rowling — não são apenas histórias. São arquitecturas onde aprendi que o invisível importa, que a amizade salva, que a coragem não é a ausência do medo.",
+        "Algumas noites o silêncio só é suportável com música a baixo volume e um livro que ainda não acabei.",
+        "Isso é o suficiente. Mais do que o suficiente.",
+      ],
+    },
+    {
+      heading: "VI — SOBRE AQUILO QUE AINDA QUERO",
+      body: [
+        "Quero trabalho que faça sentido com o que sou — não apenas com o que aprendi.",
+        "Quero fotografar sem justificar porquê. Quero construir algo que seja completamente meu, feito com as mãos e com a atenção e com o tempo que as coisas precisam.",
+        "Imagino-me algures entre o Porto e o mar. Talvez Aveiro. Talvez um sítio que ainda não existe no meu mapa.",
+        "Não sei o caminho exacto. Sei a direcção.",
+      ],
+    },
+    {
+      heading: "VII — PARA QUEM CHEGOU ATÉ AQUI",
+      body: [
+        "Este é o arquivo dentro do arquivo.",
+        "Se chegaste aqui é porque és do género de pessoas que lê até ao fim. Que fica quando os outros já foram. Que ouve o silêncio depois da música parar.",
+        "Obrigada por isso.",
+        "Cuida-te.",
+      ],
+    },
+  ],
+};
+
+const ROSEMARY_JSON = path.join(process.cwd(), "rosemary-config.json");
+
+export const getRosemary = createServerFn({ method: "GET" }).handler(async (): Promise<RosemaryConfig> => {
+  const saved = await cfg<Partial<RosemaryConfig>>("rosemary", ROSEMARY_JSON, {});
+  return { sections: saved.sections ?? ROSEMARY_DEFAULTS.sections };
+});
+
+export const saveRosemary = createServerFn({ method: "POST" })
+  .validator((d: unknown) => d as { password: string } & Partial<RosemaryConfig>)
+  .handler(async ({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = await cfg<Partial<RosemaryConfig>>("rosemary", ROSEMARY_JSON, {});
+    await writeConfig("rosemary", { ...current, ...rest });
+    return { ok: true };
+  });
+
+// ── Git — Commit & Push ───────────────────────────────────────────────────────
+
+export const gitCommitAndPush = createServerFn({ method: "POST" })
+  .validator((d: unknown) => d as { password: string; message?: string })
+  .handler(async ({ data }) => {
+    checkPassword(data.password);
+    const { execSync } = await import("child_process");
+    const msg = data.message?.trim()
+      || `Atualização de conteúdo — ${new Date().toLocaleDateString("pt-PT")}`;
+    const { spawnSync } = await import("child_process");
+    const opts = { cwd: process.cwd(), stdio: "pipe" as const };
+    const run = (cmd: string, args: string[]) => {
+      const r = spawnSync(cmd, args, opts);
+      if (r.status !== 0) throw new Error((r.stderr?.toString() ?? "").slice(0, 300) || `${cmd} failed`);
+    };
+    try {
+      run("git", ["add", "-A"]);
+      run("git", ["commit", "--allow-empty", "-m", msg]);
+      run("git", ["push", "origin"]);
+      return { ok: true, message: "Publicado no GitHub com sucesso." };
+    } catch (err) {
+      throw new Error(err instanceof Error ? err.message : String(err));
+    }
   });

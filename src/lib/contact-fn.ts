@@ -8,7 +8,7 @@ export type ContactInput = {
 };
 
 export const sendContactEmail = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => data as ContactInput)
+  .validator((data: unknown) => data as ContactInput)
   .handler(async ({ data }) => {
     const host = process.env.SMTP_HOST;
     const port = Number(process.env.SMTP_PORT ?? "587");

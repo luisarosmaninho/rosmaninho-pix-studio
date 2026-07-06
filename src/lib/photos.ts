@@ -289,7 +289,7 @@ export const photos: Photo[] = [
     title: "Do lado de quem fica",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "Há sítios que observam sem julgar. Este é um deles." },
+    meta: { description: "A Ribeira ao entardecer tem uma cor que o Porto não exporta para os postais. Fica-se ali a guardar." },
   },
 
   // Natureza
@@ -365,7 +365,7 @@ export const photos: Photo[] = [
     title: "Estava quase a ir embora",
     category: "retratos",
     orientation: "landscape",
-    meta: { description: "Estava de costas. Depois voltou-se. Não sei porquê, mas ficou bem." },
+    meta: { description: "Estava de costas para o mundo. Quando se voltou, trazia ainda o olhar de quem estava noutro sítio. Disparei antes de ele chegar completamente." },
   },
   {
     id: "retrato-esplanada",
@@ -373,7 +373,7 @@ export const photos: Photo[] = [
     title: "Alguém que não contava o tempo",
     category: "retratos",
     orientation: "landscape",
-    meta: { description: "O outono estava lá, bem atrás. Ele não parecia dar conta disso." },
+    meta: { description: "O outono estava a acontecer mesmo atrás dele. Ele tinha o olhar noutro sítio — naquele estado de presença ausente que só os sossegados conseguem." },
   },
   {
     id: "retrato-sol",
@@ -407,7 +407,7 @@ export const photos: Photo[] = [
     title: "Antes de ser tocado",
     category: "iguarias",
     orientation: "landscape",
-    meta: { description: "Estava tudo dentro do pão. Só faltava começar." },
+    meta: { description: "Havia demasiado dentro do pão para se comer com qualquer tipo de compostura. Era exactamente esse o ponto." },
   },
   {
     id: "waffle-ovo",
@@ -457,7 +457,7 @@ export const photos: Photo[] = [
     title: "Antes do escuro",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "A forma existe por si mesma. Não precisa de razão." },
+    meta: { description: "Às cinco da tarde o candeeiro já estava aceso. A rua não tinha decidido ainda se era de dia ou de noite, mas a luz já tinha feito a escolha por ela." },
   },
   {
     id: "cidade-nevoa",
@@ -547,7 +547,7 @@ export const photos: Photo[] = [
     title: "O outono que foi longe demais",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "O monte ficou cor de brasa antes do fim do dia. Ninguém pediu para isso acontecer." },
+    meta: { description: "Há dez minutos antes de escurecer em que o monte parece arder sem fogo. É a única hora em que a cor existe desta forma. Esperei-a." },
   },
   {
     id: "areia-onda",
@@ -589,7 +589,7 @@ export const photos: Photo[] = [
     title: "Ornamento e memória",
     category: "urbanas",
     orientation: "portrait",
-    meta: { description: "Os canteiros deixaram pedra sobre pedra até ao topo. As janelas ficaram com o céu." },
+    meta: { description: "Cada moldura é uma obsessão diferente. O tempo fez o que os canteiros não previram: tornou o ornamento indistinguível da ruína." },
   },
   {
     id: "dom-luis-douro",
@@ -597,7 +597,7 @@ export const photos: Photo[] = [
     title: "O que se atravessa duas vezes",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "A ponte atravessa-se duas vezes sem se perceber bem porquê. O rio passa por baixo das duas." },
+    meta: { description: "O Luís I tem dois tabuleiros porque uma travessia nunca é suficiente. O Douro passa por baixo das duas com a indiferença calma de quem não precisa de autorização para continuar." },
   },
   {
     id: "mural-reflexo",
@@ -621,7 +621,7 @@ export const photos: Photo[] = [
     title: "Ficou calor onde alguém esteve",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "Ninguém ficou. A pedra ficou quente na mesma." },
+    meta: { description: "Alguém esteve aqui tempo suficiente para a pedra guardar o calor. A pedra é mais leal do que a maior parte das coisas." },
   },
 
   // Natureza · costa atlântica
@@ -671,7 +671,7 @@ export const photos: Photo[] = [
     title: "A linha que não se fecha",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "A praia esticou-se até deixar de ser visível. O mar acompanhou." },
+    meta: { description: "A linha entre a areia e o mar prolongou-se até ao limite do que o olho aceita como definido. Depois tornou-se apenas sugestão." },
   },
   {
     id: "costa-vila",
@@ -679,7 +679,7 @@ export const photos: Photo[] = [
     title: "Vista de quem chegou de longe",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "Daquela altura, a vila parecia ter crescido devagar, sem plano." },
+    meta: { description: "Vista do alto, a vila parece ter crescido como crescem as coisas que não precisam de aprovação — devagar, sem plano, encostada à costa como quem ficou depois de toda a gente ir embora." },
   },
   {
     id: "costa-floresta",
@@ -687,7 +687,7 @@ export const photos: Photo[] = [
     title: "Onde a terra ainda resiste",
     category: "natureza",
     orientation: "landscape",
-    meta: { description: "A floresta segurou o terreno até à última linha antes da areia." },
+    meta: { description: "A floresta negociou com o mar durante séculos. Esta linha de árvores é o resultado actual dessa negociação — provisório, tenso, vivo." },
   },
 
   // Urbanas · costa
@@ -697,7 +697,7 @@ export const photos: Photo[] = [
     title: "A fábrica que o mar não engoliu",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "Estava ali desde antes de a costa ser turismo. Continua a estar." },
+    meta: { description: "Existe desde antes de a costa precisar de um nome para se vender. O sal tratou-lhe a cor. O vento tratou do resto." },
   },
   {
     id: "farol-entrada",
@@ -705,7 +705,7 @@ export const photos: Photo[] = [
     title: "O portão que ninguém abre",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "O farol estava fechado. A torre ficou visível na mesma." },
+    meta: { description: "O portão estava fechado. Lá dentro, o farol aguardava a noite como sempre aguardou — sem agitação, sem urgência, com a certeza calma de quem sabe que vai ser necessário." },
   },
   {
     id: "farol-frente",

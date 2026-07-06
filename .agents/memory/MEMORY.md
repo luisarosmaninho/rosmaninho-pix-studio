@@ -1,2 +1,4 @@
 - [Admin content architecture](admin-content-arch.md) — All admin data now persists in PostgreSQL (table: admin_config key/JSONB). JSON files are legacy migration path only.
 - [API endpoints in TanStack Start](api-endpoints-tanstack-start.md) — createAPIFileRoute doesn't exist; use Vite configureServer middleware for dev + server.ts interception for prod.
+- [Admin tab expansion pattern](admin-tab-expansion.md) — Adding new editable sections requires: (1) new server fns in content-fns.ts, (2) page loader updated, (3) TabId + TABS + loader + AdminPage render + new section component in admin.tsx.
+- [Git push from server](git-push-server.md) — Use spawnSync with arg arrays (shell:false) never execSync with string interpolation. Password-check server fn, then spawnSync("git",["add","-A"]) etc.

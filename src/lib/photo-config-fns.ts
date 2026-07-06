@@ -28,7 +28,7 @@ export const getPhotoConfig = createServerFn({ method: "GET" }).handler(
 );
 
 export const verifyAdminPassword = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => data as { password: string })
+  .validator((data: unknown) => data as { password: string })
   .handler(({ data }) => {
     const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
     if (data.password !== expected) {
@@ -38,7 +38,7 @@ export const verifyAdminPassword = createServerFn({ method: "POST" })
   });
 
 export const savePhotoConfig = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     (data: unknown) =>
       data as { password: string; hidden: string[]; order: string[] }
   )
