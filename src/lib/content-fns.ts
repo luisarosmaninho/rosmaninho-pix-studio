@@ -12,7 +12,8 @@ import type { Nota } from "./notas";
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function checkPassword(password: string) {
-  const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
+  const expected = process.env.ADMIN_PASSWORD;
+  if (!expected) throw new Error("ADMIN_PASSWORD not configured.");
   if (password !== expected) throw new Error("Password incorrecta.");
 }
 

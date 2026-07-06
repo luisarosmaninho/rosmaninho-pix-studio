@@ -4,7 +4,7 @@ import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
 import { getNesteMomento } from "@/lib/momento-fns";
-import { getSobreTexts, getCategories } from "@/lib/content-fns";
+import { getSobre as getSobreTexts, getCategories } from "@/lib/content-fns";
 import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
 import farolPeniche from "@/assets/farol-peniche.jpg";
 import barcoDouro from "@/assets/barco-douro.jpg";
