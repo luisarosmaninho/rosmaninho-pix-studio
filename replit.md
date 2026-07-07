@@ -103,4 +103,43 @@ Schema is created automatically on first startup (`ensureSchema()` in `src/serve
 - CSRF protection is enabled via `src/start.ts` (TanStack Start middleware)
 - RSS feed at `/api/rss` reads from DB (falls back to `journal-config.json`)
 
+## Deploy noutro servidor (fora do Replit)
+
+O site compila para um servidor Node.js autónomo. Para fazer deploy em qualquer servidor:
+
+```bash
+# 1. Build
+npm run build
+
+# 2. Arrancar o servidor de produção
+npm start        # equivale a: node dist/server/server.js
+```
+
+As variáveis de ambiente necessárias em produção (ver `.env.example`):
+- `ADMIN_PASSWORD` — senha do painel `/admin`
+- `DATABASE_URL` — PostgreSQL (opcional; sem ele usa ficheiros JSON)
+- `GITHUB_TOKEN` — para o botão "Publicar no GitHub" no admin
+- `SMTP_*` — para o formulário de contacto enviar emails
+
+### Docker (qualquer plataforma com containers)
+
+```bash
+docker build -t rosmaninho .
+docker run -p 3000:3000 \
+  -e ADMIN_PASSWORD=... \
+  -e DATABASE_URL=... \
+  -e GITHUB_TOKEN=... \
+  rosmaninho
+```
+
+### Plataformas populares
+
+| Plataforma | Como fazer deploy |
+|---|---|
+| **Railway** | Ligar repositório → Railway deteta Node e usa `npm run build` + `npm start` automaticamente |
+| **Render** | Build command: `npm run build` · Start command: `npm start` |
+| **Fly.io** | `fly launch` — usa o `Dockerfile` incluído |
+| **VPS / servidor próprio** | `npm run build` + `npm start` com PM2 ou systemd |
+| **Cloudflare Workers** | `wrangler deploy` (ver `wrangler.jsonc`) |
+
 ## User preferences

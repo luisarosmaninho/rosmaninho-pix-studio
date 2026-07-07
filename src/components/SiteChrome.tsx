@@ -544,6 +544,13 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
   );
 }
 
+/* Year rendered client-side to avoid SSR/client mismatch on New Year's Eve */
+function ClientYear() {
+  const [year, setYear] = useState<number | null>(null);
+  useEffect(() => { setYear(new Date().getFullYear()); }, []);
+  return <>{year ?? new Date().getUTCFullYear()}</>;
+}
+
 /* ---------------- Footer ---------------- */
 export function SiteFooter() {
   return (
@@ -576,7 +583,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-8 flex flex-col md:flex-row justify-between gap-3 text-[10px] tracking-[0.32em] uppercase text-cream/40">
-          <p>© {new Date().getFullYear()} Rosmaninho Fotografia</p>
+          <p>© <ClientYear /> Rosmaninho Fotografia</p>
           <p>Feito com luz, café e paciência</p>
         </div>
         <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/30 italic font-italic-serif lowercase text-center">

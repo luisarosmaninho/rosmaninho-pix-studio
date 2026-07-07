@@ -762,19 +762,27 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
     const msg = data.message?.trim()
       || `Atualização de conteúdo — ${new Date().toLocaleDateString("pt-PT")}`;
     const opts = { cwd: process.cwd(), stdio: "pipe" as const };
-    const run = (cmd: string, args: string[]) => {
-      const r = spawnSync(cmd, args, opts);
-      if (r.status !== 0) throw new Error((r.stderr?.toString() ?? "").slice(0, 400) || `${cmd} failed`);
-      return (r.stdout?.toString() ?? "").trim();
-    };
 
     // Build authenticated URL for both pull and push.
     // HTTPS remotes use x-access-token injection; SSH remotes are used as-is.
-    const originUrl = run("git", ["remote", "get-url", "origin"]);
+    const originUrlRaw = (spawnSync("git", ["remote", "get-url", "origin"], opts).stdout?.toString() ?? "").trim();
+    if (!originUrlRaw) throw new Error("Não foi possível obter o URL do repositório remoto.");
     const token = process.env.GITHUB_TOKEN;
-    const authUrl = (token && originUrl.startsWith("https://"))
-      ? originUrl.replace("https://", `https://x-access-token:${token}@`)
-      : originUrl;
+    const authUrl = (token && originUrlRaw.startsWith("https://"))
+      ? originUrlRaw.replace("https://", `https://x-access-token:${token}@`)
+      : originUrlRaw;
+
+    /** Run a git command, redacting the token from any error output. */
+    const run = (cmd: string, args: string[]) => {
+      const r = spawnSync(cmd, args, opts);
+      if (r.status !== 0) {
+        let errText = (r.stderr?.toString() ?? r.stdout?.toString() ?? "").slice(0, 400) || `${cmd} failed`;
+        // Redact the token so it never surfaces to the browser / admin UI.
+        if (token) errText = errText.replaceAll(token, "***");
+        throw new Error(errText);
+      }
+      return (r.stdout?.toString() ?? "").trim();
+    };
 
     // Auto-regenerate sitemap before committing so it's always up-to-date.
     const sitemapResult = spawnSync("node", ["scripts/generate-sitemap.mjs"], opts);
