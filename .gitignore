@@ -37,6 +37,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Bun (project uses npm — keep only package-lock.json)
+bun.lock
+bunfig.toml
+
 # Replit-specific (not needed for local dev or other editors)
 .replit
 .agents/
