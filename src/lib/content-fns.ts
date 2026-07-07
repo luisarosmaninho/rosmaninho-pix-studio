@@ -394,7 +394,12 @@ export const saveNotasPageTexts = createServerFn({ method: "POST" })
 
 export type HomepageConfig = {
   heroTagline: string;
+  heroHeadlinePart1: string;
+  heroHeadlineItalicWord: string;
+  heroHeadlinePart2: string;
   heroSubtitle: string;
+  archiveWhisper: string;
+  coordinatesWhisper: string;
   manifestoText: string;
   autoraP1: string;
   autoraP2: string;
@@ -402,7 +407,12 @@ export type HomepageConfig = {
 
 export const HOMEPAGE_DEFAULTS: HomepageConfig = {
   heroTagline: "Arquivo lento · Coimbra",
+  heroHeadlinePart1: "Onde o tempo",
+  heroHeadlineItalicWord: "para",
+  heroHeadlinePart2: ", e a emoção fica.",
   heroSubtitle: "Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.",
+  archiveWhisper: "arquivo lento · Coimbra · MMXX —",
+  coordinatesWhisper: "40°12′N · 8°25′O",
   manifestoText: "Não fotografo para mostrar — fotografo para demorar. Cada imagem é uma forma educada de pedir ao mundo que fique mais um momento.",
   autoraP1: "A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa.",
   autoraP2: "Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.",
@@ -787,7 +797,10 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
     };
     run("git", ["add", "-A"]);
     run("git", ["commit", "--allow-empty", "-m", msg]);
-    run("git", ["push", "origin"]);
+    const token = process.env.GITHUB_TOKEN;
+    const originUrl = run("git", ["remote", "get-url", "origin"]);
+    const pushUrl = token ? originUrl.replace("https://", `https://x-access-token:${token}@`) : "origin";
+    run("git", ["push", pushUrl]);
     const logLine = run("git", ["log", "--format=%H\x1f%s", "-1"]);
     const [fullHash = "", subject = ""] = logLine.split("\x1f");
     return { ok: true, message: "Publicado no GitHub com sucesso.", commitHash: fullHash.slice(0, 7), commitMessage: subject };

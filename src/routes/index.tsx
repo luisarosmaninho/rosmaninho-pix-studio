@@ -409,8 +409,8 @@ function HomePage() {
             transition={{ duration: 1.4, delay: 1.6, ease: "easeOut" }}
             className="font-display text-cream text-[64px] leading-[0.95] md:text-[140px] lg:text-[180px] max-w-6xl tracking-tight"
           >
-            Onde o tempo<br />
-            <span className="font-italic-serif text-copper">para</span>, e a emoção fica.
+            {homepageTexts.heroHeadlinePart1}<br />
+            <span className="font-italic-serif text-copper">{homepageTexts.heroHeadlineItalicWord}</span>{homepageTexts.heroHeadlinePart2}
           </motion.h1>
 
           <motion.div
@@ -447,8 +447,8 @@ function HomePage() {
             {homepageTexts.manifestoText}
           </p>
           <div className="mt-12 flex justify-between items-end">
-            <Whisper text="arquivo lento · Coimbra · MMXX —" delay={1.4} />
-            <Whisper text="40°12′N · 8°25′O" delay={2} />
+            <Whisper text={homepageTexts.archiveWhisper} delay={1.4} />
+            <Whisper text={homepageTexts.coordinatesWhisper} delay={2} />
           </div>
         </div>
       </Section>

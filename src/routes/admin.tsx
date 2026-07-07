@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, createContext, useContext, type ReactNode } from "react";
 import { photos as staticPhotos, categories as staticCategories, type Photo, type CategorySlug } from "@/lib/photos";
 import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/photo-config-fns";
 import { getNesteMomento, saveNesteMomento } from "@/lib/momento-fns";
@@ -1045,48 +1045,45 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
 // ── Homepage section ──────────────────────────────────────────────────────────
 
 function HomepageSection({ password, initial }: { password: string; initial: HomepageConfig }) {
-  const router = useRouter();
   const [tagline, setTagline] = useState(initial.heroTagline);
+  const [headline1, setHeadline1] = useState(initial.heroHeadlinePart1 ?? "Onde o tempo");
+  const [headlineItalic, setHeadlineItalic] = useState(initial.heroHeadlineItalicWord ?? "para");
+  const [headline2, setHeadline2] = useState(initial.heroHeadlinePart2 ?? ", e a emoção fica.");
   const [subtitle, setSubtitle] = useState(initial.heroSubtitle);
+  const [archiveW, setArchiveW] = useState(initial.archiveWhisper ?? "arquivo lento · Coimbra · MMXX —");
+  const [coordsW, setCoordsW] = useState(initial.coordinatesWhisper ?? "40°12′N · 8°25′O");
   const [manifesto, setManifesto] = useState(initial.manifestoText);
   const [p1, setP1] = useState(initial.autoraP1);
   const [p2, setP2] = useState(initial.autoraP2);
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function save(id: string, payload: Partial<HomepageConfig>) {
-    setSaving(id); setSaved(null);
-    try {
-      await saveHomepageTexts({ data: { password, ...payload } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Homepage");
+  function save(id: string, payload: Partial<HomepageConfig>) {
+    pub(id, () => saveHomepageTexts({ data: { password, ...payload } }));
   }
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Homepage" />
 
       {/* Hero */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial</p>
-        <FreeBlock
-          label="Tagline"
-          hint="linha de cima, estilo 'Arquivo lento · Coimbra'"
-          value={tagline}
-          onChange={(v) => { setTagline(v); setSaved(null); }}
-          rows={1}
-        />
-        <FreeBlock
-          label="Subtítulo"
-          hint="parágrafo abaixo do título grande"
-          value={subtitle}
-          onChange={(v) => { setSubtitle(v); setSaved(null); }}
-          rows={3}
-        />
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial (homepage /)</p>
+        <FreeBlock label="Tagline" hint="linha pequena acima do título · ex: 'Arquivo lento · Coimbra'"
+          value={tagline} onChange={setTagline} rows={1} />
+        <div className="border-t border-white/8 pt-4 space-y-3">
+          <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Título grande</p>
+          <FreeBlock label="Linha 1 (texto normal)" hint="ex: 'Onde o tempo'" value={headline1} onChange={setHeadline1} rows={1} />
+          <FreeBlock label="Palavra em itálico cobre" hint="ex: 'para' — aparece em itálico e cor cobre" value={headlineItalic} onChange={setHeadlineItalic} rows={1} />
+          <FreeBlock label="Continuação" hint="ex: ', e a emoção fica.'" value={headline2} onChange={setHeadline2} rows={1} />
+        </div>
+        <div className="border-t border-white/8 pt-4 grid grid-cols-2 gap-4">
+          <FreeBlock label="Texto esq. (pequeno)" hint="ex: 'arquivo lento · Coimbra · MMXX —'" value={archiveW} onChange={setArchiveW} rows={1} />
+          <FreeBlock label="Coordenadas dir." hint="ex: '40°12′N · 8°25′O'" value={coordsW} onChange={setCoordsW} rows={1} />
+        </div>
+        <FreeBlock label="Subtítulo" hint="parágrafo abaixo do título grande"
+          value={subtitle} onChange={(v) => { setSubtitle(v); setSaved(null); }} rows={3} />
         <SaveRow id="hero" saving={saving} saved={saved} savedTime={savedTime}
-          onSave={() => save("hero", { heroTagline: tagline, heroSubtitle: subtitle })} />
+          onSave={() => save("hero", { heroTagline: tagline, heroSubtitle: subtitle, heroHeadlinePart1: headline1, heroHeadlineItalicWord: headlineItalic, heroHeadlinePart2: headline2, archiveWhisper: archiveW, coordinatesWhisper: coordsW })} />
       </div>
 
       {/* Manifesto */}
@@ -1125,14 +1122,62 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
           onSave={() => save("autora-home", { autoraP1: p1, autoraP2: p2 })} />
       </div>
 
-      <p className="font-mono text-[9px] text-white/20 leading-relaxed">
-        Os títulos grandes (como "Onde o tempo para, e a emoção fica.") são parte do design e não se alteram aqui.
-      </p>
     </div>
+    </PubProvider>
   );
 }
 
 // ── Autora section ────────────────────────────────────────────────────────────
+
+// ── Shared save hook (DB + auto git push) ────────────────────────────────────
+
+const PubCtx = createContext<{
+  pubStatus: Record<string, "idle" | "pushing" | "ok" | "error">;
+  pubHash: Record<string, string>;
+}>({ pubStatus: {}, pubHash: {} });
+
+function useSave(password: string, sectionLabel: string) {
+  const router = useRouter();
+  const [saving, setSaving] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [savedTime, setSavedTime] = useState("");
+  const [pubStatus, setPubStatus] = useState<Record<string, "idle" | "pushing" | "ok" | "error">>({});
+  const [pubHash, setPubHash] = useState<Record<string, string>>({});
+
+  async function save(id: string, saveFn: () => Promise<unknown>) {
+    setSaving(id);
+    setSaved(null);
+    setPubStatus((p) => ({ ...p, [id]: "idle" }));
+    try {
+      await saveFn();
+      setSaved(id);
+      setSavedTime(now());
+      router.invalidate();
+      setPubStatus((p) => ({ ...p, [id]: "pushing" }));
+      try {
+        const res = await gitCommitAndPush({
+          data: { password, message: `${sectionLabel} — ${new Date().toLocaleDateString("pt-PT")}` },
+        });
+        setPubStatus((p) => ({ ...p, [id]: "ok" }));
+        if (res.commitHash) setPubHash((p) => ({ ...p, [id]: res.commitHash! }));
+      } catch {
+        setPubStatus((p) => ({ ...p, [id]: "error" }));
+      }
+    } catch {
+      alert("Erro ao guardar.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  function PubProvider({ children }: { children: ReactNode }) {
+    return <PubCtx.Provider value={{ pubStatus, pubHash }}>{children}</PubCtx.Provider>;
+  }
+
+  return { save, saving, saved, setSaved, savedTime, PubProvider };
+}
+
+// ── Shared components ─────────────────────────────────────────────────────────
 
 function FreeBlock({
   label, hint, value, onChange, rows = 6, placeholder,
@@ -1156,11 +1201,22 @@ function FreeBlock({
 }
 
 function SaveRow({ id, saving, saved, onSave, savedTime }: { id: string; saving: string | null; saved: string | null; onSave: () => void; savedTime?: string }) {
+  const { pubStatus, pubHash } = useContext(PubCtx);
+  const ps = pubStatus[id] ?? "idle";
+  const ph = pubHash[id];
   return (
-    <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/8">
+    <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/8 flex-wrap">
       {saved === id && (
-        <span className="font-mono text-[10px] text-emerald-400 uppercase tracking-widest">
-          ✓ {savedTime ? `guardado às ${savedTime}` : "Guardado"}
+        <span className="font-mono text-[10px] text-emerald-400 flex items-center gap-2 flex-wrap">
+          ✓ {savedTime ? `guardado às ${savedTime}` : "guardado"}
+          {ps === "pushing" && <span className="text-white/30 animate-pulse">· ↑ a publicar…</span>}
+          {ps === "ok" && (
+            <span className="flex items-center gap-1.5">
+              · publicado no GitHub
+              {ph && <code className="text-emerald-300/50 text-[8px] border border-emerald-500/20 px-1 py-0.5 rounded">{ph}</code>}
+            </span>
+          )}
+          {ps === "error" && <span className="text-amber-400/60">· ↑ GitHub: falhou</span>}
         </span>
       )}
       <button onClick={onSave} disabled={saving === id}
@@ -1172,8 +1228,6 @@ function SaveRow({ id, saving, saved, onSave, savedTime }: { id: string; saving:
 }
 
 function AutoraSection({ password, initial }: { password: string; initial: SobreConfig }) {
-  const router = useRouter();
-
   const [introText, setIntroText] = useState(() => initial.introParagraphs.join("\n\n"));
   const [introQuote, setIntroQuote] = useState(initial.introQuote);
 
@@ -1194,20 +1248,13 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
   const [visitadas, setVisitadas] = useState(initial.cartografiaVisitadas);
   const [sonhadas, setSonhadas] = useState(initial.cartografiaSonhadas);
 
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function save(id: string, payload: Partial<SobreConfig>) {
-    setSaving(id); setSaved(null);
-    try {
-      await saveSobreTexts({ data: { password, ...payload } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Autora");
+  function save(id: string, payload: Partial<SobreConfig>) {
+    pub(id, () => saveSobreTexts({ data: { password, ...payload } }));
   }
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Página da Autora" />
 
@@ -1470,6 +1517,7 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
           onSave={() => save("cartografia", { cartografiaVisitadas: visitadas, cartografiaSonhadas: sonhadas })} />
       </div>
     </div>
+    </PubProvider>
   );
 }
 
@@ -1579,7 +1627,6 @@ function OrdemSection({ password, initialConfig }: { password: string; initialCo
 // ── Contacto section ──────────────────────────────────────────────────────────
 
 function ContactoSection({ password, initial }: { password: string; initial: ContactoConfig }) {
-  const router = useRouter();
   const [tagline, setTagline] = useState(initial.tagline);
   const [introText, setIntroText] = useState(initial.introText);
   const [responseNote, setResponseNote] = useState(initial.responseNote);
@@ -1592,20 +1639,13 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
   const [footerLine3, setFooterLine3] = useState(initial.footerLine3);
   const [confirmTitle, setConfirmTitle] = useState(initial.confirmTitle);
   const [confirmText, setConfirmText] = useState(initial.confirmText);
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function save(id: string, payload: Partial<ContactoConfig>) {
-    setSaving(id); setSaved(null);
-    try {
-      await saveContactoTexts({ data: { password, ...payload } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Contacto");
+  function save(id: string, payload: Partial<ContactoConfig>) {
+    pub(id, () => saveContactoTexts({ data: { password, ...payload } }));
   }
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Contacto" />
 
@@ -1659,32 +1699,25 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
         <SaveRow id="confirm" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("confirm", { confirmTitle, confirmText })} />
       </div>
     </div>
+    </PubProvider>
   );
 }
 
 // ── Portfolio page section ─────────────────────────────────────────────────────
 
 function PortfolioPageSection({ password, initial }: { password: string; initial: PortfolioPageConfig }) {
-  const router = useRouter();
   const [headerTagline, setHeaderTagline] = useState(initial.headerTagline);
   const [headerQuote, setHeaderQuote] = useState(initial.headerQuote);
   const [closingLine1, setClosingLine1] = useState(initial.closingLine1);
   const [closingLine2, setClosingLine2] = useState(initial.closingLine2);
   const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function save(id: string, payload: Partial<PortfolioPageConfig>) {
-    setSaving(id); setSaved(null);
-    try {
-      await savePortfolioPageTexts({ data: { password, ...payload } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Portfolio");
+  function save(id: string, payload: Partial<PortfolioPageConfig>) {
+    pub(id, () => savePortfolioPageTexts({ data: { password, ...payload } }));
   }
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Portfolio — textos da página" />
       <p className="font-mono text-[9px] text-white/25 leading-relaxed -mt-4">
@@ -1706,33 +1739,26 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
         <SaveRow id="closing" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("closing", { closingLine1, closingLine2, closingLine3 })} />
       </div>
     </div>
+    </PubProvider>
   );
 }
 
 // ── Notas page section ────────────────────────────────────────────────────────
 
 function NotasPageSection({ password, initial }: { password: string; initial: NotasPageConfig }) {
-  const router = useRouter();
   const [introLabel, setIntroLabel] = useState(initial.introLabel);
   const [introText, setIntroText] = useState(initial.introText);
   const [closingQuote, setClosingQuote] = useState(initial.closingQuote);
   const [closingLine1, setClosingLine1] = useState(initial.closingLine1);
   const [closingLine2, setClosingLine2] = useState(initial.closingLine2);
   const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function save(id: string, payload: Partial<NotasPageConfig>) {
-    setSaving(id); setSaved(null);
-    try {
-      await saveNotasPageTexts({ data: { password, ...payload } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Notas");
+  function save(id: string, payload: Partial<NotasPageConfig>) {
+    pub(id, () => saveNotasPageTexts({ data: { password, ...payload } }));
   }
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Notas — textos da página" />
       <p className="font-mono text-[9px] text-white/25 leading-relaxed -mt-4">
@@ -1755,20 +1781,18 @@ function NotasPageSection({ password, initial }: { password: string; initial: No
         <SaveRow id="closing" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("closing", { closingQuote, closingLine1, closingLine2, closingLine3 })} />
       </div>
     </div>
+    </PubProvider>
   );
 }
 
 // ── Caderno Intro section ─────────────────────────────────────────────────────
 
 function DiarioIntroSection({ password, initial }: { password: string; initial: DiarioConfig }) {
-  const router = useRouter();
   const [aberturasText, setAberturasText] = useState(() => initial.aberturasPool.join("\n"));
   const [rasuras, setRasuras] = useState<Record<string, string>>(() =>
     Object.fromEntries(Object.entries(initial.rasurasPorSlug).map(([k, v]) => [k, v.join("\n")]))
   );
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
+  const { save, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Caderno Intro");
 
   const journalSlugs = [
     { slug: "o-cafe-antes-de-tudo", label: "Café antes de tudo" },
@@ -1780,38 +1804,18 @@ function DiarioIntroSection({ password, initial }: { password: string; initial: 
     { slug: "barco-no-douro", label: "Barco no Douro" },
   ];
 
-  async function saveAberturas() {
-    setSaving("aberturas"); setSaved(null);
-    try {
-      await saveDiarioConfig({ data: { password, aberturasPool: aberturasText.split("\n").map((s) => s.trim()).filter(Boolean) } });
-      setSaved("aberturas"); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
-  }
-
-  async function saveRasura(slug: string) {
-    setSaving(slug); setSaved(null);
-    try {
-      // Build from ALL current rasuras state so we never overwrite other slugs with stale data
-      const rasurasPorSlug = Object.fromEntries(
-        Object.entries(rasuras).map(([k, v]) => [k, v.split("\n").map((s) => s.trim()).filter(Boolean)])
-      );
-      await saveDiarioConfig({ data: { password, rasurasPorSlug } });
-      setSaved(slug); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
-  }
-
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-10">
       <SectionHeader label="Caderno — Abertura e Rasuras" />
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Frases de abertura (aleatórias)</p>
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Frases de abertura (aleatórias) · página /diario</p>
         <p className="text-white/40 text-[11px]">Uma por linha. Aparecem aleatoriamente no topo do Caderno.</p>
         <FreeBlock label="Pool de aberturas" value={aberturasText} rows={14}
           onChange={(v) => { setAberturasText(v); setSaved(null); }}
           placeholder="às vezes escrevo antes de saber o que quero dizer." />
-        <SaveRow id="aberturas" saving={saving} saved={saved} savedTime={savedTime} onSave={saveAberturas} />
+        <SaveRow id="aberturas" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("aberturas", () => saveDiarioConfig({ data: { password, aberturasPool: aberturasText.split("\n").map((s) => s.trim()).filter(Boolean) } }))} />
       </div>
       <div className="space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rasuras por entrada do caderno</p>
@@ -1821,39 +1825,34 @@ function DiarioIntroSection({ password, initial }: { password: string; initial: 
             <p className="font-mono text-[9px] uppercase tracking-widest text-white/50">{label}</p>
             <FreeBlock label="Rasuras (uma por linha)" value={rasuras[slug] ?? ""} rows={3}
               onChange={(v) => { setRasuras((prev) => ({ ...prev, [slug]: v })); setSaved(null); }} />
-            <SaveRow id={slug} saving={saving} saved={saved} savedTime={savedTime} onSave={() => saveRasura(slug)} />
+            <SaveRow id={slug} saving={saving} saved={saved} savedTime={savedTime}
+              onSave={() => {
+                const rasurasPorSlug = Object.fromEntries(
+                  Object.entries({ ...rasuras, [slug]: rasuras[slug] ?? "" })
+                    .map(([k, v]) => [k, v.split("\n").map((s) => s.trim()).filter(Boolean)])
+                );
+                save(slug, () => saveDiarioConfig({ data: { password, rasurasPorSlug } }));
+              }} />
           </div>
         ))}
       </div>
     </div>
+    </PubProvider>
   );
 }
 
 // ── Rosemary (página interior) section ───────────────────────────────────────
 
 function RosemaryAdminSection({ password, initial }: { password: string; initial: RosemaryConfig }) {
-  const router = useRouter();
   const [sections, setSections] = useState(() =>
     initial.sections.map((s) => ({ heading: s.heading, bodyText: s.body.join("\n\n") }))
   );
-  const [saving, setSaving] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [savedTime, setSavedTime] = useState("");
-
-  async function saveSection(idx: number) {
-    const id = `section-${idx}`;
-    setSaving(id); setSaved(null);
-    try {
-      const newSections = sections.map((s) => ({ heading: s.heading.replace(/\n+/g, " ").trim(), body: splitIntoParagraphs(s.bodyText) }));
-      await saveRosemary({ data: { password, sections: newSections } });
-      setSaved(id); setSavedTime(now()); router.invalidate();
-    } catch { alert("Erro ao guardar."); }
-    finally { setSaving(null); }
-  }
+  const { save, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "§ Interior");
 
   return (
+    <PubProvider>
     <div className="max-w-3xl space-y-10">
-      <SectionHeader label="Página Interior (§ Rosemary)" />
+      <SectionHeader label="Página Interior (§ Rosemary) · /rosemary" />
       <p className="text-white/40 text-[11px] -mt-6">Página secreta — não indexada. Acessível apenas por quem conhece o caminho.</p>
       {sections.map((section, idx) => {
         const id = `section-${idx}`;
@@ -1864,11 +1863,16 @@ function RosemaryAdminSection({ password, initial }: { password: string; initial
               onChange={(v) => { setSections((prev) => prev.map((s, i) => i === idx ? { ...s, heading: v } : s)); setSaved(null); }} />
             <FreeBlock label="Texto (parágrafos separados por linha em branco)" value={section.bodyText} rows={8}
               onChange={(v) => { setSections((prev) => prev.map((s, i) => i === idx ? { ...s, bodyText: v } : s)); setSaved(null); }} />
-            <SaveRow id={id} saving={saving} saved={saved} savedTime={savedTime} onSave={() => saveSection(idx)} />
+            <SaveRow id={id} saving={saving} saved={saved} savedTime={savedTime}
+              onSave={() => {
+                const newSections = sections.map((s) => ({ heading: s.heading.replace(/\n+/g, " ").trim(), body: splitIntoParagraphs(s.bodyText) }));
+                save(id, () => saveRosemary({ data: { password, sections: newSections } }));
+              }} />
           </div>
         );
       })}
     </div>
+    </PubProvider>
   );
 }
 
