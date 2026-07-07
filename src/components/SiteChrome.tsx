@@ -224,9 +224,15 @@ export function CustomCursor() {
 
 /* ---------------- Loading screen (only on first visit of session) ---------------- */
 export function LoadingScreen() {
+  // `mounted` starts false on both SSR and the initial client render, so both
+  // sides return null and React hydration sees a perfect match. After mount
+  // (useEffect, client-only) the loader appears as a pure overlay — no mismatch,
+  // no "Invalid hook call" from Framer Motion animation frames racing React 19.
+  const [mounted, setMounted] = useState(false);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (sessionStorage.getItem("rf_loaded") === "1") {
       setDone(true);
       return;
@@ -238,7 +244,7 @@ export function LoadingScreen() {
     return () => clearTimeout(t);
   }, []);
 
-  if (done) return null;
+  if (!mounted || done) return null;
   return (
     <div
       className="loader-screen fixed inset-0 z-[100] flex flex-col items-center justify-center"
