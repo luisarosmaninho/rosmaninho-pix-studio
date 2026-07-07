@@ -1,3 +1,4 @@
+- [TanStack version sync](tanstack-version-sync.md) — all @tanstack packages must update together; sub-package version skew causes "Invalid hook call" + hydration errors.
 - [DB writeConfig JSON sync](db-writeconfig-json-sync.md) — writeConfig always writes JSON+DB; KEY_TO_JSON registry maps every key; schema init race prevented by in-flight promise; JSON-only mode when DATABASE_URL absent.
 - [Admin content architecture](admin-content-arch.md) — All admin data now persists in PostgreSQL (table: admin_config key/JSONB). JSON files are always kept in sync (dual-write) for git-based dev↔prod sync.
 - [API endpoints in TanStack Start](api-endpoints-tanstack-start.md) — createAPIFileRoute doesn't exist; use Vite configureServer middleware for dev + server.ts interception for prod.
