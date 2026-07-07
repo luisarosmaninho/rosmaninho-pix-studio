@@ -544,11 +544,13 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
   );
 }
 
-/* Year rendered client-side to avoid SSR/client mismatch on New Year's Eve */
+/* Year rendered client-side to avoid SSR/client mismatch.
+   SSR renders nothing; client fills in the year after mount so
+   the initial HTML always matches (no hydration warning). */
 function ClientYear() {
   const [year, setYear] = useState<number | null>(null);
   useEffect(() => { setYear(new Date().getFullYear()); }, []);
-  return <>{year ?? new Date().getUTCFullYear()}</>;
+  return <>{year !== null ? year : null}</>;
 }
 
 /* ---------------- Footer ---------------- */
