@@ -76,20 +76,49 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 // ── RSS Feed ───────────────────────────────────────────────────────────────────
 
-type JournalConfig = Record<string, Partial<JournalEntry>>;
+type JournalFileConfig = {
+  overrides: Record<string, Partial<JournalEntry>>;
+  newEntries: JournalEntry[];
+};
 
-function buildRssFeed(): string {
-  const configPath = path.join(process.cwd(), "journal-config.json");
-  let overrides: JournalConfig = {};
-  try {
-    overrides = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-  } catch {
-    // no overrides file yet
+async function buildRssFeed(): Promise<string> {
+  const { readConfig } = await import("./lib/db");
+
+  // Read from DB (where admin saves) — fall back to JSON file if DB is empty
+  const journalConfig = await readConfig<JournalFileConfig | null>("journal", null);
+
+  let entries: JournalEntry[];
+  if (journalConfig) {
+    const { overrides, newEntries } = journalConfig;
+    const withOverrides = staticJournal.map((entry) => {
+      const ov = overrides[entry.slug];
+      return ov ? { ...entry, ...ov } : entry;
+    });
+    entries = [...withOverrides, ...(newEntries ?? [])];
+  } else {
+    // DB not available yet — fall back to JSON file directly.
+    // The file may be in canonical { overrides, newEntries } format (written by
+    // writeConfig) or in the legacy slug→override map format.
+    const configPath = path.join(process.cwd(), "journal-config.json");
+    let overrides: Record<string, Partial<JournalEntry>> = {};
+    let newEntries: JournalEntry[] = [];
+    try {
+      const raw = JSON.parse(fs.readFileSync(configPath, "utf-8")) as Record<string, unknown>;
+      if (raw && typeof raw.overrides === "object" && !Array.isArray(raw.overrides)) {
+        overrides = (raw.overrides ?? {}) as Record<string, Partial<JournalEntry>>;
+        newEntries = Array.isArray(raw.newEntries) ? (raw.newEntries as JournalEntry[]) : [];
+      } else {
+        // legacy flat map
+        overrides = raw as Record<string, Partial<JournalEntry>>;
+      }
+    } catch { /* no file — use static defaults */ }
+    const withOverrides = staticJournal.map((entry) => {
+      const ov = overrides[entry.slug];
+      return ov ? { ...entry, ...ov } : entry;
+    });
+    entries = [...withOverrides, ...newEntries];
   }
-  const entries = staticJournal.map((entry) => {
-    const ov = overrides[entry.slug];
-    return ov ? { ...entry, ...ov } : entry;
-  });
+
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
   const BASE = "https://rosmaninhofotografia.pt";
 
@@ -119,9 +148,9 @@ ${items}
 </rss>`;
 }
 
-function handleRss(): Response {
+async function handleRss(): Promise<Response> {
   try {
-    return new Response(buildRssFeed(), {
+    return new Response(await buildRssFeed(), {
       headers: { "Content-Type": "application/rss+xml; charset=utf-8" },
     });
   } catch (err) {

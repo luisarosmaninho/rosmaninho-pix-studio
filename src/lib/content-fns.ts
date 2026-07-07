@@ -12,8 +12,23 @@ import type { Nota } from "./notas";
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function checkPassword(password: string) {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) throw new Error("ADMIN_PASSWORD not configured.");
+  const envPassword = process.env.ADMIN_PASSWORD;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (!envPassword && isProduction) {
+    // Fail closed in production — never allow access with the default password
+    throw new Error(
+      "ADMIN_PASSWORD não está configurado. Configura o segredo antes de usar o painel admin em produção."
+    );
+  }
+
+  const expected = envPassword ?? "rosmaninho";
+  if (!envPassword) {
+    console.warn(
+      "[admin] ADMIN_PASSWORD não definido — a usar palavra-passe por omissão 'rosmaninho'. " +
+      "OBRIGATÓRIO definir em produção!"
+    );
+  }
   if (password !== expected) throw new Error("Password incorrecta.");
 }
 
@@ -527,34 +542,11 @@ export const getSobreTexts = getSobre;
 export const saveSobreTexts = saveSobre;
 
 // ── Neste Momento ─────────────────────────────────────────────────────────────
-
-export type NestesMomentoItem = { label: string; value: string };
-export type NesteMomentoConfig = { items: NestesMomentoItem[] };
-
-export const NESTE_MOMENTO_DEFAULTS: NesteMomentoConfig = {
-  items: [
-    { label: "a fotografar", value: "Coimbra ao final da tarde" },
-    { label: "a ler", value: "um livro que não termina" },
-    { label: "a beber", value: "café, como sempre" },
-    { label: "a pensar em", value: "luz de inverno" },
-  ],
-};
-
-const NESTE_MOMENTO_JSON = path.join(process.cwd(), "momento-config.json");
-
-export const getNesteMomento = createServerFn({ method: "GET" }).handler(async (): Promise<NesteMomentoConfig> => {
-  const saved = await cfg<Partial<NesteMomentoConfig>>("neste_momento", NESTE_MOMENTO_JSON, {});
-  return { ...NESTE_MOMENTO_DEFAULTS, ...saved };
-});
-
-export const saveNesteMomento = createServerFn({ method: "POST" })
-  .validator((d: unknown) => d as { password: string } & Partial<NesteMomentoConfig>)
-  .handler(async ({ data }) => {
-    const { password, ...rest } = data;
-    checkPassword(password);
-    await writeConfig("neste_momento", rest);
-    return { ok: true };
-  });
+// Gerido por src/lib/momento-fns.ts — importa de lá directamente.
+// A secção da autora (/sobre) e o admin usam getNesteMomento / saveNesteMomento
+// exportados por momento-fns.ts, que mantêm o esquema canónico { aLer, aEscutar, ... }.
+export type { NesteMomento } from "./momento-fns";
+export { getNesteMomento, saveNesteMomento } from "./momento-fns";
 
 // ── Visits ────────────────────────────────────────────────────────────────────
 

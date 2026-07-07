@@ -86,10 +86,16 @@ ${items}
 export default defineConfig({
   plugins: [
     rssDevPlugin(),
-    tsConfigPaths(),
+    // ignoreConfigErrors suppresses warnings from Replit skill tsconfig files
+    // that live outside the project src — they are not part of the build
+    tsConfigPaths({ ignoreConfigErrors: true }),
     tailwindcss(),
     tanstackStart({
       server: { entry: "src/server.ts" },
+      serverFns: {
+        // CSRF is handled via src/start.ts — disable the startup warning
+        disableCsrfMiddlewareWarning: true,
+      },
     }),
     react(),
   ],
