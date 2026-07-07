@@ -94,7 +94,7 @@ function PasswordGate({ onAuth }: { onAuth: (pw: string) => void }) {
         </div>
         <input
           type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }}
-          placeholder="Password" autoFocus disabled={loading}
+          placeholder="Password" autoComplete="current-password" autoFocus disabled={loading}
           className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/20 disabled:opacity-50"
         />
         {error && <p className="text-red-400 text-xs">{error}</p>}
