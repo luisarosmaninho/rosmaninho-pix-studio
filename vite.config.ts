@@ -84,6 +84,11 @@ ${items}
 }
 
 export default defineConfig({
+  resolve: {
+    // Guarantee a single React instance across all packages — prevents
+    // "Invalid hook call" errors caused by duplicate React copies in SSR.
+    dedupe: ["react", "react-dom", "react-dom/server"],
+  },
   plugins: [
     rssDevPlugin(),
     // ignoreConfigErrors suppresses warnings from Replit skill tsconfig files
