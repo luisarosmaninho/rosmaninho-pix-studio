@@ -119,6 +119,8 @@ export default defineConfig({
         "**/contacto-config.json",
         "**/portfolio-page-config.json",
         "**/notas-page-config.json",
+        "**/diario-config.json",
+        "**/rosemary-config.json",
       ],
     },
   },
