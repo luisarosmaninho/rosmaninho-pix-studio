@@ -18,10 +18,9 @@ dist-ssr
 .tanstack/**
 .nitro
 
-# Environment files
-.env
-.env.local
-.env.*.local
+# Environment files (keep .env.example)
+.env*
+!.env.example
 
 # Wrangler / Cloudflare
 .wrangler/
