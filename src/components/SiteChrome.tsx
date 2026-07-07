@@ -203,15 +203,23 @@ export function SmoothScroll() {
 /* ---------------- Custom cursor ---------------- */
 export function CustomCursor() {
   const dot = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
+    // Só activa em dispositivos com rato (pointer fino)
+    const mq = window.matchMedia("(pointer: fine) and (min-width: 768px)");
+    if (!mq.matches) return;
+    setVisible(true);
+
     const move = (e: MouseEvent) => {
       if (dot.current) dot.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
     };
-    window.addEventListener("mousemove", move);
+    window.addEventListener("mousemove", move, { passive: true });
     return () => window.removeEventListener("mousemove", move);
   }, []);
-  if (typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches) return null;
-  return <div ref={dot} className="cursor-dot hidden md:block" />;
+
+  if (!visible) return null;
+  return <div ref={dot} className="cursor-dot" />;
 }
 
 /* ---------------- Loading screen (only on first visit of session) ---------------- */

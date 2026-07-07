@@ -154,10 +154,10 @@ function ContactoPage() {
 
                   {/* Assunto — opcional */}
                   <div className="flex flex-col gap-3">
-                    <label className="font-mono-label text-foreground/50">
+                    <p className="font-mono-label text-foreground/50">
                       Sobre o quê?
                       <span className="ml-2 text-foreground/25 normal-case tracking-normal" style={{ fontSize: "10px" }}>opcional</span>
-                    </label>
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {assuntoOpcoes.map((op) => {
                         const active = assunto === op.value;
@@ -180,15 +180,17 @@ function ContactoPage() {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <label className="font-mono-label text-foreground/50">Mensagem</label>
+                    <label htmlFor="mensagem" className="font-mono-label text-foreground/50">Mensagem</label>
                     <textarea
+                      id="mensagem"
                       name="mensagem"
                       rows={6}
                       placeholder="Escreve o que te trouxe até aqui — uma imagem que ficou, um lugar, uma ideia, ou simplesmente algo que quiseres partilhar."
                       className="bg-transparent border-b border-foreground/20 py-3 text-sm text-foreground placeholder:text-foreground/30 focus:border-copper focus:outline-none transition-colors duration-500 resize-none leading-relaxed"
+                      aria-describedby={errors.mensagem ? "mensagem-error" : undefined}
                     />
                     {errors.mensagem && (
-                      <span className="text-xs text-copper">{errors.mensagem}</span>
+                      <span id="mensagem-error" className="text-xs text-copper" role="alert">{errors.mensagem}</span>
                     )}
                   </div>
 
@@ -269,16 +271,19 @@ function Field({
 }: {
   label: string; name: string; type?: string; error?: string; placeholder?: string;
 }) {
+  const id = `field-${name}`;
   return (
     <div className="flex flex-col gap-3">
-      <label className="font-mono-label text-foreground/50">{label}</label>
+      <label htmlFor={id} className="font-mono-label text-foreground/50">{label}</label>
       <input
+        id={id}
         name={name}
         type={type}
         placeholder={placeholder}
         className="bg-transparent border-b border-foreground/20 py-3 text-sm placeholder:text-foreground/30 focus:border-copper focus:outline-none transition-colors duration-500"
+        aria-describedby={error ? `${id}-error` : undefined}
       />
-      {error && <span className="text-xs text-copper">{error}</span>}
+      {error && <span id={`${id}-error`} className="text-xs text-copper" role="alert">{error}</span>}
     </div>
   );
 }

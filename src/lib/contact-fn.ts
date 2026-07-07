@@ -17,9 +17,8 @@ export const sendContactEmail = createServerFn({ method: "POST" })
     const to = process.env.CONTACT_EMAIL ?? "ola@rosmaninhofotografia.pt";
 
     if (!host || !user || !pass) {
-      console.log(
-        `[contacto] ${data.nome} <${data.email}>\n${data.mensagem}`
-      );
+      // SMTP não configurado — regista no servidor mas não envia email
+      console.warn(`[contacto] SMTP não configurado. Mensagem de ${data.nome} <${data.email}> recebida mas não enviada.`);
       return { ok: true };
     }
 
