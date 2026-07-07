@@ -90,8 +90,34 @@ function EntryPage() {
   const mes = mesAbrev(entry.date);
   const ano = d.getFullYear();
 
+  const jsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": entry.title,
+    "description": entry.excerpt,
+    "datePublished": entry.date,
+    "url": `https://rosmaninhofotografia.pt/diario/${entry.slug}`,
+    "inLanguage": "pt-PT",
+    "author": {
+      "@type": "Person",
+      "name": "Luísa Rosmaninho",
+      "url": "https://rosmaninhofotografia.pt/sobre",
+    },
+    "publisher": { "@id": "https://rosmaninhofotografia.pt/#organization" },
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://rosmaninhofotografia.pt/og/diario.jpg",
+    },
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "Caderno de Matcha",
+      "url": "https://rosmaninhofotografia.pt/diario",
+    },
+  });
+
   return (
     <div className="bg-background text-foreground">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <SiteNav variant="solid" />
 
       <article>

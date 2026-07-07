@@ -767,12 +767,37 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
       if (r.status !== 0) throw new Error((r.stderr?.toString() ?? "").slice(0, 400) || `${cmd} failed`);
       return (r.stdout?.toString() ?? "").trim();
     };
+
+    // Build authenticated URL for both pull and push.
+    // HTTPS remotes use x-access-token injection; SSH remotes are used as-is.
+    const originUrl = run("git", ["remote", "get-url", "origin"]);
+    const token = process.env.GITHUB_TOKEN;
+    const authUrl = (token && originUrl.startsWith("https://"))
+      ? originUrl.replace("https://", `https://x-access-token:${token}@`)
+      : originUrl;
+
+    // Auto-regenerate sitemap before committing so it's always up-to-date.
+    const sitemapResult = spawnSync("node", ["scripts/generate-sitemap.mjs"], opts);
+    if (sitemapResult.status !== 0) {
+      console.warn("[admin] Sitemap generation failed (non-critical):", sitemapResult.stderr?.toString().slice(0, 200));
+    }
+
     run("git", ["add", "-A"]);
     run("git", ["commit", "--allow-empty", "-m", msg]);
-    const token = process.env.GITHUB_TOKEN;
-    const originUrl = run("git", ["remote", "get-url", "origin"]);
-    const pushUrl = token ? originUrl.replace("https://", `https://x-access-token:${token}@`) : "origin";
-    run("git", ["push", pushUrl]);
+
+    // Pull before push — prevents rejection when remote has diverged
+    // (e.g. from a deployment pipeline, another device, or a direct GitHub edit).
+    try {
+      run("git", ["pull", "--rebase", authUrl]);
+    } catch (pullErr) {
+      throw new Error(
+        `Não foi possível sincronizar com o repositório antes de publicar. ` +
+        `Verifica se GITHUB_TOKEN está configurado em Secrets e se não há conflitos: ` +
+        `${(pullErr as Error).message.slice(0, 300)}`
+      );
+    }
+
+    run("git", ["push", authUrl]);
     const logLine = run("git", ["log", "--format=%H\x1f%s", "-1"]);
     const [fullHash = "", subject = ""] = logLine.split("\x1f");
     return { ok: true, message: "Publicado no GitHub com sucesso.", commitHash: fullHash.slice(0, 7), commitMessage: subject };

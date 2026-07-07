@@ -53,7 +53,7 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- Entradas do diário (Caderno de Matcha) -->
+  <!-- Entradas do diário (7 entradas) -->
   <url>
     <loc>https://rosmaninhofotografia.pt/diario/o-cafe-antes-de-tudo</loc>
     <lastmod>2026-05-20</lastmod>
@@ -67,14 +67,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rosmaninhofotografia.pt/diario/telhados-com-nevoa</loc>
-    <lastmod>2026-02-03</lastmod>
+    <loc>https://rosmaninhofotografia.pt/diario/barco-no-douro</loc>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rosmaninhofotografia.pt/diario/barco-no-douro</loc>
-    <lastmod>2026-01-17</lastmod>
+    <loc>https://rosmaninhofotografia.pt/diario/telhados-com-nevoa</loc>
+    <lastmod>2026-02-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

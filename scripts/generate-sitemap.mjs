@@ -1,18 +1,22 @@
 /**
- * Gera public/sitemap.xml a partir das entradas do diário e das páginas estáticas.
- * Uso: node scripts/generate-sitemap.mjs
+ * Gera public/sitemap.xml dinamicamente a partir dos dados reais do diário.
+ * Lê as entradas estáticas de src/lib/journal.ts e as entradas dinâmicas
+ * de journal-config.json — não é necessário actualizar este ficheiro manualmente.
  *
- * Adiciona uma entrada aqui sempre que criares uma nova entrada no diário.
+ * Uso: node scripts/generate-sitemap.mjs
+ * Executado automaticamente pelo botão "Publicar no GitHub" do painel admin.
  */
 
-import { writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const root = resolve(__dirname, "..");
 
 const BASE_URL = "https://rosmaninhofotografia.pt";
 
+// ── Páginas estáticas ────────────────────────────────────────────────────────
 const staticPages = [
   { path: "/",                    changefreq: "weekly",  priority: "1.0" },
   { path: "/sobre",               changefreq: "monthly", priority: "0.7" },
@@ -26,17 +30,30 @@ const staticPages = [
   { path: "/contacto",            changefreq: "monthly", priority: "0.5" },
 ];
 
-// Adiciona aqui cada nova entrada do diário { slug, date }
-const journalEntries = [
-  { slug: "figura-no-mondego",    date: "2026-04-12" },
-  { slug: "telhados-com-nevoa",   date: "2026-02-03" },
-  { slug: "barco-no-douro",       date: "2026-01-17" },
-  { slug: "matcha-da-manha",      date: "2025-11-18" },
-  { slug: "retrato-na-esplanada", date: "2025-09-06" },
-  { slug: "ribeiro-e-musgo",      date: "2025-06-29" },
-];
+// ── Entradas do diário — lidas dos dados reais ────────────────────────────────
+// 1. Entradas estáticas: extraídas do ficheiro journal.ts por regex
+const journalTs = readFileSync(resolve(root, "src/lib/journal.ts"), "utf-8");
+const slugs = [...journalTs.matchAll(/slug:\s*["']([^"']+)["']/g)].map(m => m[1]);
+const dates = [...journalTs.matchAll(/date:\s*["'](\d{4}-\d{2}-\d{2})["']/g)].map(m => m[1]);
+const staticEntries = slugs.map((slug, i) => ({ slug, date: dates[i] ?? "" })).filter(e => e.date);
 
-function url({ loc, lastmod, changefreq, priority }) {
+// 2. Entradas dinâmicas: adicionadas pelo admin e guardadas em journal-config.json
+let newEntries = [];
+try {
+  const config = JSON.parse(readFileSync(resolve(root, "journal-config.json"), "utf-8"));
+  newEntries = Array.isArray(config.newEntries) ? config.newEntries : [];
+} catch { /* ficheiro ainda não existe */ }
+
+// Combina tudo, removendo duplicados pelo slug (dinâmica tem prioridade)
+const seen = new Set();
+const allJournalEntries = [...staticEntries, ...newEntries].filter(e => {
+  if (seen.has(e.slug)) return false;
+  seen.add(e.slug);
+  return true;
+}).sort((a, b) => b.date.localeCompare(a.date));
+
+// ── Helpers XML ──────────────────────────────────────────────────────────────
+function urlEntry({ loc, lastmod, changefreq, priority }) {
   return [
     "  <url>",
     `    <loc>${loc}</loc>`,
@@ -50,18 +67,11 @@ function url({ loc, lastmod, changefreq, priority }) {
 }
 
 const staticUrls = staticPages
-  .map((p) => url({ loc: `${BASE_URL}${p.path}`, changefreq: p.changefreq, priority: p.priority }))
+  .map(p => urlEntry({ loc: `${BASE_URL}${p.path}`, changefreq: p.changefreq, priority: p.priority }))
   .join("\n");
 
-const journalUrls = journalEntries
-  .map((e) =>
-    url({
-      loc: `${BASE_URL}/diario/${e.slug}`,
-      lastmod: e.date,
-      changefreq: "monthly",
-      priority: "0.7",
-    })
-  )
+const journalUrls = allJournalEntries
+  .map(e => urlEntry({ loc: `${BASE_URL}/diario/${e.slug}`, lastmod: e.date, changefreq: "monthly", priority: "0.7" }))
   .join("\n");
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -70,12 +80,12 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <!-- Páginas principais -->
 ${staticUrls}
 
-  <!-- Entradas do diário -->
+  <!-- Entradas do diário (${allJournalEntries.length} entradas) -->
 ${journalUrls}
 
 </urlset>
 `;
 
-const outPath = resolve(__dirname, "../public/sitemap.xml");
+const outPath = resolve(root, "public/sitemap.xml");
 writeFileSync(outPath, xml, "utf-8");
-console.log(`✓ sitemap.xml gerado com ${staticPages.length + journalEntries.length} URLs → ${outPath}`);
+console.log(`✓ sitemap.xml — ${staticPages.length} páginas + ${allJournalEntries.length} entradas do diário → ${outPath}`);

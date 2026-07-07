@@ -12,6 +12,40 @@ import appCss from "../styles.css?url";
 import { SmoothScroll, CustomCursor, LoadingScreen, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener } from "@/components/SiteChrome";
 import { THEME_SCRIPT } from "@/lib/sun";
 
+// ── Dados estruturados (JSON-LD) — indexação em motores de busca ──────────────
+const JSONLD_SITE = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://rosmaninhofotografia.pt/#organization",
+      "name": "Rosmaninho Fotografia",
+      "url": "https://rosmaninhofotografia.pt",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://rosmaninhofotografia.pt/og/cover.jpg",
+        "width": 1200,
+        "height": 630,
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "ola@rosmaninhofotografia.pt",
+        "contactType": "customer service",
+      },
+      "sameAs": ["https://www.instagram.com/luisarosmanih"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://rosmaninhofotografia.pt/#website",
+      "url": "https://rosmaninhofotografia.pt",
+      "name": "Rosmaninho Fotografia",
+      "description": "Fotografia de urbanas, natureza, retratos e iguarias por Luísa Rosmaninho. Coimbra, Portugal.",
+      "inLanguage": "pt-PT",
+      "publisher": { "@id": "https://rosmaninhofotografia.pt/#organization" },
+    },
+  ],
+});
+
 function NotFoundComponent() {
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
@@ -117,6 +151,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
         {/* Script síncrono anti-flash: aplica 'dark' antes do primeiro paint */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* Dados estruturados — organização e website para motores de busca */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSONLD_SITE }} />
       </head>
       <body>{children}<Scripts /></body>
     </html>
