@@ -19,7 +19,7 @@ export const sendContactEmail = createServerFn({ method: "POST" })
     if (!host || !user || !pass) {
       // SMTP não configurado — regista no servidor mas não envia email
       console.warn(`[contacto] SMTP não configurado. Mensagem de ${data.nome} <${data.email}> recebida mas não enviada.`);
-      return { ok: true };
+      return { ok: true, smtpMissing: true };
     }
 
     const transporter = nodemailer.createTransport({

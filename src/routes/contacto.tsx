@@ -39,6 +39,7 @@ const schema = z.object({
 function ContactoPage() {
   const { texts } = Route.useLoaderData();
   const [sent, setSent] = useState(false);
+  const [smtpMissing, setSmtpMissing] = useState(false);
   const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState("");
@@ -68,7 +69,8 @@ function ContactoPage() {
     setServerError("");
     setSending(true);
     try {
-      await sendContactEmail({ data: parsed.data });
+      const result = await sendContactEmail({ data: parsed.data });
+      setSmtpMissing(result.smtpMissing === true);
       setSent(true);
     } catch {
       setServerError("Não consegui enviar a mensagem. Tenta por email directamente.");
@@ -131,14 +133,30 @@ function ContactoPage() {
                   transition={{ duration: 0.8 }}
                   className="py-12 border-t border-b border-foreground/15"
                 >
-                  <p className="font-italic-serif text-4xl text-copper mb-4">{texts.confirmTitle}</p>
-                  <p className="text-foreground/65 leading-relaxed">
-                    {texts.confirmText}
-                  </p>
-                  <p className="font-mono-label text-foreground/30 mt-8">L.R. · Rosmaninho</p>
-                  <p className="font-italic-serif text-xs text-foreground/20 mt-6 italic">
-                    {texts.footerLine3}
-                  </p>
+                  {smtpMissing ? (
+                    <>
+                      <p className="font-italic-serif text-4xl text-foreground/50 mb-4">Recebido.</p>
+                      <p className="text-foreground/55 leading-relaxed">
+                        A tua mensagem chegou ao servidor, mas o envio por email ainda não está configurado.
+                        Podes escrever directamente para{" "}
+                        <a href="mailto:ola@rosmaninhofotografia.pt" className="text-copper underline underline-offset-4">
+                          ola@rosmaninhofotografia.pt
+                        </a>
+                        .
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-italic-serif text-4xl text-copper mb-4">{texts.confirmTitle}</p>
+                      <p className="text-foreground/65 leading-relaxed">
+                        {texts.confirmText}
+                      </p>
+                      <p className="font-mono-label text-foreground/30 mt-8">L.R. · Rosmaninho</p>
+                      <p className="font-italic-serif text-xs text-foreground/20 mt-6 italic">
+                        {texts.footerLine3}
+                      </p>
+                    </>
+                  )}
                 </motion.div>
               ) : (
                 <motion.form
