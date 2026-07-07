@@ -166,6 +166,7 @@ function DarkroomReveal() {
           className="mb-5"
           animate={{ opacity: [0.35, 0.7, 0.35], scale: [0.94, 1, 0.94] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          suppressHydrationWarning
         >
           <BotanicalMark size={15} className="text-copper" />
         </motion.div>
@@ -186,6 +187,7 @@ function DarkroomReveal() {
         animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 10 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute bottom-8 left-8 md:left-12 pointer-events-none z-20"
+        suppressHydrationWarning
       >
         <p className="font-mono-label text-copper/70 text-[9px] uppercase tracking-[0.4em] mb-1">{photo.location}</p>
         <p className="font-display text-cream/80 text-xl md:text-2xl">{photo.caption}</p>
@@ -378,6 +380,7 @@ function HomePage() {
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
           transition={{ duration: 3.4, ease: "easeOut" }}
+          suppressHydrationWarning
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85" />
 
@@ -387,6 +390,7 @@ function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.2 }}
           className="absolute top-24 inset-x-0 px-6 md:px-12 flex justify-between text-cream/70 text-[10px] tracking-[0.4em] uppercase"
+          suppressHydrationWarning
         >
           <span>N.º 001 · Vol. I</span>
           <span className="hidden md:inline">40°12'N · 8°25'W</span>
@@ -400,6 +404,7 @@ function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1.4 }}
             className="font-mono-label text-copper mb-6"
+            suppressHydrationWarning
           >
             {homepageTexts.heroTagline}
           </motion.p>
@@ -408,6 +413,7 @@ function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, delay: 1.6, ease: "easeOut" }}
             className="font-display text-cream text-[64px] leading-[0.95] md:text-[140px] lg:text-[180px] max-w-6xl tracking-tight"
+            suppressHydrationWarning
           >
             {homepageTexts.heroHeadlinePart1}<br />
             <span className="font-italic-serif text-copper">{homepageTexts.heroHeadlineItalicWord}</span>{homepageTexts.heroHeadlinePart2}
@@ -418,6 +424,7 @@ function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 2.1 }}
             className="mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
+            suppressHydrationWarning
           >
             <p className="max-w-md text-cream/75 text-base leading-relaxed">
               {homepageTexts.heroSubtitle}
@@ -434,6 +441,7 @@ function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2.6, duration: 1 }}
           className="absolute bottom-6 left-1/2 -translate-x-1/2 text-cream/50 text-[10px] uppercase tracking-[0.5em]"
+          suppressHydrationWarning
         >
           desce devagar ↓
         </motion.div>
