@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
 import { readConfig, writeConfig } from "./db";
+import { checkAdminPassword as checkPassword } from "./admin-auth";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
 import { journal as staticJournal } from "./journal";
@@ -10,27 +11,6 @@ import { notas as staticNotas } from "./notas";
 import type { Nota } from "./notas";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-function checkPassword(password: string) {
-  const envPassword = process.env.ADMIN_PASSWORD;
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (!envPassword && isProduction) {
-    // Fail closed in production — never allow access with the default password
-    throw new Error(
-      "ADMIN_PASSWORD não está configurado. Configura o segredo antes de usar o painel admin em produção."
-    );
-  }
-
-  const expected = envPassword ?? "rosmaninho";
-  if (!envPassword) {
-    console.warn(
-      "[admin] ADMIN_PASSWORD não definido — a usar palavra-passe por omissão 'rosmaninho'. " +
-      "OBRIGATÓRIO definir em produção!"
-    );
-  }
-  if (password !== expected) throw new Error("Password incorrecta.");
-}
 
 /**
  * Read a config from DB. If not in DB, migrate from legacy JSON file and write

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
 import { readConfig, writeConfig } from "./db";
+import { checkAdminPassword } from "./admin-auth";
 
 export type NesteMomento = {
   aLer: string;
@@ -44,10 +45,7 @@ export const getNesteMomento = createServerFn({ method: "GET" }).handler(
 export const saveNesteMomento = createServerFn({ method: "POST" })
   .validator((data: unknown) => data as { password: string } & NesteMomento)
   .handler(async ({ data }) => {
-    const expected = process.env.ADMIN_PASSWORD ?? "rosmaninho";
-    if (data.password !== expected) {
-      throw new Error("Password incorrecta.");
-    }
+    checkAdminPassword(data.password);
     const momento: NesteMomento = {
       aLer: data.aLer,
       aLerUrl: data.aLerUrl ?? "",

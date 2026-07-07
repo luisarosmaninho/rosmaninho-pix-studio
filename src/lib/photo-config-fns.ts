@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
 import { readConfig, writeConfig } from "./db";
+import { checkAdminPassword } from "./admin-auth";
 
 export type PhotoConfig = {
   hidden: string[];
@@ -26,21 +27,6 @@ async function readPhotoConfig(): Promise<PhotoConfig> {
 export const getPhotoConfig = createServerFn({ method: "GET" }).handler(
   async () => readPhotoConfig()
 );
-
-function checkAdminPassword(password: string) {
-  const envPassword = process.env.ADMIN_PASSWORD;
-  const isProduction = process.env.NODE_ENV === "production";
-  if (!envPassword && isProduction) {
-    throw new Error(
-      "ADMIN_PASSWORD não está configurado. Configura o segredo antes de usar o painel admin em produção."
-    );
-  }
-  const expected = envPassword ?? "rosmaninho";
-  if (!envPassword) {
-    console.warn("[admin] ADMIN_PASSWORD não definido — a usar palavra-passe por omissão. OBRIGATÓRIO definir em produção!");
-  }
-  if (password !== expected) throw new Error("Password incorrecta.");
-}
 
 export const verifyAdminPassword = createServerFn({ method: "POST" })
   .validator((data: unknown) => data as { password: string })
