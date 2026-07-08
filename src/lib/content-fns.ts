@@ -840,8 +840,16 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
 
     // Build authenticated URL for both pull and push.
     // HTTPS remotes use x-access-token injection; SSH remotes are used as-is.
-    const originUrlRaw = (spawnSync("git", ["remote", "get-url", "origin"], opts).stdout?.toString() ?? "").trim();
-    if (!originUrlRaw) throw new Error("Não foi possível obter o URL do repositório remoto.");
+    // In autoscale production containers the git remote may not be set.
+    // Fall back to the REPO_URL env var (set in Replit Secrets / env vars).
+    const originUrlRaw =
+      (spawnSync("git", ["remote", "get-url", "origin"], opts).stdout?.toString() ?? "").trim() ||
+      process.env.REPO_URL?.trim() ||
+      "";
+    if (!originUrlRaw) throw new Error(
+      "Não foi possível obter o URL do repositório remoto. " +
+      "Configura REPO_URL nas variáveis de ambiente (ex: https://github.com/user/repo)."
+    );
     const token = process.env.GITHUB_TOKEN;
     const authUrl = (token && originUrlRaw.startsWith("https://"))
       ? originUrlRaw.replace("https://", `https://x-access-token:${token}@`)
