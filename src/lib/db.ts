@@ -102,6 +102,9 @@ export async function readConfig<T>(key: string, fallback: T): Promise<T> {
     const jp = jsonFilePath(key);
     return jp ? readJsonFile(jp, fallback) : fallback;
   }
+  // In production, wait for the startup JSON→DB seed before serving data.
+  // _startupSeed is set to null once complete, so this is a no-op after the first run.
+  if (_startupSeed) await _startupSeed;
   try {
     const result = await getPool().query<{ value: T }>(
       "SELECT value FROM admin_config WHERE key = $1",
@@ -140,4 +143,111 @@ export async function writeConfig(key: string, value: unknown): Promise<void> {
     // Content is safe; DB will sync on next successful write.
     console.warn(`[db] writeConfig("${key}") DB write failed (JSON saved):`, err);
   }
+}
+
+// ── File ↔ key index ─────────────────────────────────────────────────────────
+// Build a reverse map: filename → [keys…] so alias handling is deterministic.
+// Iteration order of Object.entries() is insertion order, so the *first* key
+// in KEY_TO_JSON for each file is the "primary" key; aliases follow.
+const FILE_TO_KEYS: Map<string, string[]> = (() => {
+  const m = new Map<string, string[]>();
+  for (const [key, filename] of Object.entries(KEY_TO_JSON)) {
+    if (!m.has(filename)) m.set(filename, []);
+    m.get(filename)!.push(key);
+  }
+  return m;
+})();
+
+// ── Sync helpers ─────────────────────────────────────────────────────────────
+
+/**
+ * Dump every DB key to its corresponding JSON file.
+ * Call this BEFORE git commit so the repository always reflects the latest
+ * content — even if some keys were saved before the JSON-write logic existed.
+ *
+ * Alias-safe: for each JSON file, only the primary key's value is written.
+ * If the primary key is absent from the DB, the first alias that has a value
+ * is used instead.
+ */
+export async function syncDbToJson(): Promise<void> {
+  if (!HAS_DB) return; // JSON-only mode — files are already the source of truth
+  try {
+    await ensureSchema();
+    const result = await getPool().query<{ key: string; value: unknown }>(
+      "SELECT key, value FROM admin_config"
+    );
+    // Index all DB rows by key for O(1) lookup.
+    const dbRows = new Map<string, unknown>(result.rows.map((r) => [r.key, r.value]));
+
+    // For each unique file, pick the primary key's value (or first alias with data).
+    for (const [filename, keys] of FILE_TO_KEYS) {
+      let value: unknown = undefined;
+      for (const k of keys) {
+        if (dbRows.has(k)) { value = dbRows.get(k); break; }
+      }
+      if (value === undefined) continue; // nothing in DB for this file
+      const jp = path.join(process.cwd(), filename);
+      writeJsonFile(jp, value);
+    }
+  } catch (err) {
+    console.warn("[db] syncDbToJson failed (non-critical):", err);
+  }
+}
+
+/**
+ * Seed the DB from JSON files on the filesystem.
+ * Called once on server startup in production so that a git push + Replit Publish
+ * cycle immediately reflects the new content — the JSON files baked into the
+ * deployment build win over whatever the previous deployment left in the DB.
+ *
+ * Alias-safe: every alias key for a file is upserted so all code paths find data,
+ * regardless of which key they use to read.
+ *
+ * Only skips a file if it cannot be read or cannot be parsed as JSON.
+ * Valid empty structures ({} / []) ARE written — they represent intentional clears.
+ */
+export async function loadJsonToDb(): Promise<void> {
+  if (!HAS_DB) return; // JSON-only mode — nothing to seed
+  try {
+    await ensureSchema();
+    for (const [filename, keys] of FILE_TO_KEYS) {
+      const jp = path.join(process.cwd(), filename);
+      let raw: string;
+      try { raw = fs.readFileSync(jp, "utf-8"); } catch { continue; } // file missing — skip
+      let value: unknown;
+      try { value = JSON.parse(raw); } catch { continue; } // malformed JSON — skip
+      // Upsert ALL keys (primary + aliases) so every reader finds data.
+      for (const key of keys) {
+        try {
+          await getPool().query(
+            `INSERT INTO admin_config (key, value, updated_at)
+             VALUES ($1, $2::jsonb, NOW())
+             ON CONFLICT (key) DO UPDATE
+               SET value = EXCLUDED.value,
+                   updated_at = EXCLUDED.updated_at`,
+            [key, JSON.stringify(value)]
+          );
+        } catch (err) {
+          console.warn(`[db] loadJsonToDb("${key}") failed:`, err);
+        }
+      }
+    }
+    console.log("[db] loadJsonToDb: startup JSON→DB seed complete.");
+  } catch (err) {
+    console.warn("[db] loadJsonToDb failed (non-critical):", err);
+  }
+}
+
+// ── Production startup seed ───────────────────────────────────────────────────
+// Kick off the seed immediately when this module is first imported in production.
+// readConfig() awaits _startupSeed before serving data, so early requests are
+// blocked only for the brief duration of the seed (typically <100 ms).
+let _startupSeed: Promise<void> | null = null;
+if (process.env.NODE_ENV === "production" && HAS_DB) {
+  _startupSeed = loadJsonToDb().finally(() => { _startupSeed = null; });
+}
+
+/** @internal – exported only so readConfig can await it. */
+export function getStartupSeedPromise(): Promise<void> | null {
+  return _startupSeed;
 }

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
-import { readConfig, writeConfig } from "./db";
+import { readConfig, writeConfig, syncDbToJson } from "./db";
 import { checkAdminPassword as checkPassword } from "./admin-auth";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
@@ -783,6 +783,11 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
       }
       return (r.stdout?.toString() ?? "").trim();
     };
+
+    // Flush every DB key to its JSON file so the commit always reflects the
+    // latest admin content — even for keys saved before the dual-write logic
+    // was introduced.
+    await syncDbToJson();
 
     // Auto-regenerate sitemap before committing so it's always up-to-date.
     const sitemapResult = spawnSync("node", ["scripts/generate-sitemap.mjs"], opts);

@@ -95,6 +95,7 @@ function PasswordGate({ onAuth }: { onAuth: (pw: string) => void }) {
         <input
           type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }}
           placeholder="Password" autoComplete="current-password" autoFocus disabled={loading}
+          suppressHydrationWarning
           className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/20 disabled:opacity-50"
         />
         {error && <p className="text-red-400 text-xs">{error}</p>}
@@ -2004,9 +2005,24 @@ function GitHubSection({ password }: { password: string }) {
           )}
         </div>
         <p className="text-white/18 text-[10px] leading-relaxed">
-          Corre <code className="text-white/30">git add -A → commit → push origin</code> no servidor e confirma com o hash do commit acima.
+          Sincroniza a base de dados com os ficheiros JSON, faz commit e push para o GitHub.
         </p>
       </div>
+
+      {/* Próximo passo: republicar em produção */}
+      {pushStatus === "ok" && (
+        <div className="bg-emerald-950/40 border border-emerald-500/20 p-6 space-y-3">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-emerald-400/60">Passo seguinte — Produção</p>
+          <p className="text-emerald-200/80 text-sm leading-relaxed">
+            O código foi publicado no GitHub com sucesso.
+            Para atualizar o site em produção, clica em <strong>Publicar</strong> no painel do Replit.
+          </p>
+          <p className="text-white/30 text-[10px] leading-relaxed">
+            O Replit irá fazer build do projeto com os ficheiros JSON mais recentes e arrancar o servidor de produção.
+            Os dados do admin são automaticamente carregados para a base de dados de produção no arranque.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
