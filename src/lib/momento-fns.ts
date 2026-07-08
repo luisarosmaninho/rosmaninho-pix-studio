@@ -15,7 +15,7 @@ export type NesteMomento = {
 
 const MOMENTO_JSON = path.join(process.cwd(), "momento-config.json");
 
-const DEFAULT: NesteMomento = {
+export const MOMENTO_DEFAULT: NesteMomento = {
   aLer: "Central Park, de Guillaume Musso — comecei numa tarde e ainda não consegui parar.",
   aLerUrl: "https://www.bertrand.pt/livro/central-park-guillaume-musso/16613027",
   aEscutar: "a minha playlist de 2026 no Spotify, feita por mim ao longo do ano.",
@@ -26,15 +26,15 @@ const DEFAULT: NesteMomento = {
 
 async function readMomento(): Promise<NesteMomento> {
   const fromDb = await readConfig<Partial<NesteMomento> | null>("momento", null);
-  if (fromDb !== null) return { ...DEFAULT, ...fromDb };
+  if (fromDb !== null) return { ...MOMENTO_DEFAULT, ...fromDb };
   // Migration from legacy JSON file
   try {
     const legacy = JSON.parse(fs.readFileSync(MOMENTO_JSON, "utf-8")) as Partial<NesteMomento>;
-    const merged = { ...DEFAULT, ...legacy };
+    const merged = { ...MOMENTO_DEFAULT, ...legacy };
     await writeConfig("momento", merged);
     return merged;
   } catch {
-    return DEFAULT;
+    return MOMENTO_DEFAULT;
   }
 }
 

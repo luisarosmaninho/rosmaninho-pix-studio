@@ -191,6 +191,12 @@ export function ScrollProgress() {
 /* ---------------- Smooth scroll ---------------- */
 export function SmoothScroll() {
   useEffect(() => {
+    // Skip on touch/mobile devices and when the user prefers reduced motion.
+    // Lenis on low-end phones causes jank and drains battery.
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    if (prefersReduced || isTouch) return;
+
     const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
     let raf = 0;
     const loop = (t: number) => { lenis.raf(t); raf = requestAnimationFrame(loop); };

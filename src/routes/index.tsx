@@ -40,11 +40,11 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/" }],
   }),
   loader: async () => {
-    const { getNesteMomento } = await import("@/lib/momento-fns");
+    const { getNesteMomento, MOMENTO_DEFAULT } = await import("@/lib/momento-fns");
     const { getHomepageTexts, HOMEPAGE_DEFAULTS } = await import("@/lib/content-fns");
     // .catch() ensures SSR never hangs if the DB is slow/unavailable on cold start
     const [momento, homepageTexts] = await Promise.all([
-      getNesteMomento().catch(() => null),
+      getNesteMomento().catch(() => MOMENTO_DEFAULT),
       getHomepageTexts().catch(() => HOMEPAGE_DEFAULTS),
     ]);
     return { momento, homepageTexts };
@@ -87,6 +87,7 @@ const darkroomPool: { src: string; caption: string; location: string }[] = [
 
 function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
   const [photo, setPhoto] = useState(darkroomPool[0]);
   useEffect(() => {
     setPhoto(darkroomPool[Math.floor(Math.random() * darkroomPool.length)]);
@@ -96,10 +97,18 @@ function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
   const [revealed, setRevealed] = useState(false);
   const radius = 200;
 
+  // Throttle position updates to one per animation frame to avoid
+  // flooding React state on rapid mouse/touch move events.
   function updatePos(x: number, y: number) {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    setPos({ x: x - rect.left, y: y - rect.top });
+    const nx = x - rect.left;
+    const ny = y - rect.top;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      setPos({ x: nx, y: ny });
+      rafRef.current = null;
+    });
   }
 
   function handleMouseMove(e: React.MouseEvent) { updatePos(e.clientX, e.clientY); }
@@ -122,11 +131,12 @@ function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
 
   return (
     <section className="relative w-full overflow-hidden select-none" style={{ height: "85vh", minHeight: 480 }}>
-      {/* Photo layer */}
+      {/* Photo layer — lazy: this section is well below the fold */}
       <img
         src={photo.src}
         alt="Sala de revelação"
         className="absolute inset-0 w-full h-full object-cover"
+        loading="lazy"
         draggable={false}
       />
       {/* Safelight tint — amber warm, visible only through the torch */}
@@ -384,6 +394,7 @@ function HomePage() {
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
           transition={{ duration: 3.4, ease: "easeOut" }}
+          fetchPriority="high"
           suppressHydrationWarning
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85" />
@@ -500,7 +511,7 @@ function HomePage() {
 
           <div className="md:col-span-7 order-1 md:order-2 relative">
             <div className="hover-zoom warm-tone aspect-[4/5] relative">
-              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             </div>
           </div>
         </div>
@@ -657,6 +668,7 @@ function HomePage() {
                     src={frame.src}
                     alt={frame.title}
                     className="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <p className="absolute bottom-3 inset-x-3 font-display text-cream text-sm leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -690,7 +702,7 @@ function HomePage() {
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-7 hover-zoom warm-tone aspect-[4/3] relative">
-            <img src={latestEntry.photoSrc} alt={latestEntry.photoTitle} className="absolute inset-0 h-full w-full object-cover" />
+            <img src={latestEntry.photoSrc} alt={latestEntry.photoTitle} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
           <div className="md:col-span-5">
             <p className="font-mono-label text-copper mb-6">§ 04 — Diário · última entrada</p>

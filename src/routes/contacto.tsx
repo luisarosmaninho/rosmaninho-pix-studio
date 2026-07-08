@@ -260,6 +260,7 @@ function ContactoPage() {
             src={sunsetBeach}
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/55 to-black/82" />
 

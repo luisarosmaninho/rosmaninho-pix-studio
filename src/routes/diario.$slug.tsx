@@ -199,6 +199,7 @@ function EntryPage() {
                   src={entry.photoSrc}
                   alt={entry.photoTitle}
                   className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
                 />
               </motion.div>
 
