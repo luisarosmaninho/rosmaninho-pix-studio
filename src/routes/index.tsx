@@ -118,6 +118,11 @@ function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
     updatePos(t.clientX, t.clientY);
   }
 
+  // Cancel any pending rAF on unmount to avoid stale state updates
+  useEffect(() => {
+    return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current); };
+  }, []);
+
   useEffect(() => {
     if (active) {
       const timer = setTimeout(() => setRevealed(true), 2400);
