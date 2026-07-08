@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
-import { readConfig, writeConfig, syncDbToJson } from "./db";
+import { readConfig, writeConfig, syncDbToJson, getConfigFilenames } from "./db";
 import { checkAdminPassword as checkPassword } from "./admin-auth";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
@@ -806,95 +806,136 @@ export type GitInfo = {
 };
 
 export const getGitInfo = createServerFn({ method: "GET" }).handler(async (): Promise<GitInfo> => {
-  const { spawnSync } = await import("child_process");
-  const opts = { cwd: process.cwd(), stdio: "pipe" as const };
-  const read = (cmd: string, args: string[]): string =>
-    (spawnSync(cmd, args, opts).stdout?.toString() ?? "").trim();
+  // Try git CLI first (works in dev / Replit workspace).
   try {
+    const { spawnSync } = await import("child_process");
+    const opts = { cwd: process.cwd(), stdio: "pipe" as const };
+    const read = (cmd: string, args: string[]): string =>
+      (spawnSync(cmd, args, opts).stdout?.toString() ?? "").trim();
     const branch = read("git", ["rev-parse", "--abbrev-ref", "HEAD"]);
+    if (!branch) throw new Error("not a git repo");
     const remote = read("git", ["remote", "get-url", "origin"]);
     const logRaw = read("git", ["log", "--format=%H\x1f%s\x1f%cr", "-5"]);
     const statusRaw = read("git", ["status", "--porcelain"]);
     const lastCommits: GitCommitInfo[] = logRaw
-      .split("\n")
-      .filter(Boolean)
+      .split("\n").filter(Boolean)
       .map((line) => {
         const [hash = "", message = "", date = ""] = line.split("\x1f");
         return { hash: hash.slice(0, 7), message, date };
       });
     const dirtyLines = statusRaw.split("\n").filter(Boolean);
     return { branch, remote, lastCommits, dirty: dirtyLines.length > 0, dirtyCount: dirtyLines.length };
+  } catch { /* git not available — fall through to GitHub API */ }
+
+  // Production autoscale: no .git directory. Use the GitHub API.
+  try {
+    const { owner, repo, branch } = parseRepoUrl();
+    const token = process.env.GITHUB_TOKEN ?? "";
+    const ghGet = async (path: string) => {
+      const r = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+      });
+      if (!r.ok) throw new Error(`GitHub API ${path}: ${r.status}`);
+      return r.json();
+    };
+    const commits = await ghGet(`/commits?sha=${branch}&per_page=5`);
+    const lastCommits: GitCommitInfo[] = (commits as { sha: string; commit: { message: string; author: { date: string } } }[]).map((c) => ({
+      hash: c.sha.slice(0, 7),
+      message: c.commit.message.split("\n")[0].slice(0, 72),
+      date: new Date(c.commit.author.date).toLocaleDateString("pt-PT"),
+    }));
+    const repoUrl = process.env.REPO_URL ?? `https://github.com/${owner}/${repo}`;
+    return { branch, remote: repoUrl, lastCommits, dirty: false, dirtyCount: 0 };
   } catch {
-    return { branch: "—", remote: "—", lastCommits: [], dirty: false, dirtyCount: 0 };
+    return { branch: "—", remote: process.env.REPO_URL ?? "—", lastCommits: [], dirty: false, dirtyCount: 0 };
   }
 });
+
+// ── helpers shared by getGitInfo + gitCommitAndPush ──────────────────────────
+
+function parseRepoUrl(): { owner: string; repo: string; branch: string } {
+  const raw = process.env.REPO_URL?.trim() ?? "";
+  const m = raw.match(/github\.com[/:]([^/]+)\/([^/.]+)/);
+  if (!m) throw new Error(
+    "REPO_URL inválido ou não configurado. " +
+    "Define REPO_URL=https://github.com/owner/repo nas variáveis de ambiente."
+  );
+  return { owner: m[1], repo: m[2].replace(/\.git$/, ""), branch: "main" };
+}
 
 export const gitCommitAndPush = createServerFn({ method: "POST" })
   .validator((d: unknown) => d as { password: string; message?: string })
   .handler(async ({ data }) => {
     checkPassword(data.password);
-    const { spawnSync } = await import("child_process");
     const msg = data.message?.trim()
       || `Atualização de conteúdo — ${new Date().toLocaleDateString("pt-PT")}`;
-    const opts = { cwd: process.cwd(), stdio: "pipe" as const };
 
-    // Build authenticated URL for both pull and push.
-    // HTTPS remotes use x-access-token injection; SSH remotes are used as-is.
-    // In autoscale production containers the git remote may not be set.
-    // Fall back to the REPO_URL env var (set in Replit Secrets / env vars).
-    const originUrlRaw =
-      (spawnSync("git", ["remote", "get-url", "origin"], opts).stdout?.toString() ?? "").trim() ||
-      process.env.REPO_URL?.trim() ||
-      "";
-    if (!originUrlRaw) throw new Error(
-      "Não foi possível obter o URL do repositório remoto. " +
-      "Configura REPO_URL nas variáveis de ambiente (ex: https://github.com/user/repo)."
-    );
     const token = process.env.GITHUB_TOKEN;
-    const authUrl = (token && originUrlRaw.startsWith("https://"))
-      ? originUrlRaw.replace("https://", `https://x-access-token:${token}@`)
-      : originUrlRaw;
+    if (!token) throw new Error("GITHUB_TOKEN não está configurado em Secrets.");
 
-    /** Run a git command, redacting the token from any error output. */
-    const run = (cmd: string, args: string[]) => {
-      const r = spawnSync(cmd, args, opts);
-      if (r.status !== 0) {
-        let errText = (r.stderr?.toString() ?? r.stdout?.toString() ?? "").slice(0, 400) || `${cmd} failed`;
-        // Redact the token so it never surfaces to the browser / admin UI.
-        if (token) errText = errText.replaceAll(token, "***");
-        throw new Error(errText);
-      }
-      return (r.stdout?.toString() ?? "").trim();
+    const { owner, repo } = parseRepoUrl();
+
+    // GitHub API wrapper
+    const gh = async (method: string, path: string, body?: unknown) => {
+      const r = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "Content-Type": "application/json",
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const text = await r.text();
+      if (!r.ok) throw new Error(`GitHub API ${method} ${path} → ${r.status}: ${text.slice(0, 300)}`);
+      return JSON.parse(text);
     };
 
-    // Flush every DB key to its JSON file so the commit always reflects the
-    // latest admin content — even for keys saved before the dual-write logic
-    // was introduced.
+    // Flush DB → JSON files on disk.
     await syncDbToJson();
 
-    // Auto-regenerate sitemap before committing so it's always up-to-date.
-    const sitemapResult = spawnSync("node", ["scripts/generate-sitemap.mjs"], opts);
-    if (sitemapResult.status !== 0) {
-      console.warn("[admin] Sitemap generation failed (non-critical):", sitemapResult.stderr?.toString().slice(0, 200));
+    // Discover the default branch dynamically.
+    const repoMeta = await gh("GET", "");
+    const branch: string = repoMeta.default_branch ?? "main";
+
+    // Get the current HEAD commit + base tree.
+    const refData = await gh("GET", `/git/refs/heads/${branch}`);
+    const headSha: string = refData.object.sha;
+    const commitMeta = await gh("GET", `/git/commits/${headSha}`);
+    const baseTreeSha: string = commitMeta.tree.sha;
+
+    // Create blobs for every JSON config file that exists on disk.
+    const { readFileSync } = await import("fs");
+    const { join } = await import("path");
+    const cwd = process.cwd();
+    const filenames = getConfigFilenames();
+
+    const treeItems: { path: string; mode: string; type: string; sha: string }[] = [];
+    for (const filename of filenames) {
+      let content: string;
+      try { content = readFileSync(join(cwd, filename), "utf-8"); }
+      catch { continue; } // file doesn't exist yet, skip
+      const blob = await gh("POST", "/git/blobs", {
+        content: Buffer.from(content).toString("base64"),
+        encoding: "base64",
+      });
+      treeItems.push({ path: filename, mode: "100644", type: "blob", sha: blob.sha });
     }
 
-    run("git", ["add", "-A"]);
-    run("git", ["commit", "--allow-empty", "-m", msg]);
-
-    // Pull before push — prevents rejection when remote has diverged
-    // (e.g. from a deployment pipeline, another device, or a direct GitHub edit).
-    try {
-      run("git", ["pull", "--rebase", authUrl]);
-    } catch (pullErr) {
-      throw new Error(
-        `Não foi possível sincronizar com o repositório antes de publicar. ` +
-        `Verifica se GITHUB_TOKEN está configurado em Secrets e se não há conflitos: ` +
-        `${(pullErr as Error).message.slice(0, 300)}`
-      );
+    if (treeItems.length === 0) {
+      return { ok: true, message: "Nada para publicar.", commitHash: headSha.slice(0, 7), commitMessage: msg };
     }
 
-    run("git", ["push", authUrl]);
-    const logLine = run("git", ["log", "--format=%H\x1f%s", "-1"]);
-    const [fullHash = "", subject = ""] = logLine.split("\x1f");
-    return { ok: true, message: "Publicado no GitHub com sucesso.", commitHash: fullHash.slice(0, 7), commitMessage: subject };
+    // Build new tree, commit, and fast-forward the branch ref.
+    const newTree = await gh("POST", "/git/trees", { base_tree: baseTreeSha, tree: treeItems });
+    const newCommit = await gh("POST", "/git/commits", { message: msg, tree: newTree.sha, parents: [headSha] });
+    await gh("PATCH", `/git/refs/heads/${branch}`, { sha: newCommit.sha, force: false });
+
+    return {
+      ok: true,
+      message: "Publicado no GitHub com sucesso.",
+      commitHash: (newCommit.sha as string).slice(0, 7),
+      commitMessage: msg,
+    };
   });

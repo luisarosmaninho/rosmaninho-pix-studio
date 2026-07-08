@@ -163,6 +163,11 @@ const FILE_TO_KEYS: Map<string, string[]> = (() => {
   return m;
 })();
 
+/** Returns the unique list of JSON config filenames managed by this registry. */
+export function getConfigFilenames(): string[] {
+  return [...new Set(Object.values(KEY_TO_JSON))];
+}
+
 // ── Sync helpers ─────────────────────────────────────────────────────────────
 
 /**
