@@ -9,14 +9,21 @@ import { createStart, createCsrfMiddleware } from "@tanstack/react-start";
  * http://…:PORT URL while the browser sends the public HTTPS origin.
  * Set SITE_URL to the public-facing URL (e.g. https://example.com) so
  * the CSRF check does not block legitimate requests from the browser.
+ *
+ * On Replit, REPLIT_DEV_DOMAIN is set automatically — no extra config needed.
  */
+
+// Prefer explicit SITE_URL; fall back to Replit's automatic dev domain.
+const publicUrl = process.env.SITE_URL
+  || (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : null);
+
 let allowedOrigin: string | null = null;
-if (process.env.SITE_URL) {
+if (publicUrl) {
   try {
-    allowedOrigin = new URL(process.env.SITE_URL).origin;
+    allowedOrigin = new URL(publicUrl).origin;
   } catch {
     console.error(
-      `[csrf] Invalid SITE_URL "${process.env.SITE_URL}" — must be a valid URL (e.g. https://example.com). ` +
+      `[csrf] Invalid public URL "${publicUrl}" — must be a valid URL (e.g. https://example.com). ` +
       "CSRF will fall back to same-origin-only checks until this is fixed.",
     );
   }
