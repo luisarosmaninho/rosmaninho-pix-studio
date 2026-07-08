@@ -6,9 +6,17 @@ const { Pool } = pg;
 
 // ── JSON file registry ────────────────────────────────────────────────────────
 // Every DB key maps to a JSON config file on disk.
-// writeConfig() always writes both the DB (when available) AND the JSON file,
-// so git commits automatically capture the latest content and a fresh deployment
-// (empty DB) can bootstrap itself from the committed JSON files.
+//
+// Data precedence policy: the DATABASE is the single source of truth once
+// a deployment is running.  JSON files serve two purposes only:
+//   1. Bootstrap: seed a brand-new (empty) DB on a fresh deployment.
+//   2. Backup/portability: writeConfig() mirrors every admin save to the
+//      corresponding JSON file AND commits it to the repository via the
+//      admin "Push" button, so a future fresh deployment starts with the
+//      latest content rather than the original shipped defaults.
+//
+// JSON files NEVER overwrite existing DB rows (ON CONFLICT DO NOTHING).
+// This ensures admin changes survive server restarts and re-deploys.
 
 const KEY_TO_JSON: Record<string, string> = {
   categories:      "categories-config.json",
@@ -206,11 +214,18 @@ export async function syncDbToJson(): Promise<void> {
 
 /**
  * Seed the DB from JSON files on the filesystem.
- * Called once on server startup in production so that a git push + Replit Publish
- * cycle immediately reflects the new content — the JSON files baked into the
- * deployment build win over whatever the previous deployment left in the DB.
+ * Called once on server startup in production.
  *
- * Alias-safe: every alias key for a file is upserted so all code paths find data,
+ * Precedence: DB wins.  Uses INSERT … ON CONFLICT DO NOTHING so existing rows
+ * (live admin edits) are never overwritten.  Only keys that are absent from the
+ * DB (e.g. a brand-new deployment or a new config key added to the codebase) get
+ * populated from the JSON files.
+ *
+ * To update live content: use the admin panel → "Push" button commits the change
+ * to the repository.  The DB row is already updated; the JSON file is kept in sync
+ * so future fresh deployments start with the current content.
+ *
+ * Alias-safe: every alias key for a file is inserted so all code paths find data,
  * regardless of which key they use to read.
  *
  * Only skips a file if it cannot be read or cannot be parsed as JSON.
