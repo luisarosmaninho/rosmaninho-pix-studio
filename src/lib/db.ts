@@ -65,7 +65,12 @@ let schemaInitialized = false;
 
 export function getPool(): pg.Pool {
   if (!pool) {
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      connectionTimeoutMillis: 5000,  // fail fast if DB unreachable
+      statement_timeout: 8000,        // kill hung queries after 8 s
+      idleTimeoutMillis: 30000,
+    });
   }
   return pool;
 }

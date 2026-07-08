@@ -41,8 +41,12 @@ export const Route = createFileRoute("/")({
   }),
   loader: async () => {
     const { getNesteMomento } = await import("@/lib/momento-fns");
-    const { getHomepageTexts } = await import("@/lib/content-fns");
-    const [momento, homepageTexts] = await Promise.all([getNesteMomento(), getHomepageTexts()]);
+    const { getHomepageTexts, HOMEPAGE_DEFAULTS } = await import("@/lib/content-fns");
+    // .catch() ensures SSR never hangs if the DB is slow/unavailable on cold start
+    const [momento, homepageTexts] = await Promise.all([
+      getNesteMomento().catch(() => null),
+      getHomepageTexts().catch(() => HOMEPAGE_DEFAULTS),
+    ]);
     return { momento, homepageTexts };
   },
   component: HomePage,
