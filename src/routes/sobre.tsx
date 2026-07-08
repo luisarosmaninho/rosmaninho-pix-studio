@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { Whisper, WhisperLight } from "@/components/Whisper";
-import { getNesteMomento } from "@/lib/momento-fns";
-import { getSobre as getSobreTexts, getCategories } from "@/lib/content-fns";
+import { getNesteMomento, MOMENTO_DEFAULT } from "@/lib/momento-fns";
+import { getSobre as getSobreTexts, getCategories, SOBRE_DEFAULTS } from "@/lib/content-fns";
 import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
 import farolPeniche from "@/assets/farol-peniche.jpg";
 import barcoDouro from "@/assets/barco-douro.jpg";
@@ -29,9 +29,9 @@ export const Route = createFileRoute("/sobre")({
   }),
   loader: async () => {
     const [momento, sobreTexts, categories] = await Promise.all([
-      getNesteMomento(),
-      getSobreTexts(),
-      getCategories(),
+      getNesteMomento().catch(() => MOMENTO_DEFAULT),
+      getSobreTexts().catch(() => SOBRE_DEFAULTS),
+      getCategories().catch(() => []),
     ]);
     return { momento, sobreTexts, categories };
   },

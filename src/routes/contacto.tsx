@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { z } from "zod";
 import { sendContactEmail } from "@/lib/contact-fn";
-import { getContactoTexts } from "@/lib/content-fns";
+import { getContactoTexts, CONTACTO_DEFAULTS } from "@/lib/content-fns";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
 
 const assuntoOpcoes = [
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/contacto")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/contacto" }],
   }),
   loader: async () => {
-    const texts = await getContactoTexts();
+    const texts = await getContactoTexts().catch(() => CONTACTO_DEFAULTS);
     return { texts };
   },
   component: ContactoPage,

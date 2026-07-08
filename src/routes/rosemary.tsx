@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { BotanicalMark } from "@/components/BotanicalMark";
-import { getRosemary } from "@/lib/content-fns";
+import { getRosemary, ROSEMARY_DEFAULTS } from "@/lib/content-fns";
 
 export const Route = createFileRoute("/rosemary")({
   head: () => ({
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/rosemary")({
     ],
   }),
   loader: async () => {
-    const rosemary = await getRosemary();
+    const rosemary = await getRosemary().catch(() => ROSEMARY_DEFAULTS);
     return { rosemary };
   },
   component: RosemaryPage,

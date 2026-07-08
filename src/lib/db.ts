@@ -226,15 +226,16 @@ export async function loadJsonToDb(): Promise<void> {
       try { raw = fs.readFileSync(jp, "utf-8"); } catch { continue; } // file missing — skip
       let value: unknown;
       try { value = JSON.parse(raw); } catch { continue; } // malformed JSON — skip
-      // Upsert ALL keys (primary + aliases) so every reader finds data.
+      // INSERT only — never overwrite existing DB values.
+      // The DB is the source of truth for a running deployment; admin changes
+      // must survive server restarts. JSON files are only used to seed a
+      // brand-new / empty database (fresh deploy or new instance).
       for (const key of keys) {
         try {
           await getPool().query(
             `INSERT INTO admin_config (key, value, updated_at)
              VALUES ($1, $2::jsonb, NOW())
-             ON CONFLICT (key) DO UPDATE
-               SET value = EXCLUDED.value,
-                   updated_at = EXCLUDED.updated_at`,
+             ON CONFLICT (key) DO NOTHING`,
             [key, JSON.stringify(value)]
           );
         } catch (err) {

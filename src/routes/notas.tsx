@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import type { Nota, NotaSize } from "@/lib/notas";
-import { getNotas, getNotasPageTexts } from "@/lib/content-fns";
+import { getNotas, getNotasPageTexts, NOTAS_PAGE_DEFAULTS } from "@/lib/content-fns";
 
 export const Route = createFileRoute("/notas")({
   head: () => ({
@@ -25,7 +25,10 @@ export const Route = createFileRoute("/notas")({
     links: [{ rel: "canonical", href: "https://rosmaninhofotografia.pt/notas" }],
   }),
   loader: async () => {
-    const [notas, pageTexts] = await Promise.all([getNotas(), getNotasPageTexts()]);
+    const [notas, pageTexts] = await Promise.all([
+      getNotas().catch(() => []),
+      getNotasPageTexts().catch(() => NOTAS_PAGE_DEFAULTS),
+    ]);
     return { notas, pageTexts };
   },
   component: NotasPage,

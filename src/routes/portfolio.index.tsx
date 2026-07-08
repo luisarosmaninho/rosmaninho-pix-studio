@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { SiteNav, SiteFooter } from "@/components/SiteChrome";
 import { photosByCategory } from "@/lib/photos";
 import type { Category } from "@/lib/photos";
-import { getCategories, getPortfolioPageTexts } from "@/lib/content-fns";
+import { getCategories, getPortfolioPageTexts, PORTFOLIO_PAGE_DEFAULTS } from "@/lib/content-fns";
 import { getVisitCounts } from "@/lib/visits-fns";
 import portoStreet from "@/assets/porto-street.jpg";
 import sunsetBeach from "@/assets/sunset-beach.jpg";
@@ -28,9 +28,9 @@ export const Route = createFileRoute("/portfolio/")({
   }),
   loader: async () => {
     const [categories, visitCounts, pageTexts] = await Promise.all([
-      getCategories(),
-      getVisitCounts(),
-      getPortfolioPageTexts(),
+      getCategories().catch(() => []),
+      getVisitCounts().catch(() => ({} as Record<string, number>)),
+      getPortfolioPageTexts().catch(() => PORTFOLIO_PAGE_DEFAULTS),
     ]);
     return { categories, visitCounts, pageTexts };
   },
