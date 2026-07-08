@@ -97,8 +97,6 @@ export default defineConfig({
   },
   plugins: [
     rssDevPlugin(),
-    // ignoreConfigErrors suppresses warnings from Replit skill tsconfig files
-    // that live outside the project src — they are not part of the build
     tsConfigPaths({ ignoreConfigErrors: true }),
     tailwindcss(),
     tanstackStart({
@@ -112,7 +110,7 @@ export default defineConfig({
   ],
   server: {
     host: "0.0.0.0",
-    port: 5000,
+    port: Number(process.env.PORT ?? 5000),
     strictPort: true,
     allowedHosts: true,
     watch: {
@@ -137,7 +135,7 @@ export default defineConfig({
   },
   preview: {
     host: "0.0.0.0",
-    port: 5000,
+    port: Number(process.env.PORT ?? 5000),
     allowedHosts: true,
   },
 });
