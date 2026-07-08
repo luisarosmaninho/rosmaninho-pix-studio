@@ -736,10 +736,10 @@ function HomePage() {
       {/* ============ DIÁLOGO ============ */}
       <Section className="px-6 md:px-12 py-32 md:py-44 bg-background">
         <div className="max-w-4xl mx-auto text-center relative">
-          <Whisper text="escreve devagar · há uma conversa possível" delay={1.6} className="mb-12" />
+          <Whisper text={homepageTexts.dialogoWhisper} delay={1.6} className="mb-12" />
           <p className="font-mono-label text-copper mb-6">§ 05 — Diálogo</p>
           <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
-            Se quiseres <span className="font-italic-serif text-copper">falar</span>,<br />escreve devagar.
+            {homepageTexts.dialogoTituloAntes} <span className="font-italic-serif text-copper">{homepageTexts.dialogoTituloItalic}</span>,<br />{homepageTexts.dialogoTituloDepois}
           </h2>
           <p className="mt-10 text-foreground/70 max-w-xl mx-auto leading-relaxed">
             {homepageTexts.dialogoTexto}
@@ -762,7 +762,7 @@ function HomePage() {
           <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">{homepageTexts.notaPessoalAutor}</p>
           <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-10 italic">
             <BotanicalMark size={12} className="text-foreground/65" />
-            este sítio tem camadas. como tudo o que vale a pena.
+            {homepageTexts.notaPessoalWhisper}
             <BotanicalMark size={12} className="text-foreground/65" />
           </p>
         </div>

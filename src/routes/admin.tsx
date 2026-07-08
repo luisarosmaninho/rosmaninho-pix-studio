@@ -1088,12 +1088,17 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
   const [salaHint, setSalaHint] = useState(initial.salaHint ?? D.salaHint);
   const [salaSubhint, setSalaSubhint] = useState(initial.salaSubhint ?? D.salaSubhint);
   // Diálogo
+  const [dialogoWhisper, setDialogoWhisper] = useState(initial.dialogoWhisper ?? D.dialogoWhisper);
+  const [dialogoTAntes, setDialogoTAntes] = useState(initial.dialogoTituloAntes ?? D.dialogoTituloAntes);
+  const [dialogoTItalic, setDialogoTItalic] = useState(initial.dialogoTituloItalic ?? D.dialogoTituloItalic);
+  const [dialogoTDepois, setDialogoTDepois] = useState(initial.dialogoTituloDepois ?? D.dialogoTituloDepois);
   const [dialogoTexto, setDialogoTexto] = useState(initial.dialogoTexto ?? D.dialogoTexto);
   const [dialogoCta, setDialogoCta] = useState(initial.dialogoCta ?? D.dialogoCta);
   // Nota pessoal
   const [notaL1, setNotaL1] = useState(initial.notaPessoalLinha1 ?? D.notaPessoalLinha1);
   const [notaL2, setNotaL2] = useState(initial.notaPessoalLinha2 ?? D.notaPessoalLinha2);
   const [notaAutor, setNotaAutor] = useState(initial.notaPessoalAutor ?? D.notaPessoalAutor);
+  const [notaWhisper, setNotaWhisper] = useState(initial.notaPessoalWhisper ?? D.notaPessoalWhisper);
 
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Homepage");
   function save(id: string, payload: Partial<HomepageConfig>) {
@@ -1247,12 +1252,22 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
       {/* ── Diálogo ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 05 — Diálogo (secção de contacto)</p>
-        <FreeBlock label="Texto descritivo" hint="parágrafo abaixo do título 'Se quiseres falar'"
+        <FreeBlock label="Whisper" hint="ex: 'escreve devagar · há uma conversa possível'" value={dialogoWhisper} onChange={setDialogoWhisper} rows={1} />
+        <div className="grid grid-cols-3 gap-3">
+          <FreeBlock label="Título antes" hint="ex: 'Se quiseres'" value={dialogoTAntes} onChange={setDialogoTAntes} rows={1} />
+          <FreeBlock label="Itálico cobre" hint="ex: 'falar'" value={dialogoTItalic} onChange={setDialogoTItalic} rows={1} />
+          <FreeBlock label="Título depois" hint="ex: ', escreve devagar.'" value={dialogoTDepois} onChange={setDialogoTDepois} rows={1} />
+        </div>
+        <FreeBlock label="Texto descritivo" hint="parágrafo abaixo do título"
           value={dialogoTexto} onChange={(v) => { setDialogoTexto(v); setSaved(null); }} rows={3}
           placeholder="Não há tabelas nem pacotes…" />
         <FreeBlock label="Texto do botão" hint="ex: 'Iniciar diálogo'" value={dialogoCta} onChange={setDialogoCta} rows={1} />
         <SaveRow id="dialogo" saving={saving} saved={saved} savedTime={savedTime}
-          onSave={() => save("dialogo", { dialogoTexto, dialogoCta })} />
+          onSave={() => save("dialogo", {
+            dialogoWhisper, dialogoTituloAntes: dialogoTAntes,
+            dialogoTituloItalic: dialogoTItalic, dialogoTituloDepois: dialogoTDepois,
+            dialogoTexto, dialogoCta,
+          })} />
       </div>
 
       {/* ── Nota pessoal ── */}
@@ -1263,9 +1278,11 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
         <FreeBlock label="Frase secundária (display menor)" hint="ex: 'sem clientes, sem pressa, só atenção ao que insiste em ficar.'"
           value={notaL2} onChange={setNotaL2} rows={2} />
         <FreeBlock label="Assinatura" hint="ex: 'L.R. · Coimbra'" value={notaAutor} onChange={setNotaAutor} rows={1} />
+        <FreeBlock label="Whisper final" hint="ex: 'este sítio tem camadas. como tudo o que vale a pena.'" value={notaWhisper} onChange={setNotaWhisper} rows={1} />
         <SaveRow id="nota-pessoal" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("nota-pessoal", {
-            notaPessoalLinha1: notaL1, notaPessoalLinha2: notaL2, notaPessoalAutor: notaAutor,
+            notaPessoalLinha1: notaL1, notaPessoalLinha2: notaL2,
+            notaPessoalAutor: notaAutor, notaPessoalWhisper: notaWhisper,
           })} />
       </div>
 

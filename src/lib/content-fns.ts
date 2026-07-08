@@ -429,12 +429,17 @@ export type HomepageConfig = {
   salaHint: string;
   salaSubhint: string;
   // ── Diálogo ──
+  dialogoWhisper: string;
+  dialogoTituloAntes: string;
+  dialogoTituloItalic: string;
+  dialogoTituloDepois: string;
   dialogoTexto: string;
   dialogoCta: string;
   // ── Nota pessoal ──
   notaPessoalLinha1: string;
   notaPessoalLinha2: string;
   notaPessoalAutor: string;
+  notaPessoalWhisper: string;
 };
 
 export const HOMEPAGE_DEFAULTS: HomepageConfig = {
@@ -471,11 +476,16 @@ export const HOMEPAGE_DEFAULTS: HomepageConfig = {
   contactosSubtexto: "cada frame,\numa decisão",
   salaHint: "Entra no escuro.",
   salaSubhint: "move o cursor para revelar",
+  dialogoWhisper: "escreve devagar · há uma conversa possível",
+  dialogoTituloAntes: "Se quiseres",
+  dialogoTituloItalic: "falar",
+  dialogoTituloDepois: ", escreve devagar.",
   dialogoTexto: "Não há tabelas nem pacotes. Apenas uma conversa, sobre uma imagem, um lugar, uma ideia — ou uma cópia em papel que queiras ter à parede.",
   dialogoCta: "Iniciar diálogo",
   notaPessoalLinha1: "Este sítio é o meu caderno aberto —",
   notaPessoalLinha2: "sem clientes, sem pressa, só atenção ao que insiste em ficar.",
   notaPessoalAutor: "L.R. · Coimbra",
+  notaPessoalWhisper: "este sítio tem camadas. como tudo o que vale a pena.",
 };
 
 const HOMEPAGE_JSON = path.join(process.cwd(), "homepage-config.json");
