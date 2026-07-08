@@ -81,7 +81,7 @@ const darkroomPool: { src: string; caption: string; location: string }[] = [
   { src: coimbraSkyline,   caption: "O horizonte que não se fecha",              location: "Coimbra · panorama"   },
 ];
 
-function DarkroomReveal() {
+function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [photo, setPhoto] = useState(darkroomPool[0]);
   useEffect(() => {
@@ -174,10 +174,10 @@ function DarkroomReveal() {
           § — Sala de revelação
         </p>
         <p className="font-display text-cream/30 text-2xl md:text-3xl">
-          Entra no escuro.
+          {hint}
         </p>
         <p className="font-mono-label text-white/15 text-[9px] uppercase tracking-[0.4em] mt-4">
-          move o cursor para revelar
+          {subhint}
         </p>
       </div>
 
@@ -392,9 +392,9 @@ function HomePage() {
           className="absolute top-24 inset-x-0 px-6 md:px-12 flex justify-between text-cream/70 text-[10px] tracking-[0.4em] uppercase"
           suppressHydrationWarning
         >
-          <span>N.º 001 · Vol. I</span>
-          <span className="hidden md:inline">40°12'N · 8°25'W</span>
-          <span>MMXXVI</span>
+          <span>{homepageTexts.heroVolumeLabel}</span>
+          <span className="hidden md:inline">{homepageTexts.heroCoordinatesLabel}</span>
+          <span>{homepageTexts.heroYearLabel}</span>
         </motion.div>
 
         {/* Headline */}
@@ -430,8 +430,8 @@ function HomePage() {
               {homepageTexts.heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/portfolio" className="btn-ghost-light">Fragmentos</Link>
-              <Link to="/diario" className="btn-copper">Ler diário</Link>
+              <Link to="/portfolio" className="btn-ghost-light">{homepageTexts.heroCta1}</Link>
+              <Link to="/diario" className="btn-copper">{homepageTexts.heroCta2}</Link>
             </div>
           </motion.div>
         </div>
@@ -443,7 +443,7 @@ function HomePage() {
           className="absolute bottom-6 left-1/2 -translate-x-1/2 text-cream/50 text-[10px] uppercase tracking-[0.5em]"
           suppressHydrationWarning
         >
-          desce devagar ↓
+          {homepageTexts.heroScrollHint}
         </motion.div>
       </section>
 
@@ -467,9 +467,9 @@ function HomePage() {
           <div className="md:col-span-5 order-2 md:order-1">
             <p className="font-mono-label text-copper mb-6">§ 02 — Autora</p>
             <h2 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[0.98]">
-              Nunca apenas<br />
-              <span className="font-italic-serif text-copper">tirar</span><br />
-              fotografias.
+              {homepageTexts.autoraTituloLine1}<br />
+              <span className="font-italic-serif text-copper">{homepageTexts.autoraTituloItalic}</span><br />
+              {homepageTexts.autoraTituloLine2}
             </h2>
             <div className="mt-10 space-y-5 text-foreground/75 max-w-md leading-relaxed">
               <p>{homepageTexts.autoraP1}</p>
@@ -489,9 +489,9 @@ function HomePage() {
             </div>
 
             <Link to="/sobre" className="mt-12 inline-block text-[11px] uppercase tracking-[0.32em] border-b border-foreground pb-1 hover:text-copper hover:border-copper transition-colors">
-              Conhecer a autora →
+              {homepageTexts.autoraLink}
             </Link>
-            <Whisper text="observação contínua · quatro séries abertas" delay={1.8} className="mt-8" />
+            <Whisper text={homepageTexts.autoraWhisper} delay={1.8} className="mt-8" />
           </div>
 
           <div className="md:col-span-7 order-1 md:order-2 relative">
@@ -509,15 +509,15 @@ function HomePage() {
             <div>
               <p className="font-mono-label text-copper mb-6">§ 03 — Fragmentos</p>
               <h2 className="font-display text-5xl md:text-7xl leading-[0.98]">
-                Quatro maneiras<br /><span className="font-italic-serif text-copper">de olhar</span>.
+                {homepageTexts.fragmentosTituloLine1}<br /><span className="font-italic-serif text-copper">{homepageTexts.fragmentosTituloItalic}</span>.
               </h2>
             </div>
             <div className="flex flex-col gap-4 md:items-end">
               <p className="max-w-sm text-foreground/70 text-sm leading-relaxed">
-                Urbanas, Natureza, Retratos, Iguarias. Quatro pastas abertas — nenhuma fechada.
+                {homepageTexts.fragmentosSubtitulo}
               </p>
               <Link to="/portfolio" className="font-mono-label text-[10px] uppercase tracking-[0.38em] text-foreground/40 hover:text-copper transition-colors duration-300">
-                Ver Fragmentos completo →
+                {homepageTexts.fragmentosLink}
               </Link>
             </div>
           </div>
@@ -590,12 +590,12 @@ function HomePage() {
       <Section className="px-6 md:px-12 py-24 md:py-32 bg-background">
         <div className="max-w-2xl mx-auto text-center">
           <p className="font-italic-serif text-2xl md:text-3xl text-foreground/55 leading-[1.6]">
-            "Às vezes passo dez minutos à frente de uma esquina que mais ninguém olhou duas vezes. Não procuro nada em especial. Só espero que a luz mude, que alguém passe, que alguma coisa aconteça."
+            "{homepageTexts.citacao}"
           </p>
-          <Whisper text="observação contínua · sem destino fixo" delay={1.6} className="mt-8 justify-center" />
+          <Whisper text={homepageTexts.citacaoWhisper} delay={1.6} className="mt-8 justify-center" />
           <p className="flex items-center justify-center gap-2.5 font-mono-label text-[9px] text-foreground/35 mt-10 lowercase tracking-[0.3em]">
             <BotanicalMark size={11} className="text-foreground/60" />
-            há mais do que aquilo que os olhos encontram à primeira vista.
+            {homepageTexts.citacaoFootnote}
             <BotanicalMark size={11} className="text-foreground/60" />
           </p>
         </div>
@@ -613,12 +613,12 @@ function HomePage() {
           <div>
             <p className="font-mono-label text-copper/70 mb-3 uppercase tracking-[0.38em]">§ — Contactos</p>
             <h2 className="font-display text-3xl md:text-5xl text-cream leading-[0.98]">
-              O arquivo em<br />
-              <span className="font-italic-serif text-copper">tira de filme</span>.
+              {homepageTexts.contactosTituloLine1}<br />
+              <span className="font-italic-serif text-copper">{homepageTexts.contactosTituloItalic}</span>.
             </h2>
           </div>
-          <p className="hidden md:block font-mono-label text-cream/25 text-[10px] uppercase tracking-[0.3em] max-w-[180px] text-right leading-relaxed">
-            cada frame,<br />uma decisão
+          <p className="hidden md:block font-mono-label text-cream/25 text-[10px] uppercase tracking-[0.3em] max-w-[180px] text-right leading-relaxed" style={{ whiteSpace: "pre-line" }}>
+            {homepageTexts.contactosSubtexto}
           </p>
         </motion.div>
 
@@ -680,7 +680,7 @@ function HomePage() {
       </section>
 
       {/* ============ SALA DE REVELAÇÃO ============ */}
-      <DarkroomReveal />
+      <DarkroomReveal hint={homepageTexts.salaHint} subhint={homepageTexts.salaSubhint} />
 
       {/* ============ DIÁRIO — última entrada em destaque ============ */}
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
@@ -742,10 +742,10 @@ function HomePage() {
             Se quiseres <span className="font-italic-serif text-copper">falar</span>,<br />escreve devagar.
           </h2>
           <p className="mt-10 text-foreground/70 max-w-xl mx-auto leading-relaxed">
-            Não há tabelas nem pacotes. Apenas uma conversa, sobre uma imagem, um lugar, uma ideia — ou uma cópia em papel que queiras ter à parede.
+            {homepageTexts.dialogoTexto}
           </p>
           <Link to="/contacto" className="mt-12 inline-block btn-copper">
-            Iniciar diálogo
+            {homepageTexts.dialogoCta}
           </Link>
         </div>
       </Section>
@@ -754,13 +754,12 @@ function HomePage() {
       <Section className="px-6 md:px-12 py-36 md:py-48 bg-cream">
         <div className="max-w-3xl mx-auto text-center relative">
           <p className="font-italic-serif text-5xl md:text-6xl text-foreground/75 leading-[1.2]">
-            "Este sítio é o meu<br />caderno aberto —
+            "{homepageTexts.notaPessoalLinha1}
           </p>
           <p className="font-display text-2xl md:text-3xl text-foreground/50 mt-6 leading-relaxed">
-            sem clientes, sem pressa,<br />
-            só atenção ao que insiste em ficar."
+            {homepageTexts.notaPessoalLinha2}"
           </p>
-          <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">L.R. · Coimbra</p>
+          <p className="font-mono-label text-foreground/30 mt-12 uppercase tracking-[0.4em]">{homepageTexts.notaPessoalAutor}</p>
           <p className="flex items-center justify-center gap-2.5 font-italic-serif text-sm text-foreground/50 mt-10 italic">
             <BotanicalMark size={12} className="text-foreground/65" />
             este sítio tem camadas. como tudo o que vale a pena.

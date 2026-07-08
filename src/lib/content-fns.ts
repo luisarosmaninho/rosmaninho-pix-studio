@@ -388,6 +388,7 @@ export const saveNotasPageTexts = createServerFn({ method: "POST" })
 // ── Homepage ──────────────────────────────────────────────────────────────────
 
 export type HomepageConfig = {
+  // ── Hero ──
   heroTagline: string;
   heroHeadlinePart1: string;
   heroHeadlineItalicWord: string;
@@ -395,9 +396,45 @@ export type HomepageConfig = {
   heroSubtitle: string;
   archiveWhisper: string;
   coordinatesWhisper: string;
+  heroVolumeLabel: string;
+  heroCoordinatesLabel: string;
+  heroYearLabel: string;
+  heroScrollHint: string;
+  heroCta1: string;
+  heroCta2: string;
+  // ── Manifesto ──
   manifestoText: string;
+  // ── Autora ──
+  autoraTituloLine1: string;
+  autoraTituloItalic: string;
+  autoraTituloLine2: string;
   autoraP1: string;
   autoraP2: string;
+  autoraWhisper: string;
+  autoraLink: string;
+  // ── Fragmentos ──
+  fragmentosTituloLine1: string;
+  fragmentosTituloItalic: string;
+  fragmentosSubtitulo: string;
+  fragmentosLink: string;
+  // ── Citação ──
+  citacao: string;
+  citacaoWhisper: string;
+  citacaoFootnote: string;
+  // ── Contactos (film strip) ──
+  contactosTituloLine1: string;
+  contactosTituloItalic: string;
+  contactosSubtexto: string;
+  // ── Sala de revelação ──
+  salaHint: string;
+  salaSubhint: string;
+  // ── Diálogo ──
+  dialogoTexto: string;
+  dialogoCta: string;
+  // ── Nota pessoal ──
+  notaPessoalLinha1: string;
+  notaPessoalLinha2: string;
+  notaPessoalAutor: string;
 };
 
 export const HOMEPAGE_DEFAULTS: HomepageConfig = {
@@ -408,9 +445,37 @@ export const HOMEPAGE_DEFAULTS: HomepageConfig = {
   heroSubtitle: "Um caderno aberto de imagens — ruas, paisagens, rostos e mesas — feito devagar, com câmara e palavra. Por Luísa Rosmaninho.",
   archiveWhisper: "arquivo lento · Coimbra · MMXX —",
   coordinatesWhisper: "40°12′N · 8°25′O",
+  heroVolumeLabel: "N.º 001 · Vol. I",
+  heroCoordinatesLabel: "40°12'N · 8°25'W",
+  heroYearLabel: "MMXXVI",
+  heroScrollHint: "desce devagar ↓",
+  heroCta1: "Fragmentos",
+  heroCta2: "Ler diário",
   manifestoText: "Não fotografo para mostrar — fotografo para demorar. Cada imagem é uma forma educada de pedir ao mundo que fique mais um momento.",
+  autoraTituloLine1: "Nunca apenas",
+  autoraTituloItalic: "tirar",
+  autoraTituloLine2: "fotografias.",
   autoraP1: "A fotografia tornou-se a minha forma de guardar emoções, ambientes e pequenos momentos que normalmente passam demasiado depressa.",
   autoraP2: "Procuro criar fotografias que pareçam verdadeiras. Naturais. Honestamente reais.",
+  autoraWhisper: "observação contínua · quatro séries abertas",
+  autoraLink: "Conhecer a autora →",
+  fragmentosTituloLine1: "Quatro maneiras",
+  fragmentosTituloItalic: "de olhar",
+  fragmentosSubtitulo: "Urbanas, Natureza, Retratos, Iguarias. Quatro pastas abertas — nenhuma fechada.",
+  fragmentosLink: "Ver Fragmentos completo →",
+  citacao: "Às vezes passo dez minutos à frente de uma esquina que mais ninguém olhou duas vezes. Não procuro nada em especial. Só espero que a luz mude, que alguém passe, que alguma coisa aconteça.",
+  citacaoWhisper: "observação contínua · sem destino fixo",
+  citacaoFootnote: "há mais do que aquilo que os olhos encontram à primeira vista.",
+  contactosTituloLine1: "O arquivo em",
+  contactosTituloItalic: "tira de filme",
+  contactosSubtexto: "cada frame,\numa decisão",
+  salaHint: "Entra no escuro.",
+  salaSubhint: "move o cursor para revelar",
+  dialogoTexto: "Não há tabelas nem pacotes. Apenas uma conversa, sobre uma imagem, um lugar, uma ideia — ou uma cópia em papel que queiras ter à parede.",
+  dialogoCta: "Iniciar diálogo",
+  notaPessoalLinha1: "Este sítio é o meu caderno aberto —",
+  notaPessoalLinha2: "sem clientes, sem pressa, só atenção ao que insiste em ficar.",
+  notaPessoalAutor: "L.R. · Coimbra",
 };
 
 const HOMEPAGE_JSON = path.join(process.cwd(), "homepage-config.json");

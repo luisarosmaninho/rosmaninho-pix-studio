@@ -16,7 +16,7 @@ import {
   getDiarioConfig, saveDiarioConfig,
   getRosemary, saveRosemary,
   gitCommitAndPush, getGitInfo,
-  type SobreConfig, type NewPhotoEntry, type HomepageConfig,
+  type SobreConfig, type NewPhotoEntry, type HomepageConfig, HOMEPAGE_DEFAULTS,
   type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
   type DiarioConfig, type RosemaryConfig, type GitInfo,
 } from "@/lib/content-fns";
@@ -1046,16 +1046,55 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
 // ── Homepage section ──────────────────────────────────────────────────────────
 
 function HomepageSection({ password, initial }: { password: string; initial: HomepageConfig }) {
-  const [tagline, setTagline] = useState(initial.heroTagline);
-  const [headline1, setHeadline1] = useState(initial.heroHeadlinePart1 ?? "Onde o tempo");
-  const [headlineItalic, setHeadlineItalic] = useState(initial.heroHeadlineItalicWord ?? "para");
-  const [headline2, setHeadline2] = useState(initial.heroHeadlinePart2 ?? ", e a emoção fica.");
-  const [subtitle, setSubtitle] = useState(initial.heroSubtitle);
-  const [archiveW, setArchiveW] = useState(initial.archiveWhisper ?? "arquivo lento · Coimbra · MMXX —");
-  const [coordsW, setCoordsW] = useState(initial.coordinatesWhisper ?? "40°12′N · 8°25′O");
-  const [manifesto, setManifesto] = useState(initial.manifestoText);
-  const [p1, setP1] = useState(initial.autoraP1);
-  const [p2, setP2] = useState(initial.autoraP2);
+  const D = HOMEPAGE_DEFAULTS;
+  // Hero
+  const [tagline, setTagline] = useState(initial.heroTagline ?? D.heroTagline);
+  const [headline1, setHeadline1] = useState(initial.heroHeadlinePart1 ?? D.heroHeadlinePart1);
+  const [headlineItalic, setHeadlineItalic] = useState(initial.heroHeadlineItalicWord ?? D.heroHeadlineItalicWord);
+  const [headline2, setHeadline2] = useState(initial.heroHeadlinePart2 ?? D.heroHeadlinePart2);
+  const [subtitle, setSubtitle] = useState(initial.heroSubtitle ?? D.heroSubtitle);
+  const [archiveW, setArchiveW] = useState(initial.archiveWhisper ?? D.archiveWhisper);
+  const [coordsW, setCoordsW] = useState(initial.coordinatesWhisper ?? D.coordinatesWhisper);
+  const [volumeLabel, setVolumeLabel] = useState(initial.heroVolumeLabel ?? D.heroVolumeLabel);
+  const [coordsLabel, setCoordsLabel] = useState(initial.heroCoordinatesLabel ?? D.heroCoordinatesLabel);
+  const [yearLabel, setYearLabel] = useState(initial.heroYearLabel ?? D.heroYearLabel);
+  const [scrollHint, setScrollHint] = useState(initial.heroScrollHint ?? D.heroScrollHint);
+  const [cta1, setCta1] = useState(initial.heroCta1 ?? D.heroCta1);
+  const [cta2, setCta2] = useState(initial.heroCta2 ?? D.heroCta2);
+  // Manifesto
+  const [manifesto, setManifesto] = useState(initial.manifestoText ?? D.manifestoText);
+  // Autora
+  const [autoraTL1, setAutoraTL1] = useState(initial.autoraTituloLine1 ?? D.autoraTituloLine1);
+  const [autoraTItalic, setAutoraTItalic] = useState(initial.autoraTituloItalic ?? D.autoraTituloItalic);
+  const [autoraTL2, setAutoraTL2] = useState(initial.autoraTituloLine2 ?? D.autoraTituloLine2);
+  const [p1, setP1] = useState(initial.autoraP1 ?? D.autoraP1);
+  const [p2, setP2] = useState(initial.autoraP2 ?? D.autoraP2);
+  const [autoraW, setAutoraW] = useState(initial.autoraWhisper ?? D.autoraWhisper);
+  const [autoraLink, setAutoraLink] = useState(initial.autoraLink ?? D.autoraLink);
+  // Fragmentos
+  const [fragTL1, setFragTL1] = useState(initial.fragmentosTituloLine1 ?? D.fragmentosTituloLine1);
+  const [fragTItalic, setFragTItalic] = useState(initial.fragmentosTituloItalic ?? D.fragmentosTituloItalic);
+  const [fragSub, setFragSub] = useState(initial.fragmentosSubtitulo ?? D.fragmentosSubtitulo);
+  const [fragLink, setFragLink] = useState(initial.fragmentosLink ?? D.fragmentosLink);
+  // Citação
+  const [citacao, setCitacao] = useState(initial.citacao ?? D.citacao);
+  const [citacaoW, setCitacaoW] = useState(initial.citacaoWhisper ?? D.citacaoWhisper);
+  const [citacaoFN, setCitacaoFN] = useState(initial.citacaoFootnote ?? D.citacaoFootnote);
+  // Contactos
+  const [contTL1, setContTL1] = useState(initial.contactosTituloLine1 ?? D.contactosTituloLine1);
+  const [contTItalic, setContTItalic] = useState(initial.contactosTituloItalic ?? D.contactosTituloItalic);
+  const [contSub, setContSub] = useState(initial.contactosSubtexto ?? D.contactosSubtexto);
+  // Sala de revelação
+  const [salaHint, setSalaHint] = useState(initial.salaHint ?? D.salaHint);
+  const [salaSubhint, setSalaSubhint] = useState(initial.salaSubhint ?? D.salaSubhint);
+  // Diálogo
+  const [dialogoTexto, setDialogoTexto] = useState(initial.dialogoTexto ?? D.dialogoTexto);
+  const [dialogoCta, setDialogoCta] = useState(initial.dialogoCta ?? D.dialogoCta);
+  // Nota pessoal
+  const [notaL1, setNotaL1] = useState(initial.notaPessoalLinha1 ?? D.notaPessoalLinha1);
+  const [notaL2, setNotaL2] = useState(initial.notaPessoalLinha2 ?? D.notaPessoalLinha2);
+  const [notaAutor, setNotaAutor] = useState(initial.notaPessoalAutor ?? D.notaPessoalAutor);
+
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Homepage");
   function save(id: string, payload: Partial<HomepageConfig>) {
     pub(id, () => saveHomepageTexts({ data: { password, ...payload } }));
@@ -1066,61 +1105,168 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Homepage" />
 
-      {/* Hero */}
+      {/* ── Hero ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial (homepage /)</p>
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial</p>
         <FreeBlock label="Tagline" hint="linha pequena acima do título · ex: 'Arquivo lento · Coimbra'"
           value={tagline} onChange={setTagline} rows={1} />
         <div className="border-t border-white/8 pt-4 space-y-3">
           <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Título grande</p>
           <FreeBlock label="Linha 1 (texto normal)" hint="ex: 'Onde o tempo'" value={headline1} onChange={setHeadline1} rows={1} />
-          <FreeBlock label="Palavra em itálico cobre" hint="ex: 'para' — aparece em itálico e cor cobre" value={headlineItalic} onChange={setHeadlineItalic} rows={1} />
+          <FreeBlock label="Palavra em itálico cobre" hint="ex: 'para'" value={headlineItalic} onChange={setHeadlineItalic} rows={1} />
           <FreeBlock label="Continuação" hint="ex: ', e a emoção fica.'" value={headline2} onChange={setHeadline2} rows={1} />
-        </div>
-        <div className="border-t border-white/8 pt-4 grid grid-cols-2 gap-4">
-          <FreeBlock label="Texto esq. (pequeno)" hint="ex: 'arquivo lento · Coimbra · MMXX —'" value={archiveW} onChange={setArchiveW} rows={1} />
-          <FreeBlock label="Coordenadas dir." hint="ex: '40°12′N · 8°25′O'" value={coordsW} onChange={setCoordsW} rows={1} />
         </div>
         <FreeBlock label="Subtítulo" hint="parágrafo abaixo do título grande"
           value={subtitle} onChange={(v) => { setSubtitle(v); setSaved(null); }} rows={3} />
+        <div className="border-t border-white/8 pt-4 space-y-3">
+          <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Metadados (barra superior do hero)</p>
+          <div className="grid grid-cols-3 gap-3">
+            <FreeBlock label="Esquerda" hint="ex: 'N.º 001 · Vol. I'" value={volumeLabel} onChange={setVolumeLabel} rows={1} />
+            <FreeBlock label="Centro" hint="ex: '40°12'N · 8°25'W'" value={coordsLabel} onChange={setCoordsLabel} rows={1} />
+            <FreeBlock label="Direita" hint="ex: 'MMXXVI'" value={yearLabel} onChange={setYearLabel} rows={1} />
+          </div>
+        </div>
+        <div className="border-t border-white/8 pt-4 space-y-3">
+          <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Whispers (manifesto)</p>
+          <div className="grid grid-cols-2 gap-3">
+            <FreeBlock label="Whisper esquerdo" hint="ex: 'arquivo lento · Coimbra · MMXX —'" value={archiveW} onChange={setArchiveW} rows={1} />
+            <FreeBlock label="Whisper direito" hint="ex: '40°12′N · 8°25′O'" value={coordsW} onChange={setCoordsW} rows={1} />
+          </div>
+        </div>
+        <div className="border-t border-white/8 pt-4 space-y-3">
+          <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Botões e dica de scroll</p>
+          <div className="grid grid-cols-2 gap-3">
+            <FreeBlock label="Botão 1 (fantasma)" hint="ex: 'Fragmentos'" value={cta1} onChange={setCta1} rows={1} />
+            <FreeBlock label="Botão 2 (cobre)" hint="ex: 'Ler diário'" value={cta2} onChange={setCta2} rows={1} />
+          </div>
+          <FreeBlock label="Dica de scroll" hint="ex: 'desce devagar ↓'" value={scrollHint} onChange={setScrollHint} rows={1} />
+        </div>
         <SaveRow id="hero" saving={saving} saved={saved} savedTime={savedTime}
-          onSave={() => save("hero", { heroTagline: tagline, heroSubtitle: subtitle, heroHeadlinePart1: headline1, heroHeadlineItalicWord: headlineItalic, heroHeadlinePart2: headline2, archiveWhisper: archiveW, coordinatesWhisper: coordsW })} />
+          onSave={() => save("hero", {
+            heroTagline: tagline, heroSubtitle: subtitle,
+            heroHeadlinePart1: headline1, heroHeadlineItalicWord: headlineItalic, heroHeadlinePart2: headline2,
+            archiveWhisper: archiveW, coordinatesWhisper: coordsW,
+            heroVolumeLabel: volumeLabel, heroCoordinatesLabel: coordsLabel, heroYearLabel: yearLabel,
+            heroScrollHint: scrollHint, heroCta1: cta1, heroCta2: cta2,
+          })} />
       </div>
 
-      {/* Manifesto */}
+      {/* ── Manifesto ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 01 — Manifesto</p>
-        <FreeBlock
-          label="Texto do manifesto"
-          hint="a frase grande que aparece logo a seguir ao hero"
-          value={manifesto}
-          onChange={(v) => { setManifesto(v); setSaved(null); }}
-          rows={5}
-          placeholder="Não fotografo para mostrar — fotografo para demorar…"
-        />
+        <FreeBlock label="Texto do manifesto" hint="frase grande após o hero"
+          value={manifesto} onChange={(v) => { setManifesto(v); setSaved(null); }} rows={5}
+          placeholder="Não fotografo para mostrar — fotografo para demorar…" />
         <SaveRow id="manifesto" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("manifesto", { manifestoText: manifesto })} />
       </div>
 
-      {/* Autora */}
+      {/* ── Autora ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 02 — Autora (bloco creme)</p>
-        <FreeBlock
-          label="Parágrafo 1"
-          value={p1}
-          onChange={(v) => { setP1(v); setSaved(null); }}
-          rows={3}
-          placeholder="A fotografia tornou-se a minha forma de guardar emoções…"
-        />
-        <FreeBlock
-          label="Parágrafo 2"
-          value={p2}
-          onChange={(v) => { setP2(v); setSaved(null); }}
-          rows={3}
-          placeholder="Procuro criar fotografias que pareçam verdadeiras…"
-        />
+        <div className="space-y-3">
+          <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Título da secção</p>
+          <div className="grid grid-cols-3 gap-3">
+            <FreeBlock label="Linha 1" hint="ex: 'Nunca apenas'" value={autoraTL1} onChange={setAutoraTL1} rows={1} />
+            <FreeBlock label="Palavra itálico cobre" hint="ex: 'tirar'" value={autoraTItalic} onChange={setAutoraTItalic} rows={1} />
+            <FreeBlock label="Linha 3" hint="ex: 'fotografias.'" value={autoraTL2} onChange={setAutoraTL2} rows={1} />
+          </div>
+        </div>
+        <FreeBlock label="Parágrafo 1" value={p1}
+          onChange={(v) => { setP1(v); setSaved(null); }} rows={3}
+          placeholder="A fotografia tornou-se a minha forma de guardar emoções…" />
+        <FreeBlock label="Parágrafo 2" value={p2}
+          onChange={(v) => { setP2(v); setSaved(null); }} rows={3}
+          placeholder="Procuro criar fotografias que pareçam verdadeiras…" />
+        <div className="grid grid-cols-2 gap-3">
+          <FreeBlock label="Whisper" hint="ex: 'observação contínua · quatro séries abertas'" value={autoraW} onChange={setAutoraW} rows={1} />
+          <FreeBlock label="Link 'Conhecer a autora'" hint="texto do link para /sobre" value={autoraLink} onChange={setAutoraLink} rows={1} />
+        </div>
         <SaveRow id="autora-home" saving={saving} saved={saved} savedTime={savedTime}
-          onSave={() => save("autora-home", { autoraP1: p1, autoraP2: p2 })} />
+          onSave={() => save("autora-home", {
+            autoraTituloLine1: autoraTL1, autoraTituloItalic: autoraTItalic, autoraTituloLine2: autoraTL2,
+            autoraP1: p1, autoraP2: p2, autoraWhisper: autoraW, autoraLink,
+          })} />
+      </div>
+
+      {/* ── Fragmentos ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 03 — Fragmentos (séries)</p>
+        <div className="grid grid-cols-2 gap-3">
+          <FreeBlock label="Título linha 1" hint="ex: 'Quatro maneiras'" value={fragTL1} onChange={setFragTL1} rows={1} />
+          <FreeBlock label="Itálico cobre" hint="ex: 'de olhar'" value={fragTItalic} onChange={setFragTItalic} rows={1} />
+        </div>
+        <FreeBlock label="Subtítulo" hint="linha descritiva das 4 séries" value={fragSub}
+          onChange={(v) => { setFragSub(v); setSaved(null); }} rows={2} />
+        <FreeBlock label="Link 'Ver Fragmentos'" hint="ex: 'Ver Fragmentos completo →'" value={fragLink} onChange={setFragLink} rows={1} />
+        <SaveRow id="fragmentos" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("fragmentos", {
+            fragmentosTituloLine1: fragTL1, fragmentosTituloItalic: fragTItalic,
+            fragmentosSubtitulo: fragSub, fragmentosLink: fragLink,
+          })} />
+      </div>
+
+      {/* ── Citação ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Citação (bloco central)</p>
+        <FreeBlock label="Citação" hint="frase em itálico grande no centro da página" value={citacao}
+          onChange={(v) => { setCitacao(v); setSaved(null); }} rows={4}
+          placeholder="Às vezes passo dez minutos à frente de uma esquina…" />
+        <FreeBlock label="Whisper" hint="ex: 'observação contínua · sem destino fixo'" value={citacaoW} onChange={setCitacaoW} rows={1} />
+        <FreeBlock label="Nota de rodapé" hint="linha pequena com botanical mark" value={citacaoFN} onChange={setCitacaoFN} rows={1} />
+        <SaveRow id="citacao" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("citacao", { citacao, citacaoWhisper: citacaoW, citacaoFootnote: citacaoFN })} />
+      </div>
+
+      {/* ── Contactos (film strip) ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ — Contactos (tira de filme)</p>
+        <div className="grid grid-cols-2 gap-3">
+          <FreeBlock label="Título linha 1" hint="ex: 'O arquivo em'" value={contTL1} onChange={setContTL1} rows={1} />
+          <FreeBlock label="Itálico cobre" hint="ex: 'tira de filme'" value={contTItalic} onChange={setContTItalic} rows={1} />
+        </div>
+        <FreeBlock label="Subtexto (lado direito)" hint="usa \\n para quebra de linha · ex: 'cada frame,\\numa decisão'"
+          value={contSub} onChange={setContSub} rows={2} />
+        <SaveRow id="contactos-strip" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("contactos-strip", {
+            contactosTituloLine1: contTL1, contactosTituloItalic: contTItalic, contactosSubtexto: contSub,
+          })} />
+      </div>
+
+      {/* ── Sala de revelação ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Sala de revelação (efeito torch)</p>
+        <div className="grid grid-cols-2 gap-3">
+          <FreeBlock label="Frase principal" hint="ex: 'Entra no escuro.'" value={salaHint} onChange={setSalaHint} rows={1} />
+          <FreeBlock label="Instrução (pequena)" hint="ex: 'move o cursor para revelar'" value={salaSubhint} onChange={setSalaSubhint} rows={1} />
+        </div>
+        <SaveRow id="sala" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("sala", { salaHint, salaSubhint })} />
+      </div>
+
+      {/* ── Diálogo ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 05 — Diálogo (secção de contacto)</p>
+        <FreeBlock label="Texto descritivo" hint="parágrafo abaixo do título 'Se quiseres falar'"
+          value={dialogoTexto} onChange={(v) => { setDialogoTexto(v); setSaved(null); }} rows={3}
+          placeholder="Não há tabelas nem pacotes…" />
+        <FreeBlock label="Texto do botão" hint="ex: 'Iniciar diálogo'" value={dialogoCta} onChange={setDialogoCta} rows={1} />
+        <SaveRow id="dialogo" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("dialogo", { dialogoTexto, dialogoCta })} />
+      </div>
+
+      {/* ── Nota pessoal ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Nota pessoal (bloco creme final)</p>
+        <FreeBlock label="Frase principal (itálico grande)" hint="ex: 'Este sítio é o meu caderno aberto —'"
+          value={notaL1} onChange={setNotaL1} rows={2} />
+        <FreeBlock label="Frase secundária (display menor)" hint="ex: 'sem clientes, sem pressa, só atenção ao que insiste em ficar.'"
+          value={notaL2} onChange={setNotaL2} rows={2} />
+        <FreeBlock label="Assinatura" hint="ex: 'L.R. · Coimbra'" value={notaAutor} onChange={setNotaAutor} rows={1} />
+        <SaveRow id="nota-pessoal" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("nota-pessoal", {
+            notaPessoalLinha1: notaL1, notaPessoalLinha2: notaL2, notaPessoalAutor: notaAutor,
+          })} />
       </div>
 
     </div>
