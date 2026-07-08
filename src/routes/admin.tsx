@@ -92,8 +92,6 @@ function PasswordGate({ onAuth }: { onAuth: (pw: string) => void }) {
           <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-white/30 mb-2">Rosmaninho Fotografia</p>
           <h1 className="text-white text-3xl font-light tracking-tight">Área reservada</h1>
         </div>
-        {/* Hidden username field — required by browsers for password-manager accessibility */}
-        <input type="text" autoComplete="username" aria-hidden="true" className="hidden" readOnly value="admin" tabIndex={-1} />
         <input
           type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(""); }}
           placeholder="Password" autoComplete="current-password" autoFocus disabled={loading}
