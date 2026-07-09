@@ -257,7 +257,7 @@ function ContactoPage() {
         {/* ── Coluna direita: imagem atmosférica ── */}
         <div className="relative hidden lg:block">
           <img
-            src={sunsetBeach}
+            src={texts.sidebarImage || sunsetBeach}
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
             loading="lazy"

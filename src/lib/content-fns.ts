@@ -274,6 +274,7 @@ export type ContactoConfig = {
   footerLine3: string;
   confirmTitle: string;
   confirmText: string;
+  sidebarImage: string;
 };
 
 export const CONTACTO_DEFAULTS: ContactoConfig = {
@@ -295,6 +296,7 @@ export const CONTACTO_DEFAULTS: ContactoConfig = {
   footerLine3: "escrever aqui não é a única forma de entrar.",
   confirmTitle: "Recebido.",
   confirmText: "Fica descansado — li com atenção. Volto a ti em breve, por email, sem pressa.",
+  sidebarImage: "",
 };
 
 const CONTACTO_JSON = path.join(process.cwd(), "contacto-config.json");
@@ -322,6 +324,10 @@ export type PortfolioPageConfig = {
   closingLine1: string;
   closingLine2: string;
   closingLine3: string;
+  coverUrbanas: string;
+  coverNatureza: string;
+  coverRetratos: string;
+  coverIguarias: string;
 };
 
 export const PORTFOLIO_PAGE_DEFAULTS: PortfolioPageConfig = {
@@ -330,6 +336,10 @@ export const PORTFOLIO_PAGE_DEFAULTS: PortfolioPageConfig = {
   closingLine1: "fotografias são apenas metade do arquivo.",
   closingLine2: "o que não está na imagem pode estar noutro sítio.",
   closingLine3: "há um lado deste arquivo que não se vê — escreve-se.",
+  coverUrbanas: "",
+  coverNatureza: "",
+  coverRetratos: "",
+  coverIguarias: "",
 };
 
 const PORTFOLIO_PAGE_JSON = path.join(process.cwd(), "portfolio-page-config.json");
@@ -407,8 +417,86 @@ export const saveChrome = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ── Image uploads ───────────────────────────────────────────────────────────
+// Uploaded images are saved as real files under public/uploads/ so they are
+// served statically in BOTH dev and production (Vite copies public/ into
+// dist/client/ at build time) and can be committed to git for durability. The
+// editing flow is: upload in the preview/workspace, then publish. Production's
+// filesystem is ephemeral, so uploads there are refused with a clear message.
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const ALLOWED_IMG_EXT: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+  "image/avif": ".avif",
+};
+
+// Identify the real image type from magic bytes. We never trust the
+// client-declared contentType for the extension we serve the file as.
+function sniffImageType(buf: Buffer): string | null {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (
+    buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47 &&
+    buf[4] === 0x0d && buf[5] === 0x0a && buf[6] === 0x1a && buf[7] === 0x0a
+  ) return "image/png";
+  if (buf.length >= 6) {
+    const g = buf.toString("ascii", 0, 6);
+    if (g === "GIF87a" || g === "GIF89a") return "image/gif";
+  }
+  if (buf.length >= 12 && buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP")
+    return "image/webp";
+  if (buf.length >= 24 && buf.toString("ascii", 4, 8) === "ftyp") {
+    const brands = buf.toString("ascii", 8, 24);
+    if (brands.includes("avif") || brands.includes("avis")) return "image/avif";
+  }
+  return null;
+}
+
+export const uploadSiteImage = createServerFn({ method: "POST" })
+  .validator(
+    (d: unknown) =>
+      d as { password: string; filename: string; contentType: string; dataBase64: string },
+  )
+  .handler(async ({ data }): Promise<{ url: string }> => {
+    checkPassword(data.password);
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "As imagens só podem ser carregadas na pré-visualização. Carrega aqui e depois publica o site para ficarem online.",
+      );
+    }
+    const b64 = typeof data.dataBase64 === "string" ? data.dataBase64 : "";
+    // Reject oversized payloads BEFORE decoding (base64 ≈ 1.37× the byte size).
+    if (b64.length > 15 * 1024 * 1024) throw new Error("Imagem demasiado grande (máx. 10 MB).");
+    const buf = Buffer.from(b64, "base64");
+    if (buf.length === 0) throw new Error("Ficheiro vazio.");
+    if (buf.length > 10 * 1024 * 1024) throw new Error("Imagem demasiado grande (máx. 10 MB).");
+    // Trust the file's magic bytes, not the client-declared MIME type.
+    const sniffed = sniffImageType(buf);
+    if (!sniffed) throw new Error("Ficheiro não é uma imagem válida (JPG, PNG, WebP, GIF ou AVIF).");
+    const ext = ALLOWED_IMG_EXT[sniffed];
+    const base =
+      (data.filename || "imagem")
+        .replace(/\.[^.]+$/, "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 40) || "imagem";
+    const name = `${base}-${Date.now()}${ext}`;
+    await fs.promises.mkdir(UPLOAD_DIR, { recursive: true });
+    await fs.promises.writeFile(path.join(UPLOAD_DIR, name), buf);
+    return { url: `/uploads/${name}` };
+  });
+
 export type HomepageConfig = {
   // ── Hero ──
+  heroImage: string;
+  // ── Imagens editáveis ──
+  autoraImage: string;
+  darkroomImages: string[];
+  filmFramesImages: string[];
   heroTagline: string;
   heroHeadlinePart1: string;
   heroHeadlineItalicWord: string;
@@ -463,6 +551,10 @@ export type HomepageConfig = {
 };
 
 export const HOMEPAGE_DEFAULTS: HomepageConfig = {
+  heroImage: "",
+  autoraImage: "",
+  darkroomImages: [],
+  filmFramesImages: [],
   heroTagline: "Arquivo lento · Coimbra",
   heroHeadlinePart1: "Onde o tempo",
   heroHeadlineItalicWord: "para",
@@ -542,6 +634,11 @@ export type SobreConfig = {
   ritmos: { quando: string; recurso: string }[];
   cartografiaVisitadas: { cidade: string; nota: string }[];
   cartografiaSonhadas: { cidade: string; nota: string }[];
+  aberturaImage: string;
+  comecoImage: string;
+  detalheImage: string;
+  intermediaImage1: string;
+  intermediaImage2: string;
 };
 
 export const SOBRE_DEFAULTS: SobreConfig = {
@@ -593,6 +690,11 @@ export const SOBRE_DEFAULTS: SobreConfig = {
     { cidade: "Bruges.", nota: "Canais, reflexos, pedra antiga. Uma cidade que parece existir fora do tempo." },
     { cidade: "Verona.", nota: "Arena, ruelas, a luz de Itália que é diferente de todas as outras." },
   ],
+  aberturaImage: "",
+  comecoImage: "",
+  detalheImage: "",
+  intermediaImage1: "",
+  intermediaImage2: "",
 };
 
 const SOBRE_JSON = path.join(process.cwd(), "sobre-config.json");
@@ -926,7 +1028,7 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
     const baseTreeSha: string = commitMeta.tree.sha;
 
     // Create blobs for every JSON config file that exists on disk.
-    const { readFileSync } = await import("fs");
+    const { readFileSync, readdirSync } = await import("fs");
     const { join } = await import("path");
     const cwd = process.cwd();
     const filenames = getConfigFilenames();
@@ -942,6 +1044,23 @@ export const gitCommitAndPush = createServerFn({ method: "POST" })
       });
       treeItems.push({ path: filename, mode: "100644", type: "blob", sha: blob.sha });
     }
+
+    // Also publish uploaded image binaries so the /uploads/... URLs referenced
+    // by the config actually exist in the repo. Append-only: base_tree preserves
+    // everything else, and re-sending an unchanged file yields the same blob sha
+    // (no diff), so this is safe to run on every publish.
+    try {
+      const uploadsRel = "public/uploads";
+      for (const ent of readdirSync(join(cwd, uploadsRel), { withFileTypes: true })) {
+        if (!ent.isFile() || ent.name.startsWith(".")) continue;
+        const bin = readFileSync(join(cwd, uploadsRel, ent.name));
+        const blob = await gh("POST", "/git/blobs", {
+          content: bin.toString("base64"),
+          encoding: "base64",
+        });
+        treeItems.push({ path: `${uploadsRel}/${ent.name}`, mode: "100644", type: "blob", sha: blob.sha });
+      }
+    } catch { /* uploads dir may not exist yet — nothing to publish */ }
 
     if (treeItems.length === 0) {
       return { ok: true, message: "Nada para publicar.", commitHash: headSha.slice(0, 7), commitMessage: msg };

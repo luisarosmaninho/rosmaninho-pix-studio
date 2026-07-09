@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState, useMemo, useEffect, createContext, useContext, type ReactNode } from "react";
+import { useState, useMemo, useEffect, useRef, createContext, useContext, type ReactNode } from "react";
 import { photos as staticPhotos, categories as staticCategories, type Photo, type CategorySlug } from "@/lib/photos";
 import { getPhotoConfig, savePhotoConfig, verifyAdminPassword } from "@/lib/photo-config-fns";
 import { getNesteMomento, saveNesteMomento } from "@/lib/momento-fns";
@@ -16,6 +16,7 @@ import {
   getDiarioConfig, saveDiarioConfig,
   getRosemary, saveRosemary,
   getChrome, saveChrome,
+  uploadSiteImage,
   gitCommitAndPush, getGitInfo,
   type SobreConfig, type NewPhotoEntry, type HomepageConfig, HOMEPAGE_DEFAULTS,
   type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
@@ -25,6 +26,28 @@ import {
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
 import type { Category } from "@/lib/photos";
+import { fileToUploadPayload } from "@/lib/image-upload-client";
+import portoStreet from "@/assets/porto-street.jpg";
+import sunsetBeach from "@/assets/sunset-beach.jpg";
+import retratoSol from "@/assets/retrato-sol.jpg";
+import cafeMatcha from "@/assets/cafe-matcha.jpg";
+import villageAlley from "@/assets/village-alley.jpg";
+import coimbraSkyline from "@/assets/coimbra-skyline.jpg";
+import arcoCoimbra from "@/assets/arco-coimbra.jpg";
+import ribeiroMusgo from "@/assets/ribeiro-musgo.jpg";
+import risottoCourgette from "@/assets/risotto-courgette.jpg";
+import portoRibeira from "@/assets/porto-ribeira.jpg";
+import farolPeniche from "@/assets/farol-peniche.jpg";
+import retratoEsplanada from "@/assets/retrato-esplanada.jpg";
+import mondegoFigura from "@/assets/mondego-figura.jpg";
+import portoRuaCalcada from "@/assets/porto-rua-calcada.jpg";
+import barcoDouro from "@/assets/barco-douro.jpg";
+import portoAzulejos from "@/assets/porto-azulejos.jpg";
+import marTetrapodos from "@/assets/mar-tetrapodos.jpg";
+
+// Default preview assets for the homepage collages (order matches index.tsx)
+const DARKROOM_DEFAULTS = [mondegoFigura, portoRibeira, farolPeniche, arcoCoimbra, retratoSol, ribeiroMusgo, retratoEsplanada, coimbraSkyline];
+const FILMFRAME_DEFAULTS = [arcoCoimbra, retratoSol, ribeiroMusgo, risottoCourgette, portoRibeira, farolPeniche, retratoEsplanada, cafeMatcha];
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
@@ -152,6 +175,82 @@ function SelectField({ label, value, onChange, options }: {
         className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-sm outline-none focus:border-white/30 transition-colors">
         {options.map((o) => <option key={o.value} value={o.value} className="bg-[#1a1a18]">{o.label}</option>)}
       </select>
+    </div>
+  );
+}
+
+function ImageField({ label, hint, value, defaultPreview, onChange, password }: {
+  label: string;
+  hint?: string;
+  value: string;
+  defaultPreview?: string;
+  onChange: (url: string) => void;
+  password: string;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const preview = value || defaultPreview || "";
+
+  async function handleFile(file: File) {
+    setErr(null);
+    setBusy(true);
+    try {
+      const payload = await fileToUploadPayload(file);
+      const res = await uploadSiteImage({ data: { password, ...payload } });
+      onChange(res.url);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Erro ao carregar a imagem.");
+    } finally {
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/30">{label}</p>
+      {hint && <p className="font-mono text-[9px] text-white/20">{hint}</p>}
+      <div className="flex items-start gap-4">
+        <div className="w-28 h-28 shrink-0 bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center">
+          {preview
+            ? <img src={preview} alt="" className="w-full h-full object-cover" />
+            : <span className="font-mono text-[8px] text-white/25 text-center px-1">sem imagem</span>}
+        </div>
+        <div className="flex-1 space-y-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={busy}
+              className="px-3 py-2 text-xs bg-white/10 border border-white/15 text-white hover:bg-white/15 transition-colors disabled:opacity-50"
+            >
+              {busy ? "A carregar…" : "Carregar imagem"}
+            </button>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                disabled={busy}
+                className="px-3 py-2 text-xs text-white/40 border border-white/10 hover:text-white/70 transition-colors"
+              >
+                Repor original
+              </button>
+            )}
+          </div>
+          <p className="font-mono text-[8px] text-white/20">
+            {value ? "A usar imagem carregada." : "A usar a imagem original do site."}
+          </p>
+          {err && <p className="text-red-400 text-xs">{err}</p>}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1052,6 +1151,15 @@ function NotasSection({ password, initial }: { password: string; initial: Nota[]
 function HomepageSection({ password, initial }: { password: string; initial: HomepageConfig }) {
   const D = HOMEPAGE_DEFAULTS;
   // Hero
+  const [heroImage, setHeroImage] = useState(initial.heroImage ?? D.heroImage);
+  // Imagens editáveis
+  const [autoraImage, setAutoraImage] = useState(initial.autoraImage ?? D.autoraImage);
+  const [darkroomImages, setDarkroomImages] = useState<string[]>(
+    () => DARKROOM_DEFAULTS.map((_, i) => initial.darkroomImages?.[i] ?? "")
+  );
+  const [filmFramesImages, setFilmFramesImages] = useState<string[]>(
+    () => FILMFRAME_DEFAULTS.map((_, i) => initial.filmFramesImages?.[i] ?? "")
+  );
   const [tagline, setTagline] = useState(initial.heroTagline ?? D.heroTagline);
   const [headline1, setHeadline1] = useState(initial.heroHeadlinePart1 ?? D.heroHeadlinePart1);
   const [headlineItalic, setHeadlineItalic] = useState(initial.heroHeadlineItalicWord ?? D.heroHeadlineItalicWord);
@@ -1117,6 +1225,9 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
       {/* ── Hero ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Hero — secção inicial</p>
+        <ImageField label="Imagem de fundo (hero)" hint="a fotografia grande no topo da página inicial"
+          value={heroImage} defaultPreview={portoStreet}
+          onChange={(v) => { setHeroImage(v); setSaved(null); }} password={password} />
         <FreeBlock label="Tagline" hint="linha pequena acima do título · ex: 'Arquivo lento · Coimbra'"
           value={tagline} onChange={setTagline} rows={1} />
         <div className="border-t border-white/8 pt-4 space-y-3">
@@ -1152,6 +1263,7 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
         </div>
         <SaveRow id="hero" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("hero", {
+            heroImage,
             heroTagline: tagline, heroSubtitle: subtitle,
             heroHeadlinePart1: headline1, heroHeadlineItalicWord: headlineItalic, heroHeadlinePart2: headline2,
             archiveWhisper: archiveW, coordinatesWhisper: coordsW,
@@ -1173,6 +1285,9 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
       {/* ── Autora ── */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">§ 02 — Autora (bloco creme)</p>
+        <ImageField label="Retrato da autora" hint="a fotografia grande ao lado do texto da autora"
+          value={autoraImage} defaultPreview={villageAlley}
+          onChange={(v) => { setAutoraImage(v); setSaved(null); }} password={password} />
         <div className="space-y-3">
           <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Título da secção</p>
           <div className="grid grid-cols-3 gap-3">
@@ -1193,6 +1308,7 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
         </div>
         <SaveRow id="autora-home" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("autora-home", {
+            autoraImage,
             autoraTituloLine1: autoraTL1, autoraTituloItalic: autoraTItalic, autoraTituloLine2: autoraTL2,
             autoraP1: p1, autoraP2: p2, autoraWhisper: autoraW, autoraLink,
           })} />
@@ -1251,6 +1367,38 @@ function HomepageSection({ password, initial }: { password: string; initial: Hom
         </div>
         <SaveRow id="sala" saving={saving} saved={saved} savedTime={savedTime}
           onSave={() => save("sala", { salaHint, salaSubhint })} />
+      </div>
+
+      {/* ── Galeria da câmara escura ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Galeria da câmara escura (8 imagens)</p>
+        <p className="font-mono text-[9px] text-white/20 -mt-3">uma destas aparece aleatoriamente na secção da sala de revelação</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {DARKROOM_DEFAULTS.map((def, i) => (
+            <ImageField key={i} label={`Imagem ${i + 1}`}
+              value={darkroomImages[i] ?? ""} defaultPreview={def}
+              onChange={(v) => { setDarkroomImages((prev) => { const a = [...prev]; a[i] = v; return a; }); setSaved(null); }}
+              password={password} />
+          ))}
+        </div>
+        <SaveRow id="darkroom-imgs" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("darkroom-imgs", { darkroomImages })} />
+      </div>
+
+      {/* ── Galeria da tira de filme ── */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Galeria da tira de filme (8 imagens)</p>
+        <p className="font-mono text-[9px] text-white/20 -mt-3">a tira de filme horizontal com lightbox, na secção Contactos</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {FILMFRAME_DEFAULTS.map((def, i) => (
+            <ImageField key={i} label={`Frame ${i + 1}`}
+              value={filmFramesImages[i] ?? ""} defaultPreview={def}
+              onChange={(v) => { setFilmFramesImages((prev) => { const a = [...prev]; a[i] = v; return a; }); setSaved(null); }}
+              password={password} />
+          ))}
+        </div>
+        <SaveRow id="filmframes-imgs" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("filmframes-imgs", { filmFramesImages })} />
       </div>
 
       {/* ── Diálogo ── */}
@@ -1416,6 +1564,12 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
   const [visitadas, setVisitadas] = useState(initial.cartografiaVisitadas);
   const [sonhadas, setSonhadas] = useState(initial.cartografiaSonhadas);
 
+  const [aberturaImage, setAberturaImage] = useState(initial.aberturaImage ?? "");
+  const [comecoImage, setComecoImage] = useState(initial.comecoImage ?? "");
+  const [detalheImage, setDetalheImage] = useState(initial.detalheImage ?? "");
+  const [intermediaImage1, setIntermediaImage1] = useState(initial.intermediaImage1 ?? "");
+  const [intermediaImage2, setIntermediaImage2] = useState(initial.intermediaImage2 ?? "");
+
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Autora");
   function save(id: string, payload: Partial<SobreConfig>) {
     pub(id, () => saveSobreTexts({ data: { password, ...payload } }));
@@ -1425,6 +1579,30 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
     <PubProvider>
     <div className="max-w-3xl space-y-8">
       <SectionHeader label="Página da Autora" />
+
+      {/* Imagens da página */}
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Imagens da página (5 imagens)</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ImageField label="Imagem de abertura" hint="a fotografia larga no topo, após a introdução"
+            value={aberturaImage} defaultPreview={portoRuaCalcada}
+            onChange={(v) => { setAberturaImage(v); setSaved(null); }} password={password} />
+          <ImageField label="Imagem — § 01 O começo" hint="a fotografia vertical ao lado do texto"
+            value={comecoImage} defaultPreview={farolPeniche}
+            onChange={(v) => { setComecoImage(v); setSaved(null); }} password={password} />
+          <ImageField label="Imagem — § 03 O detalhe" hint="a fotografia na secção escura"
+            value={detalheImage} defaultPreview={barcoDouro}
+            onChange={(v) => { setDetalheImage(v); setSaved(null); }} password={password} />
+          <ImageField label="Imagem intermédia (esquerda)"
+            value={intermediaImage1} defaultPreview={portoAzulejos}
+            onChange={(v) => { setIntermediaImage1(v); setSaved(null); }} password={password} />
+          <ImageField label="Imagem intermédia (direita)"
+            value={intermediaImage2} defaultPreview={marTetrapodos}
+            onChange={(v) => { setIntermediaImage2(v); setSaved(null); }} password={password} />
+        </div>
+        <SaveRow id="imagens-sobre" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("imagens-sobre", { aberturaImage, comecoImage, detalheImage, intermediaImage1, intermediaImage2 })} />
+      </div>
 
       {/* Intro */}
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1807,6 +1985,7 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
   const [footerLine3, setFooterLine3] = useState(initial.footerLine3);
   const [confirmTitle, setConfirmTitle] = useState(initial.confirmTitle);
   const [confirmText, setConfirmText] = useState(initial.confirmText);
+  const [sidebarImage, setSidebarImage] = useState(initial.sidebarImage ?? "");
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Contacto");
   function save(id: string, payload: Partial<ContactoConfig>) {
     pub(id, () => saveContactoTexts({ data: { password, ...payload } }));
@@ -1848,8 +2027,11 @@ function ContactoSection({ password, initial }: { password: string; initial: Con
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
         <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Coluna direita (imagem)</p>
+        <ImageField label="Imagem atmosférica (coluna direita)" hint="a fotografia grande ao lado do formulário"
+          value={sidebarImage} defaultPreview={sunsetBeach}
+          onChange={(v) => { setSidebarImage(v); setSaved(null); }} password={password} />
         <FreeBlock label="Frase na imagem" value={sidebarQuote} onChange={(v) => { setSidebarQuote(v); setSaved(null); }} rows={2} />
-        <SaveRow id="sidebar" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("sidebar", { sidebarQuote })} />
+        <SaveRow id="sidebar" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("sidebar", { sidebarImage, sidebarQuote })} />
       </div>
 
       <div className="bg-white/4 border border-white/6 p-6 space-y-5">
@@ -1879,6 +2061,10 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
   const [closingLine1, setClosingLine1] = useState(initial.closingLine1);
   const [closingLine2, setClosingLine2] = useState(initial.closingLine2);
   const [closingLine3, setClosingLine3] = useState(initial.closingLine3);
+  const [coverUrbanas, setCoverUrbanas] = useState(initial.coverUrbanas ?? "");
+  const [coverNatureza, setCoverNatureza] = useState(initial.coverNatureza ?? "");
+  const [coverRetratos, setCoverRetratos] = useState(initial.coverRetratos ?? "");
+  const [coverIguarias, setCoverIguarias] = useState(initial.coverIguarias ?? "");
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Portfolio");
   function save(id: string, payload: Partial<PortfolioPageConfig>) {
     pub(id, () => savePortfolioPageTexts({ data: { password, ...payload } }));
@@ -1905,6 +2091,23 @@ function PortfolioPageSection({ password, initial }: { password: string; initial
         <FreeBlock label="Linha 2 (mono, pequeno)" value={closingLine2} onChange={(v) => { setClosingLine2(v); setSaved(null); }} rows={1} />
         <FreeBlock label="Linha 3 (itálico)" value={closingLine3} onChange={(v) => { setClosingLine3(v); setSaved(null); }} rows={1} />
         <SaveRow id="closing" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("closing", { closingLine1, closingLine2, closingLine3 })} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Capas das séries (4 imagens)</p>
+        <p className="font-mono text-[9px] text-white/20 -mt-3">a fotografia de capa de cada série na página /portfolio</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ImageField label="Capa — Urbanas" value={coverUrbanas} defaultPreview={portoStreet}
+            onChange={(v) => { setCoverUrbanas(v); setSaved(null); }} password={password} />
+          <ImageField label="Capa — Natureza" value={coverNatureza} defaultPreview={sunsetBeach}
+            onChange={(v) => { setCoverNatureza(v); setSaved(null); }} password={password} />
+          <ImageField label="Capa — Retratos" value={coverRetratos} defaultPreview={retratoSol}
+            onChange={(v) => { setCoverRetratos(v); setSaved(null); }} password={password} />
+          <ImageField label="Capa — Iguarias" value={coverIguarias} defaultPreview={cafeMatcha}
+            onChange={(v) => { setCoverIguarias(v); setSaved(null); }} password={password} />
+        </div>
+        <SaveRow id="covers" saving={saving} saved={saved} savedTime={savedTime}
+          onSave={() => save("covers", { coverUrbanas, coverNatureza, coverRetratos, coverIguarias })} />
       </div>
     </div>
     </PubProvider>

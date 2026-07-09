@@ -49,9 +49,8 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" as const } },
 };
 
-function SeriesBlock({ cat, index, count, visits }: { cat: Category; index: number; count: number; visits: number }) {
+function SeriesBlock({ cat, index, count, visits, cover }: { cat: Category; index: number; count: number; visits: number; cover: string }) {
   const isEven = index % 2 === 0;
-  const cover = coverPhotos[cat.slug];
   const romanIdx = ["I", "II", "III", "IV"][index] ?? String(index + 1);
 
   return (
@@ -118,10 +117,17 @@ function SeriesBlock({ cat, index, count, visits }: { cat: Category; index: numb
 
 function FragmentosPage() {
   const { categories, visitCounts, pageTexts } = Route.useLoaderData();
+  const coverOverrides: Record<string, string> = {
+    urbanas: pageTexts.coverUrbanas,
+    natureza: pageTexts.coverNatureza,
+    retratos: pageTexts.coverRetratos,
+    iguarias: pageTexts.coverIguarias,
+  };
   const seriesData = categories.map((cat) => ({
     cat,
     count: photosByCategory(cat.slug).length,
     visits: visitCounts[cat.slug] ?? 0,
+    cover: coverOverrides[cat.slug] || coverPhotos[cat.slug],
   }));
 
   return (
@@ -159,8 +165,8 @@ function FragmentosPage() {
       </header>
 
       <main>
-        {seriesData.map(({ cat, count, visits }, i) => (
-          <SeriesBlock key={cat.slug} cat={cat} index={i} count={count} visits={visits} />
+        {seriesData.map(({ cat, count, visits, cover }, i) => (
+          <SeriesBlock key={cat.slug} cat={cat} index={i} count={count} visits={visits} cover={cover} />
         ))}
       </main>
 

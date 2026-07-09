@@ -85,12 +85,14 @@ const darkroomPool: { src: string; caption: string; location: string }[] = [
   { src: coimbraSkyline,   caption: "O horizonte que não se fecha",              location: "Coimbra · panorama"   },
 ];
 
-function DarkroomReveal({ hint, subhint }: { hint: string; subhint: string }) {
+function DarkroomReveal({ hint, subhint, images }: { hint: string; subhint: string; images?: string[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
-  const [photo, setPhoto] = useState(darkroomPool[0]);
+  const pool = darkroomPool.map((p, i) => ({ ...p, src: images?.[i] || p.src }));
+  const [photo, setPhoto] = useState(pool[0]);
   useEffect(() => {
-    setPhoto(darkroomPool[Math.floor(Math.random() * darkroomPool.length)]);
+    setPhoto(pool[Math.floor(Math.random() * pool.length)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [pos, setPos] = useState({ x: -999, y: -999 });
   const [active, setActive] = useState(false);
@@ -240,13 +242,14 @@ function SprocketColumn() {
   );
 }
 
-function FilmLightbox({ index, onClose, onPrev, onNext }: {
+function FilmLightbox({ index, frames, onClose, onPrev, onNext }: {
   index: number;
+  frames: typeof filmFrames;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
 }) {
-  const frame = filmFrames[index];
+  const frame = frames[index];
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -353,7 +356,7 @@ function FilmLightbox({ index, onClose, onPrev, onNext }: {
         <div>
           <p className="font-display text-cream text-lg md:text-2xl leading-tight">{frame.title}</p>
           <p className="font-mono-label text-white/25 text-[9px] uppercase tracking-[0.35em] mt-1">
-            {index + 1} / {filmFrames.length}
+            {index + 1} / {frames.length}
           </p>
         </div>
         <div className="flex items-center gap-8">
@@ -379,10 +382,12 @@ function HomePage() {
   const { momento, homepageTexts } = Route.useLoaderData();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  const frames = filmFrames.map((f, i) => ({ ...f, src: homepageTexts.filmFramesImages?.[i] || f.src }));
+
   function openLightbox(i: number) { setLightboxIndex(i); }
   function closeLightbox() { setLightboxIndex(null); }
-  function prevFrame() { setLightboxIndex((i) => i === null ? null : (i - 1 + filmFrames.length) % filmFrames.length); }
-  function nextFrame() { setLightboxIndex((i) => i === null ? null : (i + 1) % filmFrames.length); }
+  function prevFrame() { setLightboxIndex((i) => i === null ? null : (i - 1 + frames.length) % frames.length); }
+  function nextFrame() { setLightboxIndex((i) => i === null ? null : (i + 1) % frames.length); }
 
   const latestEntry = journal[0];
 
@@ -393,7 +398,7 @@ function HomePage() {
       {/* ============ HERO — editorial, oversized ============ */}
       <section className="relative min-h-screen w-full overflow-hidden bg-foreground">
         <motion.img
-          src={portoStreet}
+          src={homepageTexts.heroImage || portoStreet}
           alt="Rosmaninho Fotografia"
           className="absolute inset-0 h-full w-full object-cover opacity-80"
           initial={{ scale: 1.15 }}
@@ -516,7 +521,7 @@ function HomePage() {
 
           <div className="md:col-span-7 order-1 md:order-2 relative">
             <div className="hover-zoom warm-tone aspect-[4/5] relative">
-              <img src={villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+              <img src={homepageTexts.autoraImage || villageAlley} alt="Luísa Rosmaninho" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             </div>
           </div>
         </div>
@@ -661,7 +666,7 @@ function HomePage() {
             className="flex gap-2 px-3 overflow-x-auto scrollbar-none pt-9 pb-9"
             style={{ scrollbarWidth: "none" }}
           >
-            {filmFrames.map((frame, i) => (
+            {frames.map((frame, i) => (
               <button
                 key={i}
                 onClick={() => openLightbox(i)}
@@ -701,7 +706,7 @@ function HomePage() {
       </section>
 
       {/* ============ SALA DE REVELAÇÃO ============ */}
-      <DarkroomReveal hint={homepageTexts.salaHint} subhint={homepageTexts.salaSubhint} />
+      <DarkroomReveal hint={homepageTexts.salaHint} subhint={homepageTexts.salaSubhint} images={homepageTexts.darkroomImages} />
 
       {/* ============ DIÁRIO — última entrada em destaque ============ */}
       <Section className="px-6 md:px-12 py-28 md:py-40 bg-foreground text-cream">
@@ -795,6 +800,7 @@ function HomePage() {
         {lightboxIndex !== null && (
           <FilmLightbox
             index={lightboxIndex}
+            frames={frames}
             onClose={closeLightbox}
             onPrev={prevFrame}
             onNext={nextFrame}

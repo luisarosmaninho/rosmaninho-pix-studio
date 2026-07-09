@@ -130,6 +130,7 @@ export default defineConfig({
         "**/notas-page-config.json",
         "**/diario-config.json",
         "**/rosemary-config.json",
+        "**/public/uploads/**",
       ],
     },
   },

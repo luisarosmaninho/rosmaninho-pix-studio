@@ -101,7 +101,7 @@ function SobrePage() {
       {/* ── Imagem de abertura ── */}
       <Fade className="px-6 md:px-12 max-w-6xl mx-auto">
         <div className="hover-zoom relative aspect-[16/9] overflow-hidden">
-          <img src={portoRuaCalcada} alt="Rua ao entardecer, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+          <img src={sobreTexts.aberturaImage || portoRuaCalcada} alt="Rua ao entardecer, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">Porto · Fev 2026</div>
         </div>
       </Fade>
@@ -120,7 +120,7 @@ function SobrePage() {
       <section className="px-6 md:px-12 py-28 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
         <Fade className="md:col-span-5 md:sticky md:top-36">
           <div className="hover-zoom relative aspect-[3/4] overflow-hidden">
-            <img src={farolPeniche} alt="Farol da fortaleza, Figueira da Foz" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            <img src={sobreTexts.comecoImage || farolPeniche} alt="Farol da fortaleza, Figueira da Foz" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
           <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Figueira da Foz · Mai 2026</p>
         </Fade>
@@ -163,7 +163,7 @@ function SobrePage() {
           </Fade>
           <Fade delay={0.2} className="md:col-span-6">
             <div className="hover-zoom relative aspect-[4/5] overflow-hidden">
-              <img src={barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+              <img src={sobreTexts.detalheImage || barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             </div>
             <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Porto · Fev 2026</p>
           </Fade>
@@ -193,12 +193,12 @@ function SobrePage() {
       <div className="px-6 md:px-12 max-w-6xl mx-auto grid grid-cols-2 gap-px bg-foreground/10 mb-0">
         <Fade>
           <div className="hover-zoom relative aspect-[4/3] overflow-hidden">
-            <img src={portoAzulejos} alt="Esquina de azulejo, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            <img src={sobreTexts.intermediaImage1 || portoAzulejos} alt="Esquina de azulejo, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
         </Fade>
         <Fade delay={0.1}>
           <div className="hover-zoom relative aspect-[4/3] overflow-hidden">
-            <img src={marTetrapodos} alt="Linha de costa, Peniche" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            <img src={sobreTexts.intermediaImage2 || marTetrapodos} alt="Linha de costa, Peniche" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
         </Fade>
       </div>
