@@ -4,7 +4,7 @@ import { BotanicalMark } from "@/components/BotanicalMark";
 import { motion, AnimatePresence } from "framer-motion";
 import { isNightInPortugal, getSunTimes } from "@/lib/sun";
 import Lenis from "lenis";
-import logo from "@/assets/logo-rosmaninho.png";
+import logoLuisa from "@/assets/logo-luisa-rosmaninho.png";
 
 /* ── Informação solar ─────────────────────────────────────────────────────── */
 interface SunInfo {
@@ -253,33 +253,26 @@ export function LoadingScreen() {
   if (!mounted || done) return null;
   return (
     <div
-      className="loader-screen fixed inset-0 z-[100] flex flex-col items-center justify-center"
-      style={{ backgroundColor: "oklch(0.14 0.030 38)" }}
+      className="loader-screen fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
+      style={{ backgroundColor: "#171916" }}
     >
-      <motion.img
-        src={logo}
-        alt="Rosmaninho"
-        className="w-24 h-24 object-contain opacity-90"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 0.95, scale: 1 }}
-        transition={{ duration: 1 }}
+      {/* Fundo derivado da própria assinatura — preenche qualquer proporção de ecrã sem margens visíveis */}
+      <img
+        src={logoLuisa}
+        aria-hidden="true"
+        draggable={false}
+        className="absolute inset-0 h-full w-full scale-125 object-cover blur-3xl pointer-events-none select-none"
       />
-      <motion.p
-        className="mt-8 font-italic-serif text-4xl text-copper"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.4 }}
-      >
-        Rosmaninho
-      </motion.p>
-      <motion.span
-        className="mt-3 text-[10px] uppercase tracking-[0.5em] text-cream/50"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.8 }}
-      >
-        Fotografia · Arquivo lento
-      </motion.span>
+      {/* Assinatura nítida por cima do fundo esbatido (funde-se sem rectângulo) */}
+      <motion.img
+        src={logoLuisa}
+        alt="Luísa Rosmaninho · Fotografia"
+        draggable={false}
+        className="relative h-auto w-[92vw] max-w-[1000px] object-contain select-none"
+        initial={{ opacity: 0, scale: 1.03 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.3, ease: "easeOut" }}
+      />
     </div>
   );
 }
