@@ -37,6 +37,7 @@ const KEY_TO_JSON: Record<string, string> = {
   photo_config:    "photos-config.json",   // used by photo-config-fns.ts
   diario_config:   "diario-config.json",
   rosemary:        "rosemary-config.json",
+  chrome:          "chrome-config.json",
 };
 
 function jsonFilePath(key: string): string | null {

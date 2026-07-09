@@ -9,7 +9,8 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SmoothScroll, CustomCursor, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener } from "@/components/SiteChrome";
+import { SmoothScroll, CustomCursor, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener, ChromeProvider } from "@/components/SiteChrome";
+import { getChrome } from "@/lib/content-fns";
 import { THEME_SCRIPT } from "@/lib/sun";
 
 // ── Dados estruturados (JSON-LD) — indexação em motores de busca ──────────────
@@ -147,6 +148,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600&display=swap" },
     ],
   }),
+  loader: async () => ({ chrome: await getChrome() }),
+  // Chrome (menu/rodapé) muda raramente — evita reler a BD em cada navegação.
+  // `router.invalidate()` no admin continua a forçar refetch após guardar.
+  staleTime: 5 * 60 * 1000,
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -170,16 +175,19 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { chrome } = Route.useLoaderData();
   return (
     <QueryClientProvider client={queryClient}>
-      <NightMode />
-      <RosemaryListener />
-      <SmoothScroll />
-      <CustomCursor />
-      <GrainOverlay />
-      <ScrollProgress />
-      <BackToTop />
-      <Outlet />
+      <ChromeProvider value={chrome}>
+        <NightMode />
+        <RosemaryListener />
+        <SmoothScroll />
+        <CustomCursor />
+        <GrainOverlay />
+        <ScrollProgress />
+        <BackToTop />
+        <Outlet />
+      </ChromeProvider>
     </QueryClientProvider>
   );
 }

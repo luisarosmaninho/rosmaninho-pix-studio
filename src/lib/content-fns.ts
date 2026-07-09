@@ -9,6 +9,7 @@ import { journal as staticJournal } from "./journal";
 import type { JournalEntry } from "./journal";
 import { notas as staticNotas } from "./notas";
 import type { Nota } from "./notas";
+import { CHROME_DEFAULTS, type ChromeConfig } from "./chrome-config";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -386,6 +387,25 @@ export const saveNotasPageTexts = createServerFn({ method: "POST" })
   });
 
 // ── Homepage ──────────────────────────────────────────────────────────────────
+
+export type { ChromeConfig } from "./chrome-config";
+
+const CHROME_JSON = path.join(process.cwd(), "chrome-config.json");
+
+export const getChrome = createServerFn({ method: "GET" }).handler(async (): Promise<ChromeConfig> => {
+  const saved = await cfg<Partial<ChromeConfig>>("chrome", CHROME_JSON, {});
+  return { ...CHROME_DEFAULTS, ...saved };
+});
+
+export const saveChrome = createServerFn({ method: "POST" })
+  .validator((d: unknown) => d as { password: string } & Partial<ChromeConfig>)
+  .handler(async ({ data }) => {
+    const { password, ...rest } = data;
+    checkPassword(password);
+    const current = await cfg<Partial<ChromeConfig>>("chrome", CHROME_JSON, {});
+    await writeConfig("chrome", { ...current, ...rest });
+    return { ok: true };
+  });
 
 export type HomepageConfig = {
   // ── Hero ──

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, createContext, useContext, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BotanicalMark } from "@/components/BotanicalMark";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,6 +6,18 @@ import { isNightInPortugal, getSunTimes } from "@/lib/sun";
 import Lenis from "lenis";
 import logoHeaderLight from "@/assets/logo-header-light.png";
 import logoHeaderDark from "@/assets/logo-header-dark.png";
+import { type ChromeConfig, CHROME_DEFAULTS } from "@/lib/chrome-config";
+
+/* ── Config global (menu + rodapé) via contexto ───────────────────────────────
+   Alimentado pelo loader da rota raiz (__root). Fallback nos defaults para que
+   qualquer componente que use SiteNav/SiteFooter funcione mesmo sem provider. */
+const ChromeContext = createContext<ChromeConfig>(CHROME_DEFAULTS);
+export function ChromeProvider({ value, children }: { value: ChromeConfig; children: ReactNode }) {
+  return <ChromeContext.Provider value={value}>{children}</ChromeContext.Provider>;
+}
+export function useChrome(): ChromeConfig {
+  return useContext(ChromeContext);
+}
 
 /* ── Informação solar ─────────────────────────────────────────────────────── */
 interface SunInfo {
@@ -246,12 +258,12 @@ export function PageFade({ children }: { children: React.ReactNode }) {
 }
 
 const navLinks = [
-  { to: "/", label: "Início", exact: true },
-  { to: "/sobre", label: "Autora" },
-  { to: "/portfolio", label: "Fragmentos" },
-  { to: "/diario", label: "Diário" },
-  { to: "/notas", label: "Notas" },
-  { to: "/contacto", label: "Diálogo" },
+  { to: "/", labelKey: "navInicio", exact: true },
+  { to: "/sobre", labelKey: "navAutora" },
+  { to: "/portfolio", labelKey: "navFragmentos" },
+  { to: "/diario", labelKey: "navDiario" },
+  { to: "/notas", labelKey: "navNotas" },
+  { to: "/contacto", labelKey: "navDialogo" },
 ] as const;
 
 /* ---------------- Navigation ---------------- */
@@ -259,6 +271,7 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const sunInfo = useSunInfo();
+  const chrome = useChrome();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -411,12 +424,12 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
                 className="link-underline hover:text-copper transition-colors"
                 style={{ color: "inherit" }}
               >
-                {l.label}
+                {chrome[l.labelKey]}
               </Link>
             ))}
             <div className="relative group/ig hidden md:block">
               <a
-                href="https://instagram.com/luisarosmanih"
+                href={`https://instagram.com/${chrome.instagramHandle}`}
                 target="_blank"
                 rel="noreferrer"
                 className="opacity-65 hover:opacity-100 hover:text-copper transition-all duration-300 block"
@@ -456,10 +469,10 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
                     Instagram
                   </p>
                   <p className="font-mono-label text-cream/75 text-[10px] tracking-[0.2em]">
-                    @luisarosmanih
+                    @{chrome.instagramHandle}
                   </p>
                   <p className="font-mono-label text-cream/22 text-[7.5px] tracking-[0.22em] mt-3">
-                    Coimbra · Portugal
+                    {chrome.locationLine}
                   </p>
                 </div>
               </div>
@@ -504,17 +517,17 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
                     onClick={() => setMenuOpen(false)}
                     className="font-display text-5xl text-cream hover:text-copper transition-colors duration-300 block py-2"
                   >
-                    {l.label}
+                    {chrome[l.labelKey]}
                   </Link>
                 </motion.div>
               ))}
             </nav>
             <div className="mt-16 pt-8 border-t border-cream/15 flex flex-col gap-3">
-              <a href="mailto:ola@rosmaninhofotografia.pt" className="font-mono-label text-cream/50 hover:text-copper transition-colors">
-                ola@rosmaninhofotografia.pt
+              <a href={`mailto:${chrome.email}`} className="font-mono-label text-cream/50 hover:text-copper transition-colors">
+                {chrome.email}
               </a>
-              <a href="https://instagram.com/luisarosmanih" target="_blank" rel="noreferrer" className="font-mono-label text-cream/50 hover:text-copper transition-colors">
-                @luisarosmanih
+              <a href={`https://instagram.com/${chrome.instagramHandle}`} target="_blank" rel="noreferrer" className="font-mono-label text-cream/50 hover:text-copper transition-colors">
+                @{chrome.instagramHandle}
               </a>
             </div>
           </motion.div>
@@ -535,50 +548,51 @@ function ClientYear() {
 
 /* ---------------- Footer ---------------- */
 export function SiteFooter() {
+  const chrome = useChrome();
   return (
     <footer className="bg-foreground text-cream px-6 md:px-12 pt-28 pb-10">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-16 border-b border-cream/15">
           <div className="md:col-span-6 flex flex-col gap-6">
-            <span className="font-italic-serif text-6xl md:text-7xl text-copper leading-none">Rosmaninho</span>
+            <span className="font-italic-serif text-6xl md:text-7xl text-copper leading-none">{chrome.footerBrand}</span>
             <p className="text-sm leading-relaxed text-cream/65 max-w-md">
-              Um arquivo lento de imagens e notas — urbanas, natureza, retratos e iguarias. Feito devagar, em Coimbra.
+              {chrome.footerDescription}
             </p>
-            <p className="font-mono-label text-cream/40">est. 2020 · Coimbra · Portugal</p>
+            <p className="font-mono-label text-cream/40">{chrome.footerEst}</p>
           </div>
 
           <div className="md:col-span-3 flex flex-col gap-3 text-sm">
-            <p className="font-mono-label text-cream/40 mb-3">Navegação</p>
-            <Link to="/" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Início</Link>
-            <Link to="/sobre" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Autora</Link>
-            <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Fragmentos</Link>
-            <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diário</Link>
-            <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Notas de Campo</Link>
-            <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>Diálogo</Link>
+            <p className="font-mono-label text-cream/40 mb-3">{chrome.footerNavHeading}</p>
+            <Link to="/" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkInicio}</Link>
+            <Link to="/sobre" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkAutora}</Link>
+            <Link to="/portfolio" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkFragmentos}</Link>
+            <Link to="/diario" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkDiario}</Link>
+            <Link to="/notas" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkNotas}</Link>
+            <Link to="/contacto" className="hover:text-copper transition-colors" style={{ color: "inherit" }}>{chrome.footerLinkDialogo}</Link>
           </div>
 
           <div className="md:col-span-3 flex flex-col gap-3 text-sm">
-            <p className="font-mono-label text-cream/40 mb-3">Contacto</p>
-            <a href="mailto:ola@rosmaninhofotografia.pt" className="hover:text-copper transition-colors">ola@rosmaninhofotografia.pt</a>
-            <a href="https://instagram.com/luisarosmanih" target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">Instagram · @luisarosmanih</a>
+            <p className="font-mono-label text-cream/40 mb-3">{chrome.footerContactHeading}</p>
+            <a href={`mailto:${chrome.email}`} className="hover:text-copper transition-colors">{chrome.email}</a>
+            <a href={`https://instagram.com/${chrome.instagramHandle}`} target="_blank" rel="noreferrer" className="hover:text-copper transition-colors">Instagram · @{chrome.instagramHandle}</a>
           </div>
         </div>
 
         <div className="mt-8 flex flex-col md:flex-row justify-between gap-3 text-[10px] tracking-[0.32em] uppercase text-cream/40">
-          <p>© <ClientYear /> Rosmaninho Fotografia</p>
-          <p>Feito com luz, café e paciência</p>
+          <p>© <ClientYear /> {chrome.footerCopyright}</p>
+          <p>{chrome.footerTagline}</p>
         </div>
         <p className="mt-6 text-[9px] tracking-[0.18em] text-cream/30 italic font-italic-serif lowercase text-center">
-          rosmarinus officinalis · a planta que dá nome a tudo isto.
+          {chrome.footerBotanical}
         </p>
         <p className="mt-5 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
           <BotanicalMark size={12} className="text-copper/70" />
-          algumas entradas não estão no menu. estão escondidas no nome.
+          {chrome.footerSecret1}
           <BotanicalMark size={12} className="text-copper/70" />
         </p>
         <p className="mt-4 flex items-center justify-center gap-2.5 text-[9px] tracking-[0.18em] text-cream/35 font-mono-label lowercase">
           <BotanicalMark size={12} className="text-copper/70" />
-          este arquivo tem uma sala que não aparece na navegação.
+          {chrome.footerSecret2}
           <BotanicalMark size={12} className="text-copper/70" />
         </p>
       </div>

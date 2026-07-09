@@ -15,10 +15,12 @@ import {
   getNotasPageTexts, saveNotasPageTexts,
   getDiarioConfig, saveDiarioConfig,
   getRosemary, saveRosemary,
+  getChrome, saveChrome,
   gitCommitAndPush, getGitInfo,
   type SobreConfig, type NewPhotoEntry, type HomepageConfig, HOMEPAGE_DEFAULTS,
   type ContactoConfig, type PortfolioPageConfig, type NotasPageConfig,
   type DiarioConfig, type RosemaryConfig, type GitInfo,
+  type ChromeConfig,
 } from "@/lib/content-fns";
 import type { Nota } from "@/lib/notas";
 import type { JournalEntry } from "@/lib/journal";
@@ -27,7 +29,7 @@ import type { Category } from "@/lib/photos";
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Rosmaninho Fotografia" }] }),
   loader: async () => {
-    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig] = await Promise.all([
+    const [config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig, chromeConfig] = await Promise.all([
       getPhotoConfig(),
       getNesteMomento(),
       getCategories(),
@@ -43,13 +45,14 @@ export const Route = createFileRoute("/admin")({
       getNotasPageTexts(),
       getDiarioConfig(),
       getRosemary(),
+      getChrome(),
     ]);
-    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig };
+    return { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig, chromeConfig };
   },
   component: AdminPage,
 });
 
-type TabId = "homepage" | "momento" | "autora" | "contacto" | "portfolio" | "series" | "caderno" | "notas" | "fotos" | "ordem" | "caderno-intro" | "rosemary" | "github";
+type TabId = "homepage" | "momento" | "autora" | "contacto" | "portfolio" | "series" | "caderno" | "notas" | "fotos" | "ordem" | "caderno-intro" | "rosemary" | "global" | "github";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "homepage", label: "Homepage" },
@@ -64,6 +67,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "fotos", label: "Fotos" },
   { id: "ordem", label: "Ordem" },
   { id: "rosemary", label: "§ Interior" },
+  { id: "global", label: "Menu & Rodapé" },
   { id: "github", label: "↑ GitHub" },
 ];
 
@@ -2042,6 +2046,78 @@ function RosemaryAdminSection({ password, initial }: { password: string; initial
 
 // ── GitHub section ────────────────────────────────────────────────────────────
 
+// ── Menu & Rodapé (global) section ──────────────────────────────────────────
+function ChromeSection({ password, initial }: { password: string; initial: ChromeConfig }) {
+  const [c, setC] = useState<ChromeConfig>(initial);
+  const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Global");
+  const upd = (k: keyof ChromeConfig) => (v: string) => { setC((p) => ({ ...p, [k]: v })); setSaved(null); };
+  function save(id: string, keys: (keyof ChromeConfig)[]) {
+    const payload = Object.fromEntries(keys.map((k) => [k, c[k]])) as Partial<ChromeConfig>;
+    pub(id, () => saveChrome({ data: { password, ...payload } }));
+  }
+
+  return (
+    <PubProvider>
+    <div className="max-w-3xl space-y-8">
+      <SectionHeader label="Menu & Rodapé — textos partilhados" />
+      <p className="font-mono text-[9px] text-white/25 leading-relaxed -mt-4">
+        Estes textos aparecem em todas as páginas: o menu do topo e o rodapé. O e-mail e o Instagram são usados em vários sítios ao mesmo tempo — mudas aqui uma vez e muda em todo o lado.
+      </p>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Menu (topo)</p>
+        <FreeBlock label="Início" value={c.navInicio} onChange={upd("navInicio")} rows={1} />
+        <FreeBlock label="Autora" value={c.navAutora} onChange={upd("navAutora")} rows={1} />
+        <FreeBlock label="Fragmentos" value={c.navFragmentos} onChange={upd("navFragmentos")} rows={1} />
+        <FreeBlock label="Diário" value={c.navDiario} onChange={upd("navDiario")} rows={1} />
+        <FreeBlock label="Notas" value={c.navNotas} onChange={upd("navNotas")} rows={1} />
+        <FreeBlock label="Diálogo" value={c.navDialogo} onChange={upd("navDialogo")} rows={1} />
+        <SaveRow id="menu" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("menu", ["navInicio", "navAutora", "navFragmentos", "navDiario", "navNotas", "navDialogo"])} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Contactos & redes</p>
+        <FreeBlock label="E-mail" hint="usado no menu e no rodapé" value={c.email} onChange={upd("email")} rows={1} />
+        <FreeBlock label="Instagram (sem @)" hint="ex: luisarosmanih" value={c.instagramHandle} onChange={upd("instagramHandle")} rows={1} />
+        <FreeBlock label="Localização (balão do Instagram)" value={c.locationLine} onChange={upd("locationLine")} rows={1} />
+        <SaveRow id="contact" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("contact", ["email", "instagramHandle", "locationLine"])} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rodapé — bloco principal</p>
+        <FreeBlock label="Nome grande (cor cobre)" value={c.footerBrand} onChange={upd("footerBrand")} rows={1} />
+        <FreeBlock label="Descrição" value={c.footerDescription} onChange={upd("footerDescription")} rows={3} />
+        <FreeBlock label="Linha 'est.'" value={c.footerEst} onChange={upd("footerEst")} rows={1} />
+        <SaveRow id="footermain" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("footermain", ["footerBrand", "footerDescription", "footerEst"])} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rodapé — coluna de navegação</p>
+        <FreeBlock label="Título da coluna" value={c.footerNavHeading} onChange={upd("footerNavHeading")} rows={1} />
+        <FreeBlock label="Ligação 1 (Início)" value={c.footerLinkInicio} onChange={upd("footerLinkInicio")} rows={1} />
+        <FreeBlock label="Ligação 2 (Autora)" value={c.footerLinkAutora} onChange={upd("footerLinkAutora")} rows={1} />
+        <FreeBlock label="Ligação 3 (Fragmentos)" value={c.footerLinkFragmentos} onChange={upd("footerLinkFragmentos")} rows={1} />
+        <FreeBlock label="Ligação 4 (Diário)" value={c.footerLinkDiario} onChange={upd("footerLinkDiario")} rows={1} />
+        <FreeBlock label="Ligação 5 (Notas de Campo)" value={c.footerLinkNotas} onChange={upd("footerLinkNotas")} rows={1} />
+        <FreeBlock label="Ligação 6 (Diálogo)" value={c.footerLinkDialogo} onChange={upd("footerLinkDialogo")} rows={1} />
+        <SaveRow id="footernav" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("footernav", ["footerNavHeading", "footerLinkInicio", "footerLinkAutora", "footerLinkFragmentos", "footerLinkDiario", "footerLinkNotas", "footerLinkDialogo"])} />
+      </div>
+
+      <div className="bg-white/4 border border-white/6 p-6 space-y-5">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">Rodapé — contacto & fundo</p>
+        <FreeBlock label="Título 'Contacto'" value={c.footerContactHeading} onChange={upd("footerContactHeading")} rows={1} />
+        <FreeBlock label="Direitos de autor (depois do ©)" value={c.footerCopyright} onChange={upd("footerCopyright")} rows={1} />
+        <FreeBlock label="Frase pequena (à direita)" value={c.footerTagline} onChange={upd("footerTagline")} rows={1} />
+        <FreeBlock label="Linha botânica (itálico)" value={c.footerBotanical} onChange={upd("footerBotanical")} rows={2} />
+        <FreeBlock label="Pista secreta 1" hint="convite discreto às páginas escondidas" value={c.footerSecret1} onChange={upd("footerSecret1")} rows={2} />
+        <FreeBlock label="Pista secreta 2" value={c.footerSecret2} onChange={upd("footerSecret2")} rows={2} />
+        <SaveRow id="footerbottom" saving={saving} saved={saved} savedTime={savedTime} onSave={() => save("footerbottom", ["footerContactHeading", "footerCopyright", "footerTagline", "footerBotanical", "footerSecret1", "footerSecret2"])} />
+      </div>
+    </div>
+    </PubProvider>
+  );
+}
+
 function GitHubSection({ password }: { password: string }) {
   const [message, setMessage] = useState("");
   const [pushStatus, setPushStatus] = useState<"idle" | "pushing" | "ok" | "error">("idle");
@@ -2193,7 +2269,7 @@ function GitHubSection({ password }: { password: string }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function AdminPage() {
-  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig } = Route.useLoaderData();
+  const { config, momento, categories, photosWithMeta, newPhotos, journalEntries, newJournalEntries, notasList, sobreTexts, homepageTexts, contactoTexts, portfolioPageTexts, notasPageTexts, diarioConfig, rosemaryConfig, chromeConfig } = Route.useLoaderData();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState<TabId>("momento");
@@ -2252,6 +2328,7 @@ function AdminPage() {
         {tab === "ordem" && <OrdemSection password={password} initialConfig={config} />}
         {tab === "caderno-intro" && <DiarioIntroSection password={password} initial={diarioConfig} />}
         {tab === "rosemary" && <RosemaryAdminSection password={password} initial={rosemaryConfig} />}
+        {tab === "global" && <ChromeSection password={password} initial={chromeConfig} />}
         {tab === "github" && <GitHubSection password={password} />}
       </div>
     </div>
