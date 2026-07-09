@@ -100,6 +100,19 @@ export async function ensureSchema(): Promise<void> {
           updated_at TIMESTAMPTZ DEFAULT NOW()
         )
       `);
+      // Uploaded site images live in the DB so they are durable on the live
+      // (autoscale) site — its filesystem is ephemeral, so files written to
+      // public/uploads/ at runtime would vanish on the next restart. Serving
+      // images from the DB means an upload in the admin is instantly online
+      // with no redeploy.
+      await getPool().query(`
+        CREATE TABLE IF NOT EXISTS site_images (
+          name TEXT PRIMARY KEY,
+          content_type TEXT NOT NULL,
+          data BYTEA NOT NULL,
+          updated_at TIMESTAMPTZ DEFAULT NOW()
+        )
+      `);
       schemaInitialized = true;
     } catch (err) {
       // Reset so the next call can retry
@@ -157,6 +170,51 @@ export async function writeConfig(key: string, value: unknown): Promise<void> {
     // Content is safe; DB will sync on next successful write.
     console.warn(`[db] writeConfig("${key}") DB write failed (JSON saved):`, err);
   }
+}
+
+// ── Image storage ─────────────────────────────────────────────────────────────
+// Uploaded images are stored in the DB (see the site_images table in
+// ensureSchema). This keeps them durable on the live autoscale site and served
+// instantly after an admin upload — no redeploy required.
+
+/** True when a Postgres database is configured (DATABASE_URL present). */
+export function hasDb(): boolean {
+  return HAS_DB;
+}
+
+/** Store (or replace) an uploaded image's bytes in the database. */
+export async function saveImageToDb(
+  name: string,
+  contentType: string,
+  data: Buffer,
+): Promise<void> {
+  await ensureSchema();
+  await getPool().query(
+    `INSERT INTO site_images (name, content_type, data, updated_at)
+     VALUES ($1, $2, $3, NOW())
+     ON CONFLICT (name) DO UPDATE
+       SET content_type = EXCLUDED.content_type,
+           data = EXCLUDED.data,
+           updated_at = EXCLUDED.updated_at`,
+    [name, contentType, data],
+  );
+}
+
+/** Read an uploaded image's bytes from the database, or null if not found. */
+export async function readImageFromDb(
+  name: string,
+): Promise<{ contentType: string; data: Buffer } | null> {
+  if (!HAS_DB) return null;
+  await ensureSchema();
+  const result = await getPool().query<{ content_type: string; data: Buffer }>(
+    "SELECT content_type, data FROM site_images WHERE name = $1",
+    [name],
+  );
+  // A genuine miss → null (caller returns 404). DB/query errors are NOT
+  // swallowed: they propagate so /media can surface a 500 instead of a
+  // misleading 404 during an outage.
+  if (result.rows.length === 0) return null;
+  return { contentType: result.rows[0].content_type, data: result.rows[0].data };
 }
 
 // ── File ↔ key index ─────────────────────────────────────────────────────────

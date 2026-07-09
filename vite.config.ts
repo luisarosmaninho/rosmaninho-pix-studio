@@ -83,6 +83,47 @@ ${items}
 </rss>`;
 }
 
+// Serve DB-stored uploaded images at /media/<name> during development.
+// (In production the identical path is handled inside src/server.ts.)
+function mediaDevPlugin(): Plugin {
+  return {
+    name: "media-dev",
+    configureServer(server) {
+      server.middlewares.use("/media", async (req, res) => {
+        try {
+          const rel = (req.url ?? "").split("?")[0].replace(/^\/+/, "");
+          const name = decodeURIComponent(rel);
+          if (!name || name.includes("/") || name.includes("..")) {
+            res.statusCode = 404;
+            res.end("Not found");
+            return;
+          }
+          const db = (await server.ssrLoadModule("/src/lib/db.ts")) as {
+            readImageFromDb: (
+              n: string,
+            ) => Promise<{ contentType: string; data: Buffer } | null>;
+          };
+          const img = await db.readImageFromDb(name);
+          if (!img) {
+            res.statusCode = 404;
+            res.end("Not found");
+            return;
+          }
+          res.statusCode = 200;
+          res.setHeader("Content-Type", img.contentType);
+          res.setHeader("Content-Length", String(img.data.length));
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          res.end(img.data);
+        } catch (err) {
+          console.error("[media-dev] error:", err);
+          res.statusCode = 500;
+          res.end("Media error: " + String(err));
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig({
   resolve: {
     // Guarantee a single React instance across all packages — prevents
@@ -97,6 +138,7 @@ export default defineConfig({
   },
   plugins: [
     rssDevPlugin(),
+    mediaDevPlugin(),
     tsConfigPaths({ ignoreConfigErrors: true }),
     tailwindcss(),
     tanstackStart({

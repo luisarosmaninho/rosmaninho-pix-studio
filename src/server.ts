@@ -159,6 +159,36 @@ async function handleRss(): Promise<Response> {
   }
 }
 
+// ── Site images (stored in the DB) ──────────────────────────────────────────────
+// Uploaded images are kept in the database so they survive on the live autoscale
+// site (whose filesystem is ephemeral). We serve them here in production; a Vite
+// middleware handles the identical path in development. Names are unique per
+// upload, so the response can be cached immutably.
+async function handleMedia(pathname: string): Promise<Response> {
+  try {
+    const name = decodeURIComponent(pathname.slice("/media/".length));
+    if (!name || name.includes("/") || name.includes("..")) {
+      return new Response("Not found", { status: 404 });
+    }
+    const { readImageFromDb } = await import("./lib/db");
+    const img = await readImageFromDb(name);
+    if (!img) return new Response("Not found", { status: 404 });
+    // Wrap in a fresh Uint8Array: @types/node's Buffer isn't accepted as a
+    // Response BodyInit under this TS config, but a Uint8Array is.
+    return new Response(new Uint8Array(img.data), {
+      status: 200,
+      headers: {
+        "Content-Type": img.contentType,
+        "Content-Length": String(img.data.length),
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch (err) {
+    console.error("Media serving error:", err);
+    return new Response("Media unavailable", { status: 500 });
+  }
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default {
@@ -167,6 +197,10 @@ export default {
 
     if (url.pathname === "/api/rss") {
       return handleRss();
+    }
+
+    if (url.pathname.startsWith("/media/")) {
+      return handleMedia(url.pathname);
     }
 
     try {

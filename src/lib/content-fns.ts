@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
-import { readConfig, writeConfig, syncDbToJson, getConfigFilenames } from "./db";
+import { readConfig, writeConfig, syncDbToJson, getConfigFilenames, saveImageToDb, hasDb } from "./db";
 import { checkAdminPassword as checkPassword } from "./admin-auth";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
@@ -460,11 +460,6 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<{ url: string }> => {
     checkPassword(data.password);
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "As imagens só podem ser carregadas na pré-visualização. Carrega aqui e depois publica o site para ficarem online.",
-      );
-    }
     const b64 = typeof data.dataBase64 === "string" ? data.dataBase64 : "";
     // Reject oversized payloads BEFORE decoding (base64 ≈ 1.37× the byte size).
     if (b64.length > 15 * 1024 * 1024) throw new Error("Imagem demasiado grande (máx. 10 MB).");
@@ -474,7 +469,6 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
     // Trust the file's magic bytes, not the client-declared MIME type.
     const sniffed = sniffImageType(buf);
     if (!sniffed) throw new Error("Ficheiro não é uma imagem válida (JPG, PNG, WebP, GIF ou AVIF).");
-    const ext = ALLOWED_IMG_EXT[sniffed];
     const base =
       (data.filename || "imagem")
         .replace(/\.[^.]+$/, "")
@@ -484,7 +478,23 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "")
         .slice(0, 40) || "imagem";
-    const name = `${base}-${Date.now()}${ext}`;
+    const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    // Preferred path: store the image in the database. This is durable on the
+    // live (autoscale) site — whose filesystem is wiped on every restart — so
+    // an upload in the admin is instantly online, no redeploy needed.
+    if (hasDb()) {
+      // Extension-less name so the URL flows to our /media handler rather than
+      // being intercepted by the dev server's static-file handling.
+      const name = `${base}-${unique}`;
+      await saveImageToDb(name, sniffed, buf);
+      return { url: `/media/${name}` };
+    }
+
+    // Fallback for local development without a database: write a real file to
+    // public/uploads/ and serve it statically.
+    const ext = ALLOWED_IMG_EXT[sniffed];
+    const name = `${base}-${unique}${ext}`;
     await fs.promises.mkdir(UPLOAD_DIR, { recursive: true });
     await fs.promises.writeFile(path.join(UPLOAD_DIR, name), buf);
     return { url: `/uploads/${name}` };

@@ -91,7 +91,9 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "ordem", label: "Ordem" },
   { id: "rosemary", label: "§ Interior" },
   { id: "global", label: "Menu & Rodapé" },
-  { id: "github", label: "↑ GitHub" },
+  // The GitHub / publish step is only useful in the workspace. On the live site
+  // saves are instant, so we hide it there to avoid confusion.
+  ...(import.meta.env.PROD ? [] : [{ id: "github" as TabId, label: "↑ GitHub" }]),
 ];
 
 // ── Password gate ────────────────────────────────────────────────────────────
@@ -1469,6 +1471,10 @@ function useSave(password: string, sectionLabel: string) {
       setSaved(id);
       setSavedTime(now());
       router.invalidate();
+      // On the live site the save above is already public (written straight to
+      // the database), and git is not available. Skip the push there so no
+      // spurious "GitHub: falhou" message appears.
+      if (import.meta.env.PROD) return;
       setPubStatus((p) => ({ ...p, [id]: "pushing" }));
       try {
         const res = await gitCommitAndPush({
@@ -2532,7 +2538,7 @@ function AdminPage() {
         {tab === "caderno-intro" && <DiarioIntroSection password={password} initial={diarioConfig} />}
         {tab === "rosemary" && <RosemaryAdminSection password={password} initial={rosemaryConfig} />}
         {tab === "global" && <ChromeSection password={password} initial={chromeConfig} />}
-        {tab === "github" && <GitHubSection password={password} />}
+        {tab === "github" && !import.meta.env.PROD && <GitHubSection password={password} />}
       </div>
     </div>
   );
