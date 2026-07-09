@@ -4,7 +4,8 @@ import { BotanicalMark } from "@/components/BotanicalMark";
 import { motion, AnimatePresence } from "framer-motion";
 import { isNightInPortugal, getSunTimes } from "@/lib/sun";
 import Lenis from "lenis";
-import logoLuisa from "@/assets/logo-luisa-rosmaninho.png";
+import logoHeaderLight from "@/assets/logo-header-light.png";
+import logoHeaderDark from "@/assets/logo-header-dark.png";
 
 /* ── Informação solar ─────────────────────────────────────────────────────── */
 interface SunInfo {
@@ -228,55 +229,6 @@ export function CustomCursor() {
   return <div ref={dot} className="cursor-dot" />;
 }
 
-/* ---------------- Loading screen (only on first visit of session) ---------------- */
-export function LoadingScreen() {
-  // `mounted` starts false on both SSR and the initial client render, so both
-  // sides return null and React hydration sees a perfect match. After mount
-  // (useEffect, client-only) the loader appears as a pure overlay — no mismatch,
-  // no "Invalid hook call" from Framer Motion animation frames racing React 19.
-  const [mounted, setMounted] = useState(false);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    if (sessionStorage.getItem("rf_loaded") === "1") {
-      setDone(true);
-      return;
-    }
-    const t = setTimeout(() => {
-      setDone(true);
-      sessionStorage.setItem("rf_loaded", "1");
-    }, 2000);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (!mounted || done) return null;
-  return (
-    <div
-      className="loader-screen fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: "#171916" }}
-    >
-      {/* Fundo derivado da própria assinatura — preenche qualquer proporção de ecrã sem margens visíveis */}
-      <img
-        src={logoLuisa}
-        aria-hidden="true"
-        draggable={false}
-        className="absolute inset-0 h-full w-full scale-125 object-cover blur-3xl pointer-events-none select-none"
-      />
-      {/* Assinatura nítida por cima do fundo esbatido (funde-se sem rectângulo) */}
-      <motion.img
-        src={logoLuisa}
-        alt="Luísa Rosmaninho · Fotografia"
-        draggable={false}
-        className="relative h-auto w-[92vw] max-w-[1000px] object-contain select-none"
-        initial={{ opacity: 0, scale: 1.03 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.3, ease: "easeOut" }}
-      />
-    </div>
-  );
-}
-
 /* ---------------- Page transition ---------------- */
 export function PageFade({ children }: { children: React.ReactNode }) {
   return (
@@ -334,15 +286,38 @@ export function SiteNav({ variant = "solid" }: { variant?: "overlay" | "solid" }
           <div className="relative group/logo">
             <Link
               to="/"
-              className="flex items-baseline gap-3"
+              className="flex items-center gap-3"
               style={{ color: "inherit" }}
               onClick={() => setMenuOpen(false)}
+              aria-label="Rosmaninho Fotografia — início"
             >
-              <span className="inline-flex items-center gap-1.5 font-italic-serif text-3xl md:text-[34px] leading-none">
-                Rosmaninho
-                <BotanicalMark size={11} className="text-copper/80 translate-y-0.5" />
-              </span>
-              <span className="hidden md:block text-[10px] tracking-[0.4em] uppercase opacity-60">Fotografia</span>
+              {/* Logótipo — versão clara sobre fundos escuros; versão escura sobre o tema claro (dia) */}
+              {isOverlay ? (
+                <img
+                  src={logoHeaderLight}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="h-11 md:h-14 w-auto select-none"
+                />
+              ) : (
+                <>
+                  <img
+                    src={logoHeaderDark}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="block dark:hidden h-11 md:h-14 w-auto select-none"
+                  />
+                  <img
+                    src={logoHeaderLight}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="hidden dark:block h-11 md:h-14 w-auto select-none"
+                  />
+                </>
+              )}
 
               {/* Ícone lunar/solar — aparece subtilmente ao hover */}
               {sunInfo && (

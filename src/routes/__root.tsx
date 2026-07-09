@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SmoothScroll, CustomCursor, LoadingScreen, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener } from "@/components/SiteChrome";
+import { SmoothScroll, CustomCursor, GrainOverlay, ScrollProgress, BackToTop, NightMode, RosemaryListener } from "@/components/SiteChrome";
 import { THEME_SCRIPT } from "@/lib/sun";
 
 // ── Dados estruturados (JSON-LD) — indexação em motores de busca ──────────────
@@ -174,7 +174,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <NightMode />
       <RosemaryListener />
-      <LoadingScreen />
       <SmoothScroll />
       <CustomCursor />
       <GrainOverlay />
