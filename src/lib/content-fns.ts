@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import fs from "fs";
 import path from "path";
 import { readConfig, writeConfig, syncDbToJson, getConfigFilenames, saveImageToDb, hasDb } from "./db";
+import { MAX_IMAGE_SIZE_BYTES } from "./upload-limits";
 import { checkAdminPassword as checkPassword } from "./admin-auth";
 import { categories as staticCategories, photos as staticPhotos } from "./photos";
 import type { Category, Photo } from "./photos";
@@ -453,6 +454,20 @@ function sniffImageType(buf: Buffer): string | null {
   return null;
 }
 
+// Upper bound on decoded bytes for a base64 string, derived from its length and
+// padding without actually decoding. This lets us reject oversized images before
+// spending memory on Buffer.from. Buffer.from would ignore whitespace, so we do
+// the same here to keep the estimate accurate.
+function base64ByteUpperBound(b64: string): number {
+  const clean = b64.replace(/\s/g, "");
+  if (clean.length === 0) return 0;
+  if (clean.length % 4 !== 0) return Infinity; // invalid, will be caught by Buffer.from
+  let padding = 0;
+  if (clean.endsWith("==")) padding = 2;
+  else if (clean.endsWith("=")) padding = 1;
+  return (clean.length / 4) * 3 - padding;
+}
+
 export const uploadSiteImage = createServerFn({ method: "POST" })
   .validator(
     (d: unknown) =>
@@ -461,11 +476,11 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ url: string }> => {
     checkPassword(data.password);
     const b64 = typeof data.dataBase64 === "string" ? data.dataBase64 : "";
-    // Reject oversized payloads BEFORE decoding (base64 ≈ 1.37× the byte size).
-    if (b64.length > 15 * 1024 * 1024) throw new Error("Imagem demasiado grande (máx. 10 MB).");
+    // Reject oversized payloads BEFORE decoding.
+    if (base64ByteUpperBound(b64) > MAX_IMAGE_SIZE_BYTES) throw new Error(`Imagem demasiado grande (máx. ${MAX_IMAGE_SIZE_BYTES / 1024 / 1024} MB).`);
     const buf = Buffer.from(b64, "base64");
     if (buf.length === 0) throw new Error("Ficheiro vazio.");
-    if (buf.length > 10 * 1024 * 1024) throw new Error("Imagem demasiado grande (máx. 10 MB).");
+    if (buf.length > MAX_IMAGE_SIZE_BYTES) throw new Error(`Imagem demasiado grande (máx. ${MAX_IMAGE_SIZE_BYTES / 1024 / 1024} MB).`);
     // Trust the file's magic bytes, not the client-declared MIME type.
     const sniffed = sniffImageType(buf);
     if (!sniffed) throw new Error("Ficheiro não é uma imagem válida (JPG, PNG, WebP, GIF ou AVIF).");
