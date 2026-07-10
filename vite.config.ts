@@ -142,7 +142,7 @@ export default defineConfig({
     tsConfigPaths({ ignoreConfigErrors: true }),
     tailwindcss(),
     tanstackStart({
-      server: { entry: "src/server.ts" },
+      server: { entry: "server.ts" },
       serverFns: {
         // CSRF is handled via src/start.ts — disable the startup warning
         disableCsrfMiddlewareWarning: true,
