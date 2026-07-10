@@ -664,6 +664,11 @@ export type SobreConfig = {
   detalheImage: string;
   intermediaImage1: string;
   intermediaImage2: string;
+  aberturaCaption: string;
+  comecoCaption: string;
+  detalheCaption: string;
+  intermediaCaption1: string;
+  intermediaCaption2: string;
 };
 
 export const SOBRE_DEFAULTS: SobreConfig = {
@@ -720,6 +725,11 @@ export const SOBRE_DEFAULTS: SobreConfig = {
   detalheImage: "",
   intermediaImage1: "",
   intermediaImage2: "",
+  aberturaCaption: "Porto · Fev 2026",
+  comecoCaption: "Figueira da Foz · Mai 2026",
+  detalheCaption: "Porto · Fev 2026",
+  intermediaCaption1: "",
+  intermediaCaption2: "",
 };
 
 const SOBRE_JSON = path.join(process.cwd(), "sobre-config.json");

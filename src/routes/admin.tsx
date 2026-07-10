@@ -1576,6 +1576,12 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
   const [intermediaImage1, setIntermediaImage1] = useState(initial.intermediaImage1 ?? "");
   const [intermediaImage2, setIntermediaImage2] = useState(initial.intermediaImage2 ?? "");
 
+  const [aberturaCaption, setAberturaCaption] = useState(initial.aberturaCaption ?? "");
+  const [comecoCaption, setComecoCaption] = useState(initial.comecoCaption ?? "");
+  const [detalheCaption, setDetalheCaption] = useState(initial.detalheCaption ?? "");
+  const [intermediaCaption1, setIntermediaCaption1] = useState(initial.intermediaCaption1 ?? "");
+  const [intermediaCaption2, setIntermediaCaption2] = useState(initial.intermediaCaption2 ?? "");
+
   const { save: pub, saving, saved, setSaved, savedTime, PubProvider } = useSave(password, "Autora");
   function save(id: string, payload: Partial<SobreConfig>) {
     pub(id, () => saveSobreTexts({ data: { password, ...payload } }));
@@ -1606,8 +1612,23 @@ function AutoraSection({ password, initial }: { password: string; initial: Sobre
             value={intermediaImage2} defaultPreview={marTetrapodos}
             onChange={(v) => { setIntermediaImage2(v); setSaved(null); }} password={password} />
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FreeBlock label="Legenda — abertura" value={aberturaCaption}
+            onChange={(v) => { setAberturaCaption(v); setSaved(null); }} rows={1} />
+          <FreeBlock label="Legenda — O começo" value={comecoCaption}
+            onChange={(v) => { setComecoCaption(v); setSaved(null); }} rows={1} />
+          <FreeBlock label="Legenda — O detalhe" value={detalheCaption}
+            onChange={(v) => { setDetalheCaption(v); setSaved(null); }} rows={1} />
+          <FreeBlock label="Legenda — intermédia esquerda" value={intermediaCaption1}
+            onChange={(v) => { setIntermediaCaption1(v); setSaved(null); }} rows={1} />
+          <FreeBlock label="Legenda — intermédia direita" value={intermediaCaption2}
+            onChange={(v) => { setIntermediaCaption2(v); setSaved(null); }} rows={1} />
+        </div>
         <SaveRow id="imagens-sobre" saving={saving} saved={saved} savedTime={savedTime}
-          onSave={() => save("imagens-sobre", { aberturaImage, comecoImage, detalheImage, intermediaImage1, intermediaImage2 })} />
+          onSave={() => save("imagens-sobre", {
+            aberturaImage, comecoImage, detalheImage, intermediaImage1, intermediaImage2,
+            aberturaCaption, comecoCaption, detalheCaption, intermediaCaption1, intermediaCaption2,
+          })} />
       </div>
 
       {/* Intro */}

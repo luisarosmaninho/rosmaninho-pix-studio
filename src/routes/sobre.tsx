@@ -102,7 +102,9 @@ function SobrePage() {
       <Fade className="px-6 md:px-12 max-w-6xl mx-auto">
         <div className="hover-zoom relative aspect-[16/9] overflow-hidden">
           <img src={sobreTexts.aberturaImage || portoRuaCalcada} alt="Rua ao entardecer, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-          <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">Porto · Fev 2026</div>
+          {sobreTexts.aberturaCaption && (
+            <div className="absolute bottom-6 right-8 font-mono-label text-cream/50 text-[10px] uppercase tracking-[0.3em]">{sobreTexts.aberturaCaption}</div>
+          )}
         </div>
       </Fade>
 
@@ -122,7 +124,7 @@ function SobrePage() {
           <div className="hover-zoom relative aspect-[3/4] overflow-hidden">
             <img src={sobreTexts.comecoImage || farolPeniche} alt="Farol da fortaleza, Figueira da Foz" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
-          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">Figueira da Foz · Mai 2026</p>
+          <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">{sobreTexts.comecoCaption}</p>
         </Fade>
 
         <div className="md:col-span-7 space-y-12">
@@ -165,7 +167,7 @@ function SobrePage() {
             <div className="hover-zoom relative aspect-[4/5] overflow-hidden">
               <img src={sobreTexts.detalheImage || barcoDouro} alt="Barco no Douro, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             </div>
-            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">Porto · Fev 2026</p>
+            <p className="font-mono-label text-cream/25 text-[10px] mt-3 uppercase tracking-[0.25em]">{sobreTexts.detalheCaption}</p>
           </Fade>
         </div>
       </section>
@@ -195,11 +197,17 @@ function SobrePage() {
           <div className="hover-zoom relative aspect-[4/3] overflow-hidden">
             <img src={sobreTexts.intermediaImage1 || portoAzulejos} alt="Esquina de azulejo, Porto" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
+          {sobreTexts.intermediaCaption1 && (
+            <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">{sobreTexts.intermediaCaption1}</p>
+          )}
         </Fade>
         <Fade delay={0.1}>
           <div className="hover-zoom relative aspect-[4/3] overflow-hidden">
             <img src={sobreTexts.intermediaImage2 || marTetrapodos} alt="Linha de costa, Peniche" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
           </div>
+          {sobreTexts.intermediaCaption2 && (
+            <p className="font-mono-label text-foreground/30 text-[10px] mt-3 uppercase tracking-[0.25em]">{sobreTexts.intermediaCaption2}</p>
+          )}
         </Fade>
       </div>
 
