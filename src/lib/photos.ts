@@ -104,7 +104,7 @@ export const categories: Category[] = [
     title: "Urbanas",
     description: "A cidade como coisa viva. Ruas, pontes, telhados — e tudo o que insiste em ficar.",
     cover: "porto-street",
-    excerpt: "Há dias em que saio de casa sem qualquer plano. Levo a máquina fotográfica porque já aprendi que as melhores imagens raramente aparecem quando as procuramos diretamente.",
+    excerpt: "Observar a cidade é deixar que as ruas me mostrem o que os olhos distraídos já não veem.",
     intro: "Há dias em que saio de casa sem qualquer plano. Levo a máquina fotográfica porque já aprendi que as melhores imagens raramente aparecem quando as procuramos diretamente.",
     introBody: [
       "Durante muito tempo pensei que fotografava ruas. Hoje percebo que fotografo pausas. Fotografo a luz que fica presa numa fachada durante alguns minutos. Fotografo cadeiras vazias à espera de alguém. Fotografo montras ainda apagadas antes da cidade acordar. Fotografo sombras que aparecem e desaparecem sem pedir licença.",
