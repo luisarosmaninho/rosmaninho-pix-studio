@@ -122,7 +122,7 @@ export const categories: Category[] = [
     title: "Natureza",
     description: "Água, luz, paisagem. O tempo lento dos lugares que não têm pressa de nada.",
     cover: "sunset-beach",
-    excerpt: "Nem sempre procuro a natureza. Muitas vezes é ela que me encontra.",
+    excerpt: "Observar a natureza é entender que a luz nunca é a mesma duas vezes.",
     intro: "Nem sempre procuro a natureza. Muitas vezes é ela que me encontra. Acontece quando decido parar junto ao rio durante mais alguns minutos. Quando a névoa demora a desaparecer.",
     introBody: [
       "Talvez por isso nunca tenha sentido necessidade de procurar paisagens perfeitas. O que me interessa é a mudança. A água nunca é a mesma. O céu nunca regressa igual. As estações continuam o seu trabalho sem pedir autorização a ninguém.",
@@ -138,7 +138,7 @@ export const categories: Category[] = [
     title: "Retratos",
     description: "Rostos, presença. O instante antes de alguém voltar a estar em guarda.",
     cover: "retrato-sol",
-    excerpt: "Durante muito tempo tive receio de fotografar pessoas. As ruas não ficam nervosas. As árvores não se preocupam com a sua aparência.",
+    excerpt: "A maior dificuldade num retrato não é a luz, é o instante em que a pessoa deixa de representar e se mostra como é.",
     intro: "Durante muito tempo tive receio de fotografar pessoas. As ruas não ficam nervosas. As árvores não se preocupam com a sua aparência. Os edifícios não perguntam se ficaram bem na fotografia.",
     introBody: [
       "Mas foi precisamente isso que me fez gostar cada vez mais de retratos. O momento que mais me interessa não é a pose. Nem o sorriso. Nem a expressão ensaiada. É aquele segundo raro em que alguém se esquece da câmara.",
@@ -155,7 +155,7 @@ export const categories: Category[] = [
     title: "Iguarias",
     description: "Mesas, texturas. O instante antes do primeiro garfo.",
     cover: "cafe-matcha",
-    excerpt: "Sempre gostei de lugares onde as pessoas ficam mais tempo do que era necessário. Talvez seja por isso que gosto tanto de cafés. Talvez seja por isso que gosto tanto de matcha.",
+    excerpt: "Entre a escolha dos ingredientes e o prato final, há um ritual que merece ser fotografado e saboreado.",
     intro: "Sempre gostei de lugares onde as pessoas ficam mais tempo do que era necessário. Talvez seja por isso que gosto tanto de cafés. Talvez seja por isso que muitas das minhas fotografias nascem à volta de mesas.",
     introBody: [
       "Um café nunca é apenas um café. Um matcha nunca é apenas um matcha. Uma refeição nunca é apenas comida. São pausas. São conversas. São momentos onde o relógio abranda sem que ninguém repare.",
