@@ -93,7 +93,6 @@ function SeriesBlock({ cat, index, count, visits, cover }: { cat: Category; inde
             {cat.title}<span className="font-italic-serif text-copper">.</span>
           </h2>
           <p className="mt-8 text-foreground/60 leading-relaxed text-lg max-w-md font-italic-serif italic">{cat.excerpt}</p>
-          <p className="mt-5 text-foreground/40 leading-relaxed text-sm max-w-md">{cat.introBody[0]}</p>
           {cat.quote && (
             <p className="mt-8 font-italic-serif text-foreground/25 text-sm italic border-l border-copper/20 pl-5 max-w-xs leading-relaxed">
               "{cat.quote}"
