@@ -174,18 +174,18 @@ export const photos: Photo[] = [
   {
     id: "porto-street",
     src: portoStreet,
-    title: "Quando ainda havia luz",
+    title: "A Primeira Luz",
     category: "urbanas",
     orientation: "portrait",
-    meta: { description: "Havia luz suficiente para uma última fotografia. Depois os candeeiros tomaram conta.", conditions: "entardecer · luz rasante · inverno" },
+    meta: { description: "Onde o Bispo tinha hortas, o Rei mandou abrir caminho. Hoje, as esplanadas esperam o primeiro café, enquanto a memória da primeira luz a gás ainda ilumina o granito.", conditions: "entardecer · luz rasante · inverno" },
   },
   {
     id: "coimbra",
     src: coimbra,
-    title: "O que a cidade não controla",
+    title: "Onde o Rio Escuta o Saber",
     category: "urbanas",
     orientation: "square",
-    meta: { description: "Há cidades que crescem para cima porque o chão não chega. Esta é uma delas." },
+    meta: { description: "Da calma do rio, a cidade ergue-se até ao Paço Real onde nasceram gerações de reis. Quando D. Afonso III partiu para Lisboa em 1255, esse mesmo palácio tornou-se o berço do conhecimento em 1537, na colina que a UNESCO hoje guarda sob a Alta e a Sofia." },
   },
   {
     id: "porto-bridge",
