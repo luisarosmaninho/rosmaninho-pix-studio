@@ -190,10 +190,10 @@ export const photos: Photo[] = [
   {
     id: "porto-bridge",
     src: portoBridge,
-    title: "O ferro que ficou",
+    title: "A Travessia Definitiva",
     category: "urbanas",
     orientation: "landscape",
-    meta: { description: "O ferro não pede desculpa pela sua presença. Simplesmente fica." },
+    meta: { description: "Entre a demora das barcas e o balanço da pênsil, o comércio pedia um caminho seguro. Dois tabuleiros responderam ao chamado: um toca o rio, outro alcança o céu, e ninguém mais precisou de descer para atravessar." },
   },
   {
     id: "coimbra-skyline",
